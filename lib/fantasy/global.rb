@@ -2,7 +2,7 @@ require "ostruct"
 
 module Global
   class << self
-    attr_accessor :actors, :hud_texts, :hud_images, :clocks
+    attr_accessor :actors, :hud_texts, :hud_images, :backgrounds, :clocks
     attr_accessor :debug
     attr_accessor :setup_proc, :loop_proc, :button_proc
     attr_accessor :presentation_proc, :game_proc, :end_proc
@@ -25,6 +25,7 @@ module Global
       @actors = []
       @hud_texts = []
       @hud_images = []
+      @backgrounds = []
       @clocks = []
       @last_frame_at = Time.now
       @debug = false
@@ -34,10 +35,17 @@ module Global
       @camera = Camera.new(position: Coordinates.zero)
       @game_state = Global.presentation_proc.nil? ? "game" : "presentation"
 
-      @presentation_proc = Global.default_on_presentation if @presentation_proc.nil?
-      @game_proc = Global.default_on_game if @game_proc.nil?
-      @end_proc = Global.default_on_end if @end_proc.nil?
-      @paused = false
+      if @presentation_proc.nil?
+        on_presentation { Global.default_on_presentation  }
+      end
+
+      if @game_proc.nil?
+        on_game { Global.default_on_game  }
+      end
+
+      if @end_proc.nil?
+        on_end { Global.default_on_end  }
+      end
     end
 
     def update
@@ -74,7 +82,7 @@ module Global
       puts "Game stage 'presentation'"
 
       clear_state_elements
-      presentation_proc.call
+      @presentation_proc.call
     end
 
     def go_to_game

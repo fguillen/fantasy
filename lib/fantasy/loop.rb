@@ -45,6 +45,7 @@ class Game < Gosu::Window
     Gosu.draw_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Global.background)
 
     (
+      Global.backgrounds +
       Global.actors +
       Global.hud_texts +
       Global.hud_images
