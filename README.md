@@ -103,9 +103,10 @@ Actors in the game will be rendered in the relative position to this camera.
 
 Easy to configure 3 basic game states:
 
-- Initial screen
-- Game
-- Game over screen
+- Game presentation scene
+- Game game scene
+- Game end scene
+- Other scenes, like levels or such (TODO)
 
 Each state should be independent and unique Actors and other elements can be created and configured for each state
 
@@ -123,9 +124,17 @@ Move the core functions to the top level hierarchy so I don't need to create a `
 
 Direct and easy way to play a sound
 
+### Background
+
+Simple way to set up:
+
+- Background color
+- Image background (TODO)
+- Repeatable image background (TODO)
+
 ### Data Persistance (TODO)
 
-Simple mechanismo to save data in disk. For user preferences, game progress, high scores and others
+Simple mechanism to save data in disk. For user preferences, game progress, high scores and others
 
 ### User Inputs
 

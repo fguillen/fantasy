@@ -28,7 +28,7 @@ module Global
       @clocks = []
       @last_frame_at = Time.now
       @debug = false
-      @pixel_font = Gosu::Font.new(20, { name: "#{__dir__}/../fonts/VT323-Regular.ttf" } )
+      @pixel_font = Gosu::Font.new(20, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" } )
       @d_key_pressed = false
       @references = OpenStruct.new
       @camera = Camera.new(position: Coordinates.zero)

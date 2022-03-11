@@ -3,7 +3,7 @@ class Actor
   attr_accessor :position, :direction, :speed, :solid, :scale, :name, :layer
 
   def initialize(image_name)
-    @image = Gosu::Image.new("#{__dir__}/../images/#{image_name}.png", { retro: true })
+    @image = Image.new(image_name)
     @name = image_name
     @position = Coordinates.new(0, 0)
     @direction = Coordinates.new(0, 0)
@@ -23,7 +23,7 @@ class Actor
   end
 
   def image=(image_name)
-    @image = Gosu::Image.new("#{__dir__}/../images/#{image_name}.png", { retro: true })
+    @image = Image.new(image_name)
   end
 
   def width
@@ -44,7 +44,7 @@ class Actor
   end
 
   def draw
-    @image.draw(position_in_camera.x, position_in_camera.y, 0, @scale, @scale)
+    @image.draw(x: position_in_camera.x, y: position_in_camera.y, scale: @scale)
 
     draw_debug if Global.debug
   end

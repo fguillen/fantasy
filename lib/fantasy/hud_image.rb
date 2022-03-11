@@ -4,7 +4,7 @@ class HudImage
   attr_accessor :name, :scale, :color, :visible, :position, :layer
 
   def initialize(position:, image_name: )
-    @image = Gosu::Image.new("#{__dir__}/../images/#{image_name}.png", { retro: true })
+    @image = Image.new(image_name)
     @name = image_name
     @position = position
     @scale = 1
@@ -30,7 +30,7 @@ class HudImage
 
   def draw
     if visible
-      @image.draw(@position.x, @position.y, 0, @scale, @scale)
+      @image.draw(x: @position.x, y: @position.y, scale: @scale)
     end
 
     draw_debug if Global.debug
