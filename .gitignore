@@ -6,3 +6,6 @@
 /pkg/
 /spec/reports/
 /tmp/
+
+.vscode/
+.ruby-version

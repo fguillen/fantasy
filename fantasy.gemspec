@@ -8,11 +8,11 @@ Gem::Specification.new do |spec|
   spec.authors = ["Fernando Guillen"]
   spec.email = ["fguillen.mail@gmail.com"]
 
-  spec.summary = "TODO: Write a short summary, because RubyGems requires one."
-  spec.description = "TODO: Write a longer description or delete this line."
+  spec.summary = "Simple toolbox library and lean API to build great mini games"
+  spec.description = "Simple toolbox library and lean API to build great mini games"
   spec.homepage = "TODO: Put your gem's website or public repo URL here."
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 3.0.0"
 
   spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
 
@@ -32,7 +32,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # Uncomment to register a new dependency of your gem
-  # spec.add_dependency "example-gem", "~> 1.0"
+  spec.add_dependency "gosu", "~> 1.4.1"
+  spec.add_dependency "vector2d", "~> 2.2.3"
 
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
