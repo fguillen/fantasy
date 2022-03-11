@@ -156,6 +156,7 @@ Easy access to keyboard and mouse inputs on any part of the code. Specially in t
 ## Bugs
 
 - When dragging in debug mode new elements are being added to the drag (TODO)
+- Rubocop is not passing
 
 ## Development
 
