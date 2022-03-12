@@ -1,7 +1,10 @@
 class Clock
+  attr_accessor :persistent
+
   def initialize(&block)
     @block = block
     @thread = nil
+    @persistent = false # if persistent, clock is not stopped when loading new scene
 
     Global.clocks << self
   end
@@ -28,12 +31,22 @@ class Clock
         while(times_executed < times)
           @block.call
           times_executed += 1;
-          sleep(seconds)
+
+          seconds_to_sleep = seconds.is_a?(Range) ? rand(seconds) : seconds
+          sleep(seconds_to_sleep)
         end
       end
   end
 
   def stop
-    Thread.kill(@thread)
+    Thread.kill(@thread) unless @thread.nil?
+  end
+
+  def started?
+    !@thread.nil?
+  end
+
+  def persistent?
+    @persistent
   end
 end

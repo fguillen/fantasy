@@ -103,7 +103,8 @@ module Global
       @actors.clear
       @hud_texts.clear
       @hud_images.clear
-      @clocks.each(&:stop)
+      @backgrounds.clear
+      @clocks.reject(&:persistent?).each(&:stop)
       @background = Color.new(r: 0, g: 0, b: 0)
     end
 

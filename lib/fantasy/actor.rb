@@ -80,13 +80,12 @@ class Actor
         @position = @position + (@direction * @speed * Global.frame_time)
 
         if solid?
-          actual_collisions = collisions
-          actual_collisions.each do |actor|
+          collisions.each do |actor|
             collision_with(actor)
             actor.collision_with(self)
           end
 
-          @position = @last_position if actual_collisions.any?
+          @position = @last_position if collisions.any? # we don't cache collisions because position may be changed on collision callback
         end
       end
     end
