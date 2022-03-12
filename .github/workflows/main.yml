@@ -18,6 +18,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: install sdl.h
+      run: sudo apt-get -y install libsdl2-dev
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
