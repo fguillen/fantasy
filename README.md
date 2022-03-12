@@ -1,10 +1,63 @@
 # Ruby in Fantasy
 
+Simple toolbox library and lean API to build great mini games in Ruby.
+
 An upper layer over Gosu library to offer a more friendly API for an easy and lean game development.
 
 Specially intended to use Ruby as a learning language to introduce children into programming.
 
 **Attention**: This project is in early development phase, right now it is just an experiment
+
+## Use
+
+```ruby
+SCREEN_WIDTH = 640
+SCREEN_HEIGHT = 360
+
+on_game do
+  player = Actor.new("warrior")
+  player.position = Coordinates.new(100, 100)
+  points = HudText.new(position: Coordinates.new(10, 20))
+  points.text = 0
+
+  on_space_bar do
+    Sound.play("shoot")
+    bullet = Actor.new("bullet")
+    bullet.position = player.position
+    bullet.speed = 100
+    bullet.direction = Coordinates.up
+    bullet.on_collision do |other|
+      if other.name == "enemy"
+        Sound.play("impact")
+        other.destroy
+        bullet.destroy
+        points.text += 1
+      end
+    end
+  end
+
+  player.on_collision do |other|
+    if other.name == "enemy"
+      Sound.play("game_over")
+      Global.go_to_end
+    end
+  end
+end
+
+on_end do
+  HudText.new(position: Coordinates.new(10, 100), text: "You are dead. Press space to re-tart")
+
+  on_space_bar do
+    Global.go_to_game
+  end
+end
+
+start!
+```
+
+## Examples
+
+See the [Ruby in Fantasy Games Collection](https://github.com/fguillen/RubyInFantasyGames).
 
 ## Installation
 
@@ -23,6 +76,19 @@ Or install it yourself as:
     $ gem install fantasy
 
 ## Features
+
+### Game Scene transitions
+
+Easy to configure 3 basic game states:
+
+- Game presentation scene
+- Game game scene
+- Game end scene
+- Other scenes, like levels or such (TODO)
+
+Each state should be independent and unique Actors and other elements can be created and configured for each state
+
+Built-in mechanism to move from one state to another.
 
 ### Actor
 
@@ -79,7 +145,7 @@ For easy creation of head-up display components.
 
 ### Debug Mode
 
-When active different attributes from all the Actors and HUD elements will be visible in the screen.
+Press `d` to activate it. When active debug visuals are shown:
 
 - Position
 - Collider
@@ -99,18 +165,6 @@ Actors in the game will be rendered in the relative position to this camera.
 
 - Not deal with RGB or anything, just a list of colors (TODO)
 
-### Game Scene transitions
-
-Easy to configure 3 basic game states:
-
-- Game presentation scene
-- Game game scene
-- Game end scene
-- Other scenes, like levels or such (TODO)
-
-Each state should be independent and unique Actors and other elements can be created and configured for each state
-
-Built-in mechanism to move from one state to another.
 
 ### Pause Game (TODO)
 
@@ -129,7 +183,7 @@ Direct and easy way to play a sound
 Simple way to set up:
 
 - Background color
-- Image background (TODO)
+- Image background
 - Repeatable image background (TODO)
 
 ### Data Persistance (TODO)
@@ -143,20 +197,212 @@ Easy access to keyboard and mouse inputs on any part of the code. Specially in t
 - Allow "on_space_bar" and each Actor (TODO)
 - Allow multiple "on_space_bar" (TODO)
 - Remove "on_space_bar" when changing scene (TODO)
+- Detect when key/mouse button is pressed in the actual frame in any part of the code (TODO)
+
+### Tweens (TODO)
+
+Multiple movement animation effects like in [DoTween](http://dotween.demigiant.com/documentation.php) (TODO)
 
 ## API
 
+### Game Scene transitions
+
+Configure your game elements on each Scene:
+
+```ruby
+SCREEN_WIDTH = 640
+SCREEN_HEIGHT = 360
+
+# (Optional)
+on_presentation do
+  # Game elements running when the game loads
+end
+
+on_game do
+  # Game elements running when in game Scene
+end
+
+# (Optional)
+on_end do
+  # Game elements running when game is ended
+end
+```
+
+How to go from Scene to Scene:
+
+```ruby
+Global.go_to_presentation
+Global.go_to_game
+Global.go_to_end
+```
+
+#### Example
+
+```ruby
+on_presentation do
+  HudText.new(position: Coordinates.new(10, 100), text: "Press space to start")
+
+  on_space_bar do
+    Global.go_to_game
+  end
+end
+
+on_game do
+  # [...]
+  if player.dead
+    Global.go_to_end
+  end
+end
+
+on_end do
+  HudText.new(position: Coordinates.new(10, 100), text: "You are dead. Press space to re-tart")
+
+  on_space_bar do
+    Global.go_to_presentation
+  end
+end
+```
+
+### Actor
+
+Actor can be used directly:
+
+```ruby
+player = Actor.new("warrior") # ./images/warrior.png
+player.position = Coordinates.new(100, 100)
+player.solid = true
+player.speed = 200
+player.layer = 1
+player.move_with_cursors
+
+player.on_collision do |other|
+  if other.name == "enemy"
+    player.destroy
+  end
+end
+
+player.on_after_move do
+  if player.position.x > SCREEN_WIDTH
+    player.position.x = SCREEN_WIDTH
+  end
+
+  if player.position.x < 0
+    player.position.x = 0
+  end
+end
+```
+
+Or in a subclass:
+
+```ruby
+class Player < Actor
+  def initialize
+    super("warrior") # ./images/warrior.png
+    @position = Coordinates.new(100, 100)
+    @solid = true
+    @speed = 200
+    @layer = 1
+    @direction = Coordinates.zero
+    move_with_cursors
+  end
+
+  on_collision do |other|
+    if other.name == "enemy"
+      destroy
+    end
+  end
+
+  on_after_move do
+    if @position.x > SCREEN_WIDTH
+      @position.x = SCREEN_WIDTH
+    end
+
+    if @position.x < 0
+      @position.x = 0
+    end
+  end
+end
+```
+
+### Clock
+
+```ruby
+clock =
+  Clock.new do
+    enemy.attack
+    sleep(1)
+    enemy.defend
+  end
+
+clock.run_now
+clock.run_on(seconds: 2)
+clock.repeat(seconds: 2, times: 10)
+clock.stop
+```
+
+### Background
+
+```ruby
+on_presentation do
+  Global.background = Color.new(r: 34, g: 35, b: 35)
+end
+
+on_game do
+  background = Background.new(image_name: "beach")
+  background.scale = 6
+end
+```
+
+### Camera
+
+```ruby
+on_game do
+  on_loop do
+    # Camera follows player
+    Global.camera.position.y = player.position.y - (SCREEN_HEIGHT / 2)
+  end
+end
+```
+
+### Sound
+
+```ruby
+Sound.play("shoot") # ./sounds/shoot.wav
+```
+
+
+### UI
+
+#### HUD Text
+
+```ruby
+timer = HudText.new(position: Coordinates.new(20, 10))
+timer.text = 0
+timer.size = "big"
+
+Clock.new { timer.text += 1 }.repeat(seconds: 1)
+```
+
+#### HUD Image
+
+```ruby
+icon = HudImage.new(position: Coordinates.new(SCREEN_WIDTH - 220, 8), image_name: "ring")
+icon.scale = 4
+icon.visible = true
+
+Clock.new { icon.visible = !icon.visible }.repeat(seconds: 1)
+```
 
 
 ## Credits for assets
 
-- Sprites: www.kenney.nl
 - Font: VT323 Project Authors (peter.hull@oikoi.com)
 
 ## Bugs
 
 - When dragging in debug mode new elements are being added to the drag (TODO)
 - Rubocop is not passing
+- Tests are missing
 
 ## Development
 

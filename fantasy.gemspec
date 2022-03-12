@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors = ["Fernando Guillen"]
   spec.email = ["fguillen.mail@gmail.com"]
 
-  spec.summary = "Simple toolbox library and lean API to build great mini games"
-  spec.description = "Simple toolbox library and lean API to build great mini games"
+  spec.summary = "Simple toolbox library and lean API to build great mini games in Ruby"
+  spec.description = "Simple toolbox library and lean API to build great mini games in Ruby"
   spec.homepage = "https://github.com/fguillen/fantasy"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.0.0"
