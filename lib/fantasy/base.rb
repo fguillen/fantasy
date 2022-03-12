@@ -54,6 +54,7 @@ def on_mouse_button_right(&block)
 end
 
 def start!
+  Global.setup
   Global.game = Game.new
   Global.game.show
 end

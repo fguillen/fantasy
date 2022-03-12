@@ -111,5 +111,10 @@ module Global
     def mouse_position
       Coordinates.new(Global.game.mouse_x, Global.game.mouse_y)
     end
+
+    def setup
+      Sound.preload_sounds
+      Image.preload_images
+    end
   end
 end

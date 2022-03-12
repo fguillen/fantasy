@@ -22,6 +22,12 @@ class Image
       locate_image(image_name)
     end
 
+    def preload_images
+      Dir.each_child(base_path) do |file_name|
+        locate_image(file_name) unless file_name.start_with?(".")
+      end
+    end
+
     private
 
     def locate_image(image_name)
@@ -29,14 +35,17 @@ class Image
 
       puts "Initialize image: '#{image_name}'"
 
-      base_path = "#{Dir.pwd}/images"
-      file_name = Dir.entries(base_path).find { |e| e.start_with?("#{image_name}.") }
+      file_name = Dir.entries(base_path).find { |e| e =~ /^#{image_name}($|\.)/  }
 
       raise "Image file not found with name '#{image_name}'" if file_name.nil?
 
       @@images[image_name] = Gosu::Image.new("#{base_path}/#{file_name}", { retro: true })
 
       return @@images[image_name]
+    end
+
+    def base_path
+      "#{Dir.pwd}/images"
     end
   end
 end
