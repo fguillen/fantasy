@@ -218,6 +218,13 @@ Easy access to keyboard and mouse inputs on any part of the code. Specially in t
 - Remove "on_space_bar" when changing scene (TODO)
 - Detect when key/mouse button is pressed in the actual frame in any part of the code (TODO)
 
+### Tile Map (TODO)
+
+For easy creation of:
+
+- Top-down map levels (TODO)
+- Platformer map levels (TODO)
+
 ### Tweens (TODO)
 
 Multiple movement animation effects like in [DoTween](http://dotween.demigiant.com/documentation.php) (TODO)
