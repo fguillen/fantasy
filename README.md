@@ -10,6 +10,25 @@ Specially intended to use Ruby as a learning language to introduce children into
 
 ## Use
 
+### Hello World
+
+```ruby
+require "fantasy"
+
+SCREEN_WIDTH = 320
+SCREEN_HEIGHT = 240
+
+on_game do
+  message = HudText.new(position: Coordinates.new(10, 10))
+  message.text = "Hello, World!"
+  message.size = "big"
+end
+
+start!
+```
+
+### Action game
+
 ```ruby
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 360
