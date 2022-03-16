@@ -434,6 +434,7 @@ Clock.new { icon.visible = !icon.visible }.repeat(seconds: 1)
 - When dragging in debug mode new elements are being added to the drag (TODO)
 - Rubocop is not passing
 - Tests are missing
+- Allow Ruby 2.5+
 
 ## Development
 
