@@ -35,7 +35,7 @@ module Global
       @references = OpenStruct.new
       @camera = Camera.new(position: Coordinates.zero)
       @game_state = Global.presentation_proc.nil? ? "game" : "presentation"
-      @game_started_at = Time.now
+      @scene_started_at = Time.now
 
       if @presentation_proc.nil?
         on_presentation { Global.default_on_presentation  }
@@ -102,6 +102,7 @@ module Global
     end
 
     def clear_state_elements
+      @scene_started_at = Time.now
       @actors.clear
       @hud_texts.clear
       @hud_images.clear
@@ -120,8 +121,8 @@ module Global
       Image.preload_images
     end
 
-    def seconds_in_game
-      Time.now - @game_started_at
+    def seconds_in_scene
+      Time.now - @scene_started_at
     end
   end
 end
