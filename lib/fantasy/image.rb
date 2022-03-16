@@ -37,7 +37,7 @@ class Image
 
       file_name = Dir.entries(base_path).find { |e| e =~ /^#{image_name}($|\.)/  }
 
-      raise "Image file not found with name '#{image_name}'" if file_name.nil?
+      raise "Image file not found with name '#{image_name}' in #{base_path}" if file_name.nil?
 
       @@images[image_name] = Gosu::Image.new("#{base_path}/#{file_name}", { retro: true })
 

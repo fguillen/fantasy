@@ -48,6 +48,7 @@ class Game < Gosu::Window
 
     (
       Global.backgrounds +
+      Global.tile_maps +
       Global.actors +
       Global.hud_texts +
       Global.hud_images

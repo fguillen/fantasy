@@ -2,7 +2,7 @@ require "ostruct"
 
 module Global
   class << self
-    attr_accessor :actors, :hud_texts, :hud_images, :backgrounds, :clocks
+    attr_accessor :actors, :hud_texts, :hud_images, :backgrounds, :tile_maps, :clocks
     attr_accessor :debug
     attr_accessor :setup_proc, :loop_proc, :button_proc
     attr_accessor :presentation_proc, :game_proc, :end_proc
@@ -26,6 +26,7 @@ module Global
       @hud_texts = []
       @hud_images = []
       @backgrounds = []
+      @tile_maps = []
       @clocks = []
       @last_frame_at = Time.now
       @debug = false
@@ -104,6 +105,7 @@ module Global
       @hud_texts.clear
       @hud_images.clear
       @backgrounds.clear
+      @tile_maps.clear
       @clocks.reject(&:persistent?).each(&:stop)
       @background = Color.new(r: 0, g: 0, b: 0)
     end

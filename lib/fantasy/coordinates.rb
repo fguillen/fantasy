@@ -28,4 +28,8 @@ class Coordinates < Vector2d
   def y=(value)
     @y = value
   end
+
+  def clone
+    Coordinates.new(@x, @y)
+  end
 end

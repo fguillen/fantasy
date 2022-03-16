@@ -2,9 +2,10 @@ class Actor
   include MoveByCursor
 
   attr_reader :image, :moving_with_cursors
-  attr_accessor :position, :direction, :speed, :solid, :scale, :name, :layer
+  attr_accessor :image_name, :position, :direction, :speed, :solid, :scale, :name, :layer
 
   def initialize(image_name)
+    @image_name = image_name
     @image = Image.new(image_name)
     @name = image_name
     @position = Coordinates.new(0, 0)
@@ -124,5 +125,38 @@ class Actor
   def destroy
     @on_destroy_callback.call unless @on_destroy_callback.nil?
     Global.actors.delete(self)
+  end
+
+  def clone
+    actor = self.class.new(@image_name)
+    actor.image_name = @image_name
+    actor.name = @name
+    actor.position = @position.clone
+    actor.direction = @direction.clone
+    actor.speed = @speed
+    actor.scale = @scale
+    actor.moving_with_cursors if @moving_with_cursors
+    actor.solid = @solid
+    actor.layer = @layer
+
+    actor.on_after_move_callback = @on_after_move_callback
+    actor.on_collision_callback = @on_collision_callback
+    actor.on_destroy_callback = @on_destroy_callback
+
+    actor
+  end
+
+  protected
+
+  def on_after_move_callback=(block)
+    @on_after_move_callback = block
+  end
+
+  def on_collision_callback=(block)
+    @on_collision_callback = block
+  end
+
+  def on_destroy_callback=(block)
+    @on_destroy_callback = block
   end
 end
