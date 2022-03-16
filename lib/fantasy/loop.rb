@@ -38,6 +38,8 @@ class Game < Gosu::Window
       e.move
     end
 
+    Global.camera.move
+
     Global.loop_proc.call() unless Global.loop_proc.nil?
   end
 

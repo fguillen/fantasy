@@ -2,6 +2,7 @@
 require "gosu"
 
 require_relative "fantasy/version"
+require_relative "fantasy/includes/move_by_cursors"
 require_relative "fantasy/draggable"
 require_relative "fantasy/color"
 require_relative "fantasy/actor"

@@ -203,7 +203,7 @@ Simple way to set up:
 
 - Background color
 - Image background
-- Repeatable image background (TODO)
+- Repeatable image background
 
 ### Data Persistance (TODO)
 
@@ -369,12 +369,16 @@ clock.stop
 ### Background
 
 ```ruby
+# Simple color
 on_presentation do
   Global.background = Color.new(r: 34, g: 35, b: 35)
 end
 
+# Replicable (by default) Image
+# position is relative to Global.camera
 on_game do
   background = Background.new(image_name: "beach")
+  # background.replicable = false # if you don't want the image to replicate
   background.scale = 6
 end
 ```

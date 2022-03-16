@@ -1,4 +1,6 @@
 class Actor
+  include MoveByCursor
+
   attr_reader :image, :moving_with_cursors
   attr_accessor :position, :direction, :speed, :solid, :scale, :name, :layer
 
@@ -111,20 +113,6 @@ class Actor
 
   def collision_with(actor)
     @on_collision_callback.call(actor) unless @on_collision_callback.nil?
-  end
-
-  def calculate_direction_by_cursors
-    if Gosu.button_down?(Gosu::KB_DOWN)
-      @direction = Coordinates.down
-    elsif Gosu.button_down?(Gosu::KB_UP)
-      @direction = Coordinates.up
-    elsif Gosu.button_down?(Gosu::KB_RIGHT)
-      @direction = Coordinates.right
-    elsif Gosu.button_down?(Gosu::KB_LEFT)
-      @direction = Coordinates.left
-    else
-      @direction = Coordinates.zero
-    end
   end
 
   def collisions
