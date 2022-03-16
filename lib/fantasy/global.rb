@@ -108,7 +108,11 @@ module Global
       @hud_images.clear
       @backgrounds.clear
       @tile_maps.clear
-      @clocks.reject(&:persistent?).each(&:stop)
+
+      @clocks.reject(&:persistent?).each do |clock|
+        clock.stop unless clock.thread == Thread.current # no stop current Thread
+      end
+
       @background = Color.new(r: 0, g: 0, b: 0)
     end
 

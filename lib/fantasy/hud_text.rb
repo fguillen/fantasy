@@ -1,5 +1,5 @@
 class HudText
-  attr_accessor :text, :size, :color, :visible, :layer, :in_world
+  attr_accessor :text, :size, :color, :visible, :layer, :in_world, :position
 
   def initialize(position:, text: "")
     @position = position

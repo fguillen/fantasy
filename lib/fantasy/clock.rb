@@ -1,5 +1,6 @@
 class Clock
   attr_accessor :persistent
+  attr_reader :thread
 
   def initialize(&block)
     @block = block

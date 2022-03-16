@@ -27,4 +27,9 @@ module Utils
     Gosu.draw_rect(x, y + (height - stroke), width, stroke, color)
     Gosu.draw_rect(x, y, stroke, height, color)
   end
+
+  def self.remap(value:, from_ini:, from_end:, to_ini:, to_end:)
+    result = to_ini + (value - from_ini) * (to_end - to_ini) / (from_end - from_ini);
+    result
+  end
 end
