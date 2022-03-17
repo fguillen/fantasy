@@ -32,7 +32,13 @@ class Tilemap
 
       line.each do |tile_index|
         if !tile_index.nil?
-          actor = @tiles[tile_index].clone
+          actor_template = @tiles[tile_index]
+
+          if actor_template.nil?
+            raise "Tilemap config error. Not found Tile for index '#{tile_index}'"
+          end
+
+          actor = actor_template.clone
           actor.position.x = @position.x + (tile_position.x * @tile_width)
           actor.position.y = @position.y + (tile_position.y * @tile_height)
         end

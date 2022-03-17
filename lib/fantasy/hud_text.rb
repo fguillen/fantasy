@@ -17,14 +17,22 @@ class HudText
 
   def draw
     if visible
-      Global.pixel_font.draw_markup(text, screen_position.x + scale, screen_position.y - 20 + scale, 1, scale, scale, Gosu::Color::BLACK)
-      Global.pixel_font.draw_markup(text, screen_position.x, screen_position.y - 20, 1, scale, scale, color)
+      font.draw_markup(text, screen_position.x + shadow_offset, screen_position.y - 20 + shadow_offset, 1, 1, 1, Gosu::Color::BLACK)
+      font.draw_markup(text, screen_position.x, screen_position.y - 20, 1, 1, 1, color)
     end
 
     draw_debug if Global.debug
   end
 
-  def scale
+  def font
+    found_font = Global.pixel_fonts[@size]
+    if found_font.nil?
+      raise "HudText.size not valid '#{@size}'. Valid sizes: 'small, medium, big, huge'"
+    end
+    found_font
+  end
+
+  def shadow_offset
     case @size
     when "small"
       1
@@ -52,6 +60,6 @@ class HudText
   end
 
   def draw_debug
-    Global.pixel_font.draw_text("#{@position.x.floor},#{@position.y.floor}", @position.x, @position.y, 1)
+    Global.pixel_fonts["medium"].draw_text("#{@position.x.floor},#{@position.y.floor}", @position.x, @position.y, 1)
   end
 end

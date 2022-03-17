@@ -219,12 +219,13 @@ Easy access to keyboard and mouse inputs on any part of the code. Specially in t
 - Remove "on_space_bar" when changing scene (TODO)
 - Detect when key/mouse button is pressed in the actual frame in any part of the code (TODO)
 
-### Tile Map (TODO)
+### Tilemap (TODO)
 
 For easy creation of:
 
-- Top-down map levels (TODO)
+- Top-down map levels
 - Platformer map levels (TODO)
+- Allow specific map keys like a=>actor_1, b=>actor_2 (TODO)
 
 ### Tweens (TODO)
 

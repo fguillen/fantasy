@@ -15,7 +15,7 @@ module Global
 
     attr_accessor :game
     attr_reader :frame_time # delta_time
-    attr_reader :pixel_font
+    attr_reader :pixel_fonts
     attr_reader :references
     attr_reader :camera
     attr_reader :game_state
@@ -30,12 +30,20 @@ module Global
       @clocks = []
       @last_frame_at = Time.now
       @debug = false
-      @pixel_font = Gosu::Font.new(20, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" } )
+
+      @pixel_fonts = {}
+      @pixel_fonts["small"] = Gosu::Font.new(20, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" } )
+      @pixel_fonts["medium"] = Gosu::Font.new(40, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" } )
+      @pixel_fonts["big"] = Gosu::Font.new(60, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" } )
+      @pixel_fonts["huge"] = Gosu::Font.new(100, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" } )
+
       @d_key_pressed = false
       @references = OpenStruct.new
       @camera = Camera.new(position: Coordinates.zero)
       @game_state = Global.presentation_proc.nil? ? "game" : "presentation"
       @scene_started_at = Time.now
+
+      @background = Color.new(r: 0, g: 0, b: 0)
 
       if @presentation_proc.nil?
         on_presentation { Global.default_on_presentation  }
