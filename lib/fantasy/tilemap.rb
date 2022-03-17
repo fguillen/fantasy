@@ -1,4 +1,4 @@
-class TileMap
+class Tilemap
   attr_accessor :position
 
   def initialize(map_name:, tiles:, tile_size: nil, tile_width: nil, tile_height: nil)
@@ -13,7 +13,7 @@ class TileMap
     @tiles = tiles
     @position = Coordinates.zero
 
-    @grid = TileMap.load_grid(@map_name)
+    @grid = Tilemap.load_grid(@map_name)
   end
 
   def width
@@ -50,7 +50,7 @@ class TileMap
     @@maps = {}
 
     def load_grid(map_name)
-      File.readlines(TileMap.locate_map(map_name), chomp: true).map do |line|
+      File.readlines(Tilemap.locate_map(map_name), chomp: true).map do |line|
         line.each_char.map do |char|
           char == " " ? nil : char.to_i
         end
