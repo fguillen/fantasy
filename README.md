@@ -402,6 +402,20 @@ end
 Sound.play("shoot") # ./sounds/shoot.wav
 ```
 
+### Tilemap
+
+```ruby
+# ./maps/sky.txt
+#0       0        0
+#    1          0
+#
+#0    0     0
+
+planet = Actor.new("planet")
+star = Actor.new("star")
+map = Tilemap.new(map_name: "sky", tiles: [planet, star], tile_size: 30)
+map.spawn
+```
 
 ### UI
 
