@@ -422,8 +422,9 @@ map.spawn
 #### HUD Text
 
 ```ruby
-timer = HudText.new(position: Coordinates.new(20, 10))
+timer = HudText.new(position: Coordinates.new(SCREEN_WIDTH / 2, 10))
 timer.text = 0
+timer.alignment = "center"
 timer.size = "big"
 
 Clock.new { timer.text += 1 }.repeat(seconds: 1)
