@@ -1,8 +1,12 @@
 class Actor
   include MoveByCursor
+  include Mover
+  include Gravitier
+  include Jumper
 
   attr_reader :image, :moving_with_cursors
-  attr_accessor :image_name, :position, :direction, :speed, :solid, :scale, :name, :layer
+  attr_accessor :image_name, :position, :direction, :speed, :jump, :gravity, :solid, :scale, :name, :layer
+  attr_accessor :collision_during_jumping
 
   def initialize(image_name)
     @image_name = image_name
@@ -19,6 +23,13 @@ class Actor
     @dragging = false
     @dragging_offset = nil
     @layer = 0
+    @gravity = 0
+    @jump = 0
+    @collision_during_jumping = false
+
+    @on_floor = false
+    @acceleration = Coordinates.zero
+    @velocity = Coordinates.zero
 
     @on_collision_callback = nil
 
@@ -35,10 +46,6 @@ class Actor
 
   def height
     @image.height() * @scale
-  end
-
-  def move_with_cursors
-    @moving_with_cursors = true
   end
 
   def direction=(value)
@@ -61,6 +68,9 @@ class Actor
     @position - Global.camera.position
   end
 
+  # TODO: I made more of this code while I was with Covid
+  # It looks horrible and it is crap
+  # I'll improve it some day :)
   def move
     mouse_position = Global.mouse_position + Global.camera.position
 
@@ -76,24 +86,78 @@ class Actor
     if @dragging
       @position = mouse_position - @dragging_offset
     else
-      calculate_direction_by_cursors if @moving_with_cursors
+      @solid_temporal = @solid
 
-      if @direction != Coordinates.zero && !@speed.zero?
-        @last_position = @position
-        @position = @position + (@direction * @speed * Global.frame_time)
+      # if we are in collision before move we make the Actor no solid
+      # to allow it to move until collision is off
+      if collisions.any?
+        @solid = false
+      end
 
-        if solid?
-          collisions.each do |actor|
-            collision_with(actor)
-            actor.collision_with(self)
-          end
+      # Cursors moving
+      @velocity = Coordinates.zero
+      last_position = @position
+      add_forces_by_cursors
+      apply_forces(max_speed: @speed)
 
-          @position = @last_position if collisions.any? # we don't cache collisions because position may be changed on collision callback
+      # Check collision after cursor moving
+      if @solid && @position != last_position && !(@jumping && !@collision_during_jumping)
+        manage_collisions(last_position)
+      end
+
+      # Jump moving
+      unless @jump.zero?
+        @velocity = Coordinates.zero
+        last_position = @position
+        add_force_by_jump
+        apply_forces(max_speed: @speed)
+
+        # Check collision after jump moving
+        # only if collision_during_jumping is true
+        if @solid && @collision_during_jumping && @position != last_position
+         if manage_collisions(last_position)
+            @jumping = false
+         end
         end
       end
+
+      # Gravity moving
+      if !@gravity.zero? && !@jumping
+        @velocity = Coordinates.zero
+        last_position = @position
+        add_force_by_gravity
+        apply_forces(max_speed: @gravity)
+
+        # Check collision after gravity moving
+        if @solid && @position != last_position
+          @on_floor = false
+          manage_collisions(last_position)
+        end
+      end
+
+      @solid = @solid_temporal
     end
 
     @on_after_move_callback.call unless @on_after_move_callback.nil?
+  end
+
+  def manage_collisions(last_position)
+    collisions.each do |other|
+      collision_with(other)
+      other.collision_with(self)
+
+      if other.position.y > (last_position.y + height)
+        @on_floor = true
+      end
+    end
+
+    if collisions.any? # we don't cache collisions because position may be changed on collision callback
+      @position = last_position
+
+      return true
+    end
+
+    false
   end
 
   def solid?
