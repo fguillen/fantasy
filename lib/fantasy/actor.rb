@@ -1,5 +1,6 @@
 class Actor
   include MoveByCursor
+  include MoveByDirection
   include Mover
   include Gravitier
   include Jumper
@@ -12,8 +13,8 @@ class Actor
     @image_name = image_name
     @image = Image.new(image_name)
     @name = image_name
-    @position = Coordinates.new(0, 0)
-    @direction = Coordinates.new(0, 0)
+    @position = Coordinates.zero
+    @direction = Coordinates.zero
     @speed = 0
     @scale = 1
     @on_after_move_callback = nil
@@ -28,8 +29,6 @@ class Actor
     @collision_during_jumping = false
 
     @on_floor = false
-    @acceleration = Coordinates.zero
-    @velocity = Coordinates.zero
 
     @on_collision_callback = nil
 
@@ -50,7 +49,7 @@ class Actor
 
   def direction=(value)
     @direction = value
-    @direction = @direction.normalize
+    @direction = @direction.normalize unless @direction.zero?
   end
 
   def draw
@@ -94,6 +93,20 @@ class Actor
         @solid = false
       end
 
+      # Direction moving
+      unless @direction.zero?
+        @velocity = Coordinates.zero
+        last_position = @position
+        add_forces_by_direction
+        apply_forces(max_speed: @speed)
+
+        # Check collision after cursor moving
+        if @solid && @position != last_position && !(@jumping && !@collision_during_jumping)
+          manage_collisions(last_position)
+        end
+      end
+
+
       # Cursors moving
       @velocity = Coordinates.zero
       last_position = @position
@@ -104,6 +117,7 @@ class Actor
       if @solid && @position != last_position && !(@jumping && !@collision_during_jumping)
         manage_collisions(last_position)
       end
+
 
       # Jump moving
       unless @jump.zero?
@@ -120,6 +134,7 @@ class Actor
          end
         end
       end
+
 
       # Gravity moving
       if !@gravity.zero? && !@jumping
@@ -197,6 +212,7 @@ class Actor
     actor.name = @name
     actor.position = @position.clone
     actor.direction = @direction.clone
+
     actor.speed = @speed
     actor.scale = @scale
     actor.moving_with_cursors if @moving_with_cursors

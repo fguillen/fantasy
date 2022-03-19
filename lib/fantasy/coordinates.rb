@@ -32,4 +32,8 @@ class Coordinates < Vector2d
   def clone
     Coordinates.new(@x, @y)
   end
+
+  def zero?
+    @x == 0 && @y == 0
+  end
 end

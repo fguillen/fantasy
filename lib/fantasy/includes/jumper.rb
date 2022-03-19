@@ -1,8 +1,6 @@
 module Jumper
   def add_force_by_jump
-    puts "XXX: on_floor: #{@on_floor}"
     if Gosu.button_down?(Gosu::KB_SPACE) && @move_with_cursors_jump && !@jumping && @on_floor
-      puts "XXX: jump1"
       execute_jump
     end
 
