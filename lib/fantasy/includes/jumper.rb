@@ -13,6 +13,8 @@ module Jumper
     @jumping = true
     @on_floor = false
     @final_vertical_position = @position.y - @jump
+
+    on_start_jumping_do
   end
 
   def continue_jump
@@ -21,6 +23,8 @@ module Jumper
     if(@position.y <= @final_vertical_position)
       @position.y = @final_vertical_position
       @jumping = false
+
+      on_start_falling_do
     end
   end
 end

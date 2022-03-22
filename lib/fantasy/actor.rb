@@ -7,7 +7,7 @@ class Actor
 
   attr_reader :image, :moving_with_cursors
   attr_accessor :image_name, :position, :direction, :speed, :jump, :gravity, :solid, :scale, :name, :layer
-  attr_accessor :collision_during_jumping
+  attr_accessor :collision_during_jumping, :collision_with
 
   def initialize(image_name)
     @image_name = image_name
@@ -17,7 +17,7 @@ class Actor
     @direction = Coordinates.zero
     @speed = 0
     @scale = 1
-    @on_after_move_callback = nil
+
     @moving_with_cursors = false
     @solid = false
     @draggable_on_debug = true
@@ -27,10 +27,15 @@ class Actor
     @gravity = 0
     @jump = 0
     @collision_during_jumping = false
+    @collision_with = "all"
 
     @on_floor = false
 
+    @on_after_move_callback = nil
     @on_collision_callback = nil
+    @on_destroy_callback = nil
+    @on_start_jumping_callback = nil
+    @on_start_falling_callback = nil
 
     Global.actors << self
   end
@@ -153,13 +158,13 @@ class Actor
       @solid = @solid_temporal
     end
 
-    @on_after_move_callback.call unless @on_after_move_callback.nil?
+    on_after_move_do
   end
 
   def manage_collisions(last_position)
     collisions.each do |other|
-      collision_with(other)
-      other.collision_with(self)
+      on_collision_do(other)
+      other.on_collision_do(self)
 
       if other.position.y > (last_position.y + height)
         @on_floor = true
@@ -179,6 +184,7 @@ class Actor
     @solid
   end
 
+  # Set callbacks
   def on_after_move(&block)
     @on_after_move_callback = block
   end
@@ -191,18 +197,51 @@ class Actor
     @on_destroy_callback = block
   end
 
-  def collision_with(actor)
-    @on_collision_callback.call(actor) unless @on_collision_callback.nil?
+  def on_start_jumping(&block)
+    @on_start_jumping_callback = block
   end
 
+  def on_start_falling(&block)
+    @on_start_falling_callback = block
+  end
+
+
+  # Execute callbacks
+  def on_after_move_do
+    instance_exec(&@on_after_move_callback) unless @on_after_move_callback.nil?
+  end
+
+  def on_collision_do(other)
+    instance_exec(other, &@on_collision_callback) unless @on_collision_callback.nil?
+  end
+
+  def on_destroy_do
+    instance_exec(&@on_destroy_callback) unless @on_destroy_callback.nil?
+  end
+
+  def on_start_jumping_do
+    instance_exec(&@on_start_jumping_callback) unless @on_start_jumping_callback.nil?
+  end
+
+  def on_start_falling_do
+    instance_exec(&@on_start_falling_callback) unless @on_start_falling_callback.nil?
+  end
+
+
+
   def collisions
-    Global.actors.reject { |e| e == self }.select { |e| e.solid? }.select do |actor|
-      Utils.collision? self, actor
+    Global.actors.reject { |e| e == self }.select { |e| e.solid? }.select do |other|
+      if(
+        (@collision_with == "all" || @collision_with.include?(other.name)) &&
+        (other.collision_with == "all" || other.collision_with.include?(self.name))
+      )
+        Utils.collision? self, other
+      end
     end
   end
 
   def destroy
-    @on_destroy_callback.call unless @on_destroy_callback.nil?
+    on_destroy_do
     Global.actors.delete(self)
   end
 
@@ -218,10 +257,16 @@ class Actor
     actor.moving_with_cursors if @moving_with_cursors
     actor.solid = @solid
     actor.layer = @layer
+    actor.gravity = @gravity
+    actor.jump = @jump
+    actor.collision_during_jumping = @collision_during_jumping
+    actor.collision_with = @collision_with
 
     actor.on_after_move_callback = @on_after_move_callback
     actor.on_collision_callback = @on_collision_callback
     actor.on_destroy_callback = @on_destroy_callback
+    actor.on_start_jumping = @on_start_jumping_callback
+    actor.on_start_falling = @on_start_falling_callback
 
     actor
   end
@@ -238,5 +283,13 @@ class Actor
 
   def on_destroy_callback=(block)
     @on_destroy_callback = block
+  end
+
+  def on_start_jumping=(block)
+    @on_start_jumping_callback = block
+  end
+
+  def on_start_falling=(block)
+    @on_start_falling_callback = block
   end
 end

@@ -116,9 +116,9 @@ Managing game elements which have (optionally) image, movement and collision
 - Easy to set an `image`
 - Managing movement through `direction` and `speed`
 - Built-in movement control through cursors
-- Collision detection, OnCollision callback
-- Jump (TODO)
-- Gravity (TODO)
+- Collision detection, OnCollision callback, Collision matrix
+- Jump
+- Gravity
 - Animations (TODO)
 - Possibility to extend Actor class or instantiate it directly for simple characters
 - Allowing magic instance properties (Like in OpenStruct). So programmer can do `actor.stuff = 1` and it is valid (TODO)
@@ -302,6 +302,7 @@ player.solid = true
 player.speed = 200
 player.layer = 1
 player.move_with_cursors
+player.collision_with = ["enemy", "bullets"] # default "all"
 
 player.on_collision do |other|
   if other.name == "enemy"
