@@ -37,7 +37,7 @@ class HudImage
   end
 
   def draw_debug
-    Global.pixel_font.draw_text("#{@position.x.floor},#{@position.y.floor}", @position.x, @position.y - 20, 1)
+    Global.pixel_fonts["medium"].draw_text("#{@position.x.floor},#{@position.y.floor}", @position.x, @position.y - 20, 1)
   end
 
   def destroy
