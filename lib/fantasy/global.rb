@@ -116,6 +116,8 @@ module Global
       @hud_images.clear
       @backgrounds.clear
       @tile_maps.clear
+      puts "Clear camera position"
+      @camera.position = Coordinates.zero
 
       @clocks.reject(&:persistent?).each do |clock|
         clock.stop unless clock.thread == Thread.current # no stop current Thread

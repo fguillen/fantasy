@@ -122,6 +122,7 @@ Managing game elements which have (optionally) image, movement and collision
 - Animations (TODO)
 - Possibility to extend Actor class or instantiate it directly for simple characters
 - Allowing magic instance properties (Like in OpenStruct). So programmer can do `actor.stuff = 1` and it is valid (TODO)
+- Alignment "center" and "top-left" (TODO)
 
 ### Clock
 

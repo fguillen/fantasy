@@ -45,11 +45,11 @@ class Actor
   end
 
   def width
-    @image.width() * @scale
+    @image.width * @scale
   end
 
   def height
-    @image.height() * @scale
+    @image.height * @scale
   end
 
   def direction=(value)
@@ -71,6 +71,22 @@ class Actor
   def position_in_camera
     @position - Global.camera.position
   end
+
+  # TODO: make this work optimized
+  # def position_top_left
+  #   @position - position_delta
+  # end
+
+  # def position_delta
+  #   case @alignment
+  #   when "top-left"
+  #     Coordinates.zero
+  #   when "center"
+  #     Coordinates.new(width/2, height/2)
+  #   else
+  #     raise "Actor.alignment value not valid '#{@alignment}'. Valid values: 'top-left, center'"
+  #   end
+  # end
 
   # TODO: I made more of this code while I was with Covid
   # It looks horrible and it is crap
