@@ -7,7 +7,7 @@ class Actor
 
   attr_reader :image, :moving_with_cursors
   attr_accessor :image_name, :position, :direction, :speed, :jump, :gravity, :solid, :scale, :name, :layer
-  attr_accessor :collision_during_jumping, :collision_with
+  attr_accessor :collision_with
 
   def initialize(image_name)
     @image_name = image_name
@@ -26,7 +26,6 @@ class Actor
     @layer = 0
     @gravity = 0
     @jump = 0
-    @collision_during_jumping = false
     @collision_with = "all"
 
     @on_floor = false
@@ -106,14 +105,6 @@ class Actor
     if @dragging
       @position = mouse_position - @dragging_offset
     else
-      @solid_temporal = @solid
-
-      # if we are in collision before move we make the Actor no solid
-      # to allow it to move until collision is off
-      if collisions.any?
-        @solid = false
-      end
-
       # Direction moving
       unless @direction.zero?
         @velocity = Coordinates.zero
@@ -122,11 +113,10 @@ class Actor
         apply_forces(max_speed: @speed)
 
         # Check collision after cursor moving
-        if @solid && @position != last_position && !(@jumping && !@collision_during_jumping)
+        if @solid && @position != last_position
           manage_collisions(last_position)
         end
       end
-
 
       # Cursors moving
       @velocity = Coordinates.zero
@@ -135,10 +125,9 @@ class Actor
       apply_forces(max_speed: @speed)
 
       # Check collision after cursor moving
-      if @solid && @position != last_position && !(@jumping && !@collision_during_jumping)
+      if @solid && @position != last_position
         manage_collisions(last_position)
       end
-
 
       # Jump moving
       unless @jump.zero?
@@ -148,14 +137,12 @@ class Actor
         apply_forces(max_speed: @speed)
 
         # Check collision after jump moving
-        # only if collision_during_jumping is true
-        if @solid && @collision_during_jumping && @position != last_position
+        if @solid && @position != last_position
          if manage_collisions(last_position)
             @jumping = false
          end
         end
       end
-
 
       # Gravity moving
       if !@gravity.zero? && !@jumping
@@ -170,8 +157,6 @@ class Actor
           manage_collisions(last_position)
         end
       end
-
-      @solid = @solid_temporal
     end
 
     on_after_move_do
@@ -275,7 +260,6 @@ class Actor
     actor.layer = @layer
     actor.gravity = @gravity
     actor.jump = @jump
-    actor.collision_during_jumping = @collision_during_jumping
     actor.collision_with = @collision_with
 
     actor.on_after_move_callback = @on_after_move_callback

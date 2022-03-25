@@ -364,7 +364,6 @@ player = Actor.new("warrior") # ./images/warrior.png
 player.solid = true
 player.jump = 150
 player.gravity = 200
-player.collision_during_jumping = true
 player.move_with_cursors(left: true, right: true, up: false, down: false, jump: true)
 
 player.on_start_jumping do

@@ -18,8 +18,8 @@ class HudText
 
   def draw
     if visible
-      font.draw_text_rel(text, screen_position.x + shadow_offset, screen_position.y + shadow_offset, 1, position_rel.x, position_rel.y, 1, 1, Gosu::Color::BLACK)
-      font.draw_text_rel(text, screen_position.x, screen_position.y, 1, position_rel.x, position_rel.y, 1, 1, color)
+      font.draw_markup_rel(text, screen_position.x + shadow_offset, screen_position.y + shadow_offset, 1, position_rel.x, position_rel.y, 1, 1, Gosu::Color::BLACK)
+      font.draw_markup_rel(text, screen_position.x, screen_position.y, 1, position_rel.x, position_rel.y, 1, 1, color)
     end
 
     draw_debug if Global.debug
