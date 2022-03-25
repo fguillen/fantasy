@@ -116,12 +116,21 @@ module Global
       @hud_images.clear
       @backgrounds.clear
       @tile_maps.clear
-      puts "Clear camera position"
       @camera.position = Coordinates.zero
 
       @clocks.reject(&:persistent?).each do |clock|
         clock.stop unless clock.thread == Thread.current # no stop current Thread
       end
+
+      # clear callbacks
+      @button_proc = nil
+      @space_bar_proc = nil
+      @cursor_up_proc = nil
+      @cursor_down_proc = nil
+      @cursor_left_proc = nil
+      @cursor_right_proc = nil
+      @mouse_button_left_proc = nil
+      @mouse_button_right_proc = nil
 
       @background = Color.new(r: 0, g: 0, b: 0)
     end

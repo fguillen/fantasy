@@ -197,7 +197,9 @@ Move the core functions to the top level hierarchy so I don't need to create a `
 
 ### Sound
 
-Direct and easy way to play a sound
+- Direct and easy way to play a sound
+- Direct and easy way to play a background music
+
 
 ### Background
 
@@ -333,6 +335,7 @@ class Player < Actor
     @speed = 200
     @layer = 1
     @direction = Coordinates.zero
+    @collision_with = ["enemy", "bullets"] # default "all"
     move_with_cursors
   end
 
@@ -351,6 +354,26 @@ class Player < Actor
       @position.x = 0
     end
   end
+end
+```
+
+Actor settings for a platformer:
+
+```ruby
+player = Actor.new("warrior") # ./images/warrior.png
+player.solid = true
+player.jump = 150
+player.gravity = 200
+player.collision_during_jumping = true
+player.move_with_cursors(left: true, right: true, up: false, down: false, jump: true)
+
+player.on_start_jumping do
+  Sound.play("jump")
+  player.image = "warrior_jump")
+end
+
+player.on_start_falling do
+  player.image = "warrior")
 end
 ```
 
@@ -400,8 +423,18 @@ end
 
 ### Sound
 
+Plays only once:
+
 ```ruby
 Sound.play("shoot") # ./sounds/shoot.wav
+```
+
+Plays in loop:
+
+```ruby
+Music.play("music") # ./musics/music.mp3
+Music.volume = 0.5
+Music.stop
 ```
 
 ### Tilemap
