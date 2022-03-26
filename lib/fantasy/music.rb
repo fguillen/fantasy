@@ -37,6 +37,8 @@ module Music
     end
 
     def preload_musics
+      return unless Dir.exist?(base_path)
+
       Dir.each_child(base_path) do |file_name|
         locate_music(file_name) unless file_name.start_with?(".")
       end

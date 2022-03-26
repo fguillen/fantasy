@@ -2,7 +2,7 @@ require "ostruct"
 
 module Global
   class << self
-    attr_accessor :actors, :hud_texts, :hud_images, :backgrounds, :tile_maps, :clocks
+    attr_accessor :actors, :hud_texts, :hud_images, :backgrounds, :tile_maps, :clocks, :shapes
     attr_accessor :debug
     attr_accessor :setup_proc, :loop_proc, :button_proc
     attr_accessor :presentation_proc, :game_proc, :end_proc
@@ -28,6 +28,7 @@ module Global
       @backgrounds = []
       @tile_maps = []
       @clocks = []
+      @shapes = []
       @last_frame_at = Time.now
       @debug = false
 
@@ -116,6 +117,7 @@ module Global
       @hud_images.clear
       @backgrounds.clear
       @tile_maps.clear
+      @shapes.clear
       @camera.position = Coordinates.zero
 
       @clocks.reject(&:persistent?).each do |clock|
@@ -142,6 +144,7 @@ module Global
     def setup
       Sound.preload_sounds
       Image.preload_images
+      Music.preload_musics
     end
 
     def seconds_in_scene

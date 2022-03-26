@@ -4,6 +4,7 @@ class Actor
   include Mover
   include Gravitier
   include Jumper
+  include UserInputs
 
   attr_reader :image, :moving_with_cursors
   attr_accessor :image_name, :position, :direction, :speed, :jump, :gravity, :solid, :scale, :name, :layer
@@ -229,7 +230,6 @@ class Actor
   end
 
 
-
   def collisions
     Global.actors.reject { |e| e == self }.select { |e| e.solid? }.select do |other|
       if(
@@ -265,31 +265,24 @@ class Actor
     actor.on_after_move_callback = @on_after_move_callback
     actor.on_collision_callback = @on_collision_callback
     actor.on_destroy_callback = @on_destroy_callback
-    actor.on_start_jumping = @on_start_jumping_callback
-    actor.on_start_falling = @on_start_falling_callback
+    actor.on_start_jumping_callback = @on_start_jumping_callback
+    actor.on_start_falling_callback = @on_start_falling_callback
+
+    actor.on_cursor_down_callback = @on_cursor_down_callback
+    actor.on_cursor_up_callback = @on_cursor_up_callback
+    actor.on_cursor_left_callback = @on_cursor_left_callback
+    actor.on_cursor_right_callback = @on_cursor_right_callback
+    actor.on_space_bar_callback = @on_space_bar_callback
+    actor.on_mouse_button_left_callback = @on_mouse_button_left_callback
+
+    actor.on_click_callback = @on_click_callback
 
     actor
   end
 
   protected
 
-  def on_after_move_callback=(block)
-    @on_after_move_callback = block
-  end
-
-  def on_collision_callback=(block)
-    @on_collision_callback = block
-  end
-
-  def on_destroy_callback=(block)
-    @on_destroy_callback = block
-  end
-
-  def on_start_jumping=(block)
-    @on_start_jumping_callback = block
-  end
-
-  def on_start_falling=(block)
-    @on_start_falling_callback = block
-  end
+  attr_accessor :on_after_move_callback, :on_collision_callback, :on_destroy_callback, :on_start_jumping_callback, :on_start_falling_callback
+  attr_accessor :on_cursor_down_callback, :on_cursor_up_callback, :on_cursor_left_callback, :on_cursor_right_callback, :on_space_bar_callback, :on_mouse_button_left_callback
+  attr_accessor :on_click_callback
 end

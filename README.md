@@ -182,9 +182,9 @@ Actors in the game will be rendered in the relative position to this camera.
 - Allow camera move
 - Easy to follow one actor
 
-### Colors palette (TODO)
+### Colors palette
 
-- Not deal with RGB or anything, just a list of colors (TODO)
+- Not deal with RGB or anything, just a list of colors. See [Color.palette](COLOR_PALETTE.md)
 
 
 ### Pause Game (TODO)

@@ -1,11 +1,12 @@
 class HudText
-  attr_accessor :text, :size, :color, :visible, :layer, :in_world, :position, :alignment
+  attr_accessor :text, :size, :color, :background_color, :visible, :layer, :in_world, :position, :alignment
 
   def initialize(position:, text: "")
     @position = position
     @text = text
     @size = "medium"
-    @color = Gosu::Color::WHITE
+    @color = Color.palette.white
+    @background_color = Color.palette.black
     @visible = true
     @layer = 100
     @in_world = false
@@ -18,7 +19,9 @@ class HudText
 
   def draw
     if visible
-      font.draw_markup_rel(text, screen_position.x + shadow_offset, screen_position.y + shadow_offset, 1, position_rel.x, position_rel.y, 1, 1, Gosu::Color::BLACK)
+      unless @background_color.nil?
+        font.draw_markup_rel(text, screen_position.x + shadow_offset, screen_position.y + shadow_offset, 1, position_rel.x, position_rel.y, 1, 1, background_color)
+      end
       font.draw_markup_rel(text, screen_position.x, screen_position.y, 1, position_rel.x, position_rel.y, 1, 1, color)
     end
 
@@ -32,6 +35,17 @@ class HudText
     end
     found_font
   end
+
+  def destroy
+    Global.hud_texts.delete(self)
+  end
+
+  def width
+    font.markup_width(text, 1)
+  end
+
+
+  private
 
   def position_rel
     case @alignment
@@ -67,10 +81,6 @@ class HudText
     else
       @position
     end
-  end
-
-  def destroy
-    Global.hud_texts.delete(self)
   end
 
   def draw_debug

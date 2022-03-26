@@ -21,6 +21,8 @@ module Sound
     end
 
     def preload_sounds
+      return unless Dir.exist?(base_path)
+
       Dir.each_child(base_path) do |file_name|
         locate_sound(file_name) unless file_name.start_with?(".")
       end
