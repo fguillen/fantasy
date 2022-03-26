@@ -366,12 +366,12 @@ player.jump = 150
 player.gravity = 200
 player.move_with_cursors(left: true, right: true, up: false, down: false, jump: true)
 
-player.on_start_jumping do
+player.on_jumping do
   Sound.play("jump")
   player.image = "warrior_jump")
 end
 
-player.on_start_falling do
+player.on_floor do
   player.image = "warrior")
 end
 ```

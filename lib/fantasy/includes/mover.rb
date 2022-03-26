@@ -4,15 +4,15 @@ module Mover
     @acceleration += force
   end
 
-  def apply_forces(max_speed:)
+  def apply_forces(max_speed: Float::INFINITY)
     @acceleration ||= Coordinates.zero
     @velocity ||= Coordinates.zero
 
     @velocity += @acceleration
+    @velocity.resize(max_speed) if @velocity.length > max_speed
 
     unless @velocity.length.zero?
-      @velocity = @velocity.normalize * max_speed * Global.frame_time
-      @position += @velocity
+      @position += @velocity * Global.frame_time
     end
 
     @acceleration = Coordinates.zero

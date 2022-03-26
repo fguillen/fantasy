@@ -7,7 +7,7 @@ class Actor
   include UserInputs
 
   attr_reader :image, :moving_with_cursors
-  attr_accessor :image_name, :position, :direction, :speed, :jump, :gravity, :solid, :scale, :name, :layer
+  attr_accessor :image_name, :position, :direction, :speed, :jump_force, :gravity, :solid, :scale, :name, :layer
   attr_accessor :collision_with
 
   def initialize(image_name)
@@ -26,7 +26,7 @@ class Actor
     @dragging_offset = nil
     @layer = 0
     @gravity = 0
-    @jump = 0
+    @jump_force = 0
     @collision_with = "all"
 
     @on_floor = false
@@ -34,8 +34,8 @@ class Actor
     @on_after_move_callback = nil
     @on_collision_callback = nil
     @on_destroy_callback = nil
-    @on_start_jumping_callback = nil
-    @on_start_falling_callback = nil
+    @on_jumping_callback = nil
+    @on_floor_callback = nil
 
     Global.actors << self
   end
@@ -108,10 +108,8 @@ class Actor
     else
       # Direction moving
       unless @direction.zero?
-        @velocity = Coordinates.zero
         last_position = @position
-        add_forces_by_direction
-        apply_forces(max_speed: @speed)
+        move_by_direction
 
         # Check collision after cursor moving
         if @solid && @position != last_position
@@ -120,43 +118,41 @@ class Actor
       end
 
       # Cursors moving
-      @velocity = Coordinates.zero
       last_position = @position
-      add_forces_by_cursors
-      apply_forces(max_speed: @speed)
+      move_by_cursors
 
       # Check collision after cursor moving
       if @solid && @position != last_position
         manage_collisions(last_position)
       end
 
-      # Jump moving
-      unless @jump.zero?
-        @velocity = Coordinates.zero
-        last_position = @position
-        add_force_by_jump
-        apply_forces(max_speed: @speed)
+      # # Jump moving
+      # unless @jump_force.zero?
+      #   last_position = @position
+      #   add_force_by_jump
+      #   apply_forces(max_speed: @jump_speed || @jump_force)
 
-        # Check collision after jump moving
-        if @solid && @position != last_position
-         if manage_collisions(last_position)
-            @jumping = false
-         end
-        end
+      #   # Check collision after jump moving
+      #   if @solid && @position != last_position
+      #    if manage_collisions(last_position)
+      #       @jumping = false
+      #    end
+      #   end
+      # end
+
+      # Gravity force
+      if !@gravity.zero?
+        add_force_by_gravity
       end
 
-      # Gravity moving
-      if !@gravity.zero? && !@jumping
-        @velocity = Coordinates.zero
-        last_position = @position
-        add_force_by_gravity
-        apply_forces(max_speed: @gravity)
+      # Apply forces
+      last_position = @position
+      apply_forces(max_speed: @speed)
 
-        # Check collision after gravity moving
-        if @solid && @position != last_position
-          @on_floor = false
-          manage_collisions(last_position)
-        end
+      # Check collision after gravity moving
+      if @solid && @position != last_position
+        @on_floor = false
+        manage_collisions(last_position)
       end
     end
 
@@ -169,7 +165,15 @@ class Actor
       other.on_collision_do(self)
 
       if other.position.y > (last_position.y + height)
+        on_floor_do unless @on_floor
+
         @on_floor = true
+        @jumping = false
+        @velocity.y = 0
+      end
+
+      if other.position.y + other.height < last_position.y
+        @velocity.y = 0
       end
     end
 
@@ -199,12 +203,12 @@ class Actor
     @on_destroy_callback = block
   end
 
-  def on_start_jumping(&block)
-    @on_start_jumping_callback = block
+  def on_jumping(&block)
+    @on_jumping_callback = block
   end
 
-  def on_start_falling(&block)
-    @on_start_falling_callback = block
+  def on_floor(&block)
+    @on_floor_callback = block
   end
 
 
@@ -221,12 +225,12 @@ class Actor
     instance_exec(&@on_destroy_callback) unless @on_destroy_callback.nil?
   end
 
-  def on_start_jumping_do
-    instance_exec(&@on_start_jumping_callback) unless @on_start_jumping_callback.nil?
+  def on_jumping_do
+    instance_exec(&@on_jumping_callback) unless @on_jumping_callback.nil?
   end
 
-  def on_start_falling_do
-    instance_exec(&@on_start_falling_callback) unless @on_start_falling_callback.nil?
+  def on_floor_do
+    instance_exec(&@on_floor_callback) unless @on_floor_callback.nil?
   end
 
 
@@ -259,14 +263,14 @@ class Actor
     actor.solid = @solid
     actor.layer = @layer
     actor.gravity = @gravity
-    actor.jump = @jump
+    actor.jump_force = @jump_force
     actor.collision_with = @collision_with
 
     actor.on_after_move_callback = @on_after_move_callback
     actor.on_collision_callback = @on_collision_callback
     actor.on_destroy_callback = @on_destroy_callback
-    actor.on_start_jumping_callback = @on_start_jumping_callback
-    actor.on_start_falling_callback = @on_start_falling_callback
+    actor.on_jumping_callback = @on_jumping_callback
+    actor.on_floor_callback = @on_floor_callback
 
     actor.on_cursor_down_callback = @on_cursor_down_callback
     actor.on_cursor_up_callback = @on_cursor_up_callback
@@ -282,7 +286,7 @@ class Actor
 
   protected
 
-  attr_accessor :on_after_move_callback, :on_collision_callback, :on_destroy_callback, :on_start_jumping_callback, :on_start_falling_callback
+  attr_accessor :on_after_move_callback, :on_collision_callback, :on_destroy_callback, :on_jumping_callback, :on_floor_callback
   attr_accessor :on_cursor_down_callback, :on_cursor_up_callback, :on_cursor_left_callback, :on_cursor_right_callback, :on_space_bar_callback, :on_mouse_button_left_callback
   attr_accessor :on_click_callback
 end

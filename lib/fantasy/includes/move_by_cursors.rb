@@ -1,26 +1,43 @@
 module MoveByCursor
-  def add_forces_by_cursors
-    if Gosu.button_down?(Gosu::KB_DOWN) && @move_with_cursors_down
-      add_force(Coordinates.down * @speed)
-    elsif Gosu.button_down?(Gosu::KB_UP) && @move_with_cursors_up
-      add_force(Coordinates.up * @speed)
-    elsif Gosu.button_down?(Gosu::KB_RIGHT) && @move_with_cursors_right
-      add_force(Coordinates.right * @speed)
-    elsif Gosu.button_down?(Gosu::KB_LEFT) && @move_with_cursors_left
-      add_force(Coordinates.left * @speed)
-    else
-      # @velocity.x = 0
+  def move_by_cursors
+    if Gosu.button_down?(Cursor.down) && @move_with_cursors_down
+      move_by(Coordinates.down)
     end
 
+    if Gosu.button_down?(Cursor.up) && @move_with_cursors_up
+      move_by(Coordinates.up)
+    end
 
+    if Gosu.button_down?(Cursor.right) && @move_with_cursors_right
+      move_by(Coordinates.right)
+    end
+
+    if Gosu.button_down?(Cursor.left) && @move_with_cursors_left
+      move_by(Coordinates.left)
+    end
+
+    if Gosu.button_down?(Cursor.space_bar) && !@jumping && @on_floor && @move_with_cursors_jump
+      jump
+    end
   end
 
-  def move_with_cursors(down: true, up: true, left: true, right: true, jump: false)
+  def move_with_cursors(down: nil, up: nil, left: nil, right: nil, jump: false)
     puts "#{@name}: move_with_cursors(down: #{down}, up: #{up}, left: #{left}, right: #{right}), jump: #{jump}"
-    @move_with_cursors_down = down
-    @move_with_cursors_up = up
-    @move_with_cursors_left = left
-    @move_with_cursors_right = right
-    @move_with_cursors_jump = jump
+
+    if down.nil? and up.nil? and left.nil? and right.nil?
+      down = true
+      up = true
+      left = true
+      right = true
+    end
+    @move_with_cursors_down = down || false
+    @move_with_cursors_up = up || false
+    @move_with_cursors_left = left || false
+    @move_with_cursors_right = right || false
+    @move_with_cursors_jump = jump || false
+  end
+
+  def move_by(direction)
+    @position += direction * @speed * Global.frame_time
   end
 end

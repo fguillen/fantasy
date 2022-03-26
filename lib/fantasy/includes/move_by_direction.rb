@@ -1,5 +1,5 @@
 module MoveByDirection
-  def add_forces_by_direction
-    add_force(@direction)
+  def move_by_direction
+    @position += @direction * @speed * Global.frame_time
   end
 end
