@@ -1,3 +1,12 @@
+## [0.1.11] - 2022-03-26
+
+- Better jumping and gravity physics
+- Support Shape.rectangle
+- Support on_click callback on Shapes and Actors
+- Support on_cursor_* callbacks on Shapes and Actors
+- Support Color.palette with 150 colors + transparent
+
+
 ## [0.1.9] - 2022-03-25
 
 - Adding platformer support
