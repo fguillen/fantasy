@@ -440,10 +440,10 @@ Music.stop
 
 ```ruby
 # ./maps/sky.txt
-#0       0        0
-#    1          0
-#
-#0    0     0
+# 0     0
+#  0  1
+#   0   0
+# 0    01
 
 planet = Actor.new("planet")
 star = Actor.new("star")
