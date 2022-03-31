@@ -53,10 +53,12 @@ class HudText
       Coordinates.new(0, 0)
     when "top-right"
       Coordinates.new(1, 0)
+    when "top-center"
+      Coordinates.new(0.5, 0)
     when "center"
       Coordinates.new(0.5, 0.5)
     else
-      raise "HudText.alignment value not valid '#{@alignment}'. Valid values: 'top-left, top-right, center'"
+      raise "HudText.alignment value not valid '#{@alignment}'. Valid values: 'top-left, top-right, top-center, center'"
     end
   end
 

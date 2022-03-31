@@ -2,8 +2,8 @@ module Sound
   class << self
     @@sounds = {}
 
-    def play(sound_name)
-      locate_sound(sound_name).play
+    def play(sound_name, volume: 1)
+      locate_sound(sound_name).play(volume)
     end
 
     def locate_sound(sound_name)

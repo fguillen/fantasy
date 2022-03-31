@@ -3,11 +3,13 @@ module Music
     @@musics = {}
     @@actual_song = nil
 
-    def play(music_name)
+    def play(music_name, volume: nil)
       stop
 
       @@actual_song = locate_music(music_name)
       @@actual_song.play(true)
+
+      self.volume = volume unless volume.nil?
     end
 
     def stop

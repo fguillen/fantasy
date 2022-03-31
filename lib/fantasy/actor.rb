@@ -177,6 +177,15 @@ class Actor
       end
     end
 
+    # # Reset position pixel by pixel
+    # was_collision = false
+    # while collisions.any? && @position != last_position
+    #   was_collision = true
+    #   last_position_direction = last_position - @position
+    #   @position += last_position_direction.normalize
+    # end
+    # was_collision
+
     if collisions.any? # we don't cache collisions because position may be changed on collision callback
       @position = last_position
 

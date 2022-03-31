@@ -1,4 +1,8 @@
 module Mover
+  def impulse(direction:, force:)
+    add_force(direction.normalize * force)
+  end
+
   def add_force(force)
     @acceleration ||= Coordinates.zero
     @acceleration += force

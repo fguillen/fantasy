@@ -1,5 +1,5 @@
 class Background
-  attr_accessor :scale, :color, :visible, :position, :layer
+  attr_accessor :scale, :color, :visible, :position, :layer, :replicable
 
   def initialize(image_name:)
     @image = Image.new(image_name)

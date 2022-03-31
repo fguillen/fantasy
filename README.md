@@ -96,7 +96,7 @@ Or install it yourself as:
 
 ## Features
 
-### Game Scene transitions
+### Game Scenes
 
 Easy to configure 3 basic game states:
 
@@ -209,7 +209,7 @@ Simple way to set up:
 - Image background
 - Repeatable image background
 
-### Data Persistance (TODO)
+### Data Persistance
 
 Simple mechanism to save data in disk. For user preferences, game progress, high scores and others
 
@@ -236,7 +236,7 @@ Multiple movement animation effects like in [DoTween](http://dotween.demigiant.c
 
 ## API
 
-### Game Scene transitions
+### Game Scenes
 
 Configure your game elements on each Scene:
 
@@ -407,6 +407,21 @@ on_game do
   # background.replicable = false # if you don't want the image to replicate
   background.scale = 6
 end
+```
+
+### Data Persistance
+
+```ruby
+Disk.data.records = [120_000, 11_000, 678]
+Disk.data.last_level = 3
+Disk.data.sound_volume = 12
+Disk.save # data stored in ./disk/data.json
+
+# ... in another session
+
+Disk.data.records # => [120_000, 11_000, 678]
+Disk.data.last_level # => 3
+Disk.data.sound_volume # => 12
 ```
 
 ### Camera
