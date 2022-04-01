@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Actor
   include MoveByCursor
   include MoveByDirection
@@ -141,7 +143,7 @@ class Actor
       # end
 
       # Gravity force
-      if !@gravity.zero?
+      unless @gravity.zero?
         add_force_by_gravity
       end
 
@@ -222,7 +224,6 @@ class Actor
     @on_floor_callback = block
   end
 
-
   # Execute callbacks
   def on_after_move_do
     instance_exec(&@on_after_move_callback) unless @on_after_move_callback.nil?
@@ -244,10 +245,9 @@ class Actor
     instance_exec(&@on_floor_callback) unless @on_floor_callback.nil?
   end
 
-
   # rubocop:disable Style/Next
   def collisions
-    Global.actors.reject { |e| e == self }.select { |e| e.solid? }.select do |other|
+    Global.actors.reject { |e| e == self }.select(&:solid?).select do |other|
       if(
         (@collision_with == "all" || @collision_with.include?(other.name)) &&
         (other.collision_with == "all" || other.collision_with.include?(name))
