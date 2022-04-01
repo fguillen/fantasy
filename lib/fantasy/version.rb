@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module Fantasy
-  VERSION = "0.1.11"
+  VERSION = "0.1.13"
 end
