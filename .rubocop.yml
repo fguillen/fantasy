@@ -10,4 +10,19 @@ Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
 
 Layout/LineLength:
-  Max: 120
+  Max: 180
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Naming/MethodParameterName:
+  AllowedNames: ["x", "y", "to", "r", "g", "b"]
+
+Naming/VariableNumber:
+  EnforcedStyle: snake_case
+
+Metrics/MethodLength:
+  Max: 15
+
+Style/AccessorGrouping:
+  Enabled: false

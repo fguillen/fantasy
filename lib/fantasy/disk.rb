@@ -19,13 +19,15 @@ module Disk
     File.open(@@data_path, "w") { |f| f.write JSON.pretty_generate(@@data.to_h) }
   end
 
-  private
+  class << self
+    private
 
-  def self.load
-    if File.file?(@@data_path)
-      JSON.parse(File.read(@@data_path))
-    else
-      {}
+    def load
+      if File.file?(@@data_path)
+        JSON.parse(File.read(@@data_path))
+      else
+        {}
+      end
     end
   end
 end

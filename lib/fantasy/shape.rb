@@ -3,6 +3,7 @@ class Shape
 
   attr_accessor :kind, :position, :width, :height, :stroke, :color, :fill, :stroke_color, :layer
 
+  # rubocop:disable Metrics/ParameterLists
   def initialize(kind:, position:, width:, height:, stroke: 1, fill: true, color: Color.palette.black, stroke_color: nil)
     @kind = kind
     @position = position
@@ -16,9 +17,10 @@ class Shape
 
     Global.shapes << self
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def self.rectangle(position:, width:, height:, color: Color.palette.black)
-    Shape.new(kind: "rectangle", position: position, width: width, height: height)
+    Shape.new(kind: "rectangle", position: position, width: width, height: height, color: color)
   end
 
   def draw
@@ -46,10 +48,12 @@ class Shape
     end
   end
 
+  # rubocop:disable Metrics/ParameterLists
   def draw_frame(x, y, width, height, stroke, color)
     Gosu.draw_rect(x, y, width, stroke, color)
     Gosu.draw_rect(width - stroke + x, y, stroke, height, color)
     Gosu.draw_rect(x, height - stroke + y, width, stroke, color)
     Gosu.draw_rect(x, y, stroke, height, color)
   end
+  # rubocop:enable Metrics/ParameterLists
 end

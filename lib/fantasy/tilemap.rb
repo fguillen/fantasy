@@ -50,9 +50,9 @@ class Tilemap
     end
   end
 
-  private
-
   class << self
+    private
+
     @@maps = {}
 
     def load_grid(map_name)
