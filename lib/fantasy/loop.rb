@@ -9,6 +9,7 @@ class Game < Gosu::Window
     Global.presentation_proc.call
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def button_down(button_id)
     case button_id
     when Cursor.down then cursor_down_pressed
@@ -24,6 +25,7 @@ class Game < Gosu::Window
 
     super
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def cursor_down_pressed
     Global.cursor_down_proc&.call

@@ -66,7 +66,15 @@ class Actor
   end
 
   def draw_debug
-    Utils.draw_frame(position_in_camera.x, position_in_camera.y, width, height, 1, Gosu::Color::RED) if solid
+    Shape.rectangle(
+      position: position_in_camera,
+      width: width,
+      height: height,
+      color: Color.palette.transparent,
+      stroke_color: Color.palette.red,
+      stroke: 1
+    ) if solid
+
     Global.pixel_fonts["medium"].draw_text("#{@position.x.floor},#{@position.y.floor}", position_in_camera.x, position_in_camera.y - 20, 1)
   end
 
@@ -263,6 +271,8 @@ class Actor
     Global.actors.delete(self)
   end
 
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def clone
     actor = self.class.new(@image_name)
     actor.image_name = @image_name
@@ -296,6 +306,8 @@ class Actor
 
     actor
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   protected
 

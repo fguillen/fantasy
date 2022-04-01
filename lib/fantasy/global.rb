@@ -22,6 +22,7 @@ module Global
     attr_reader :camera
     attr_reader :game_state
 
+    # rubocop:disable Metrics/MethodLength
     def initialize
       puts "Global.initialize"
       @actors = []
@@ -34,18 +35,13 @@ module Global
       @last_frame_at = Time.now
       @debug = false
 
-      @pixel_fonts = {}
-      @pixel_fonts["small"] = Gosu::Font.new(20, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" })
-      @pixel_fonts["medium"] = Gosu::Font.new(40, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" })
-      @pixel_fonts["big"] = Gosu::Font.new(60, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" })
-      @pixel_fonts["huge"] = Gosu::Font.new(100, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" })
+      @pixel_fonts = load_fonts
 
       @d_key_pressed = false
       @references = OpenStruct.new
       @camera = Camera.new(position: Coordinates.zero)
       @game_state = Global.presentation_proc.nil? ? "game" : "presentation"
       @scene_started_at = Time.now
-
       @background = Color.new(r: 0, g: 0, b: 0)
 
       if @presentation_proc.nil?
@@ -60,7 +56,9 @@ module Global
         on_end { Global.default_on_end }
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
+    # rubocop:disable Style/GuardClause
     def update
       @frame_time = Time.now - @last_frame_at
       @last_frame_at = Time.now
@@ -74,6 +72,7 @@ module Global
         @d_key_pressed = false
       end
     end
+    # rubocop:enable Style/GuardClause
 
     def add_reference(name:, object:)
       @references[name] = object
@@ -114,29 +113,9 @@ module Global
 
     def clear_state_elements
       @scene_started_at = Time.now
-      @actors.clear
-      @hud_texts.clear
-      @hud_images.clear
-      @backgrounds.clear
-      @tile_maps.clear
-      @shapes.clear
-      @camera.position = Coordinates.zero
 
-      @clocks.reject(&:persistent?).each do |clock|
-        clock.stop unless clock.thread == Thread.current # no stop current Thread
-      end
-
-      # clear callbacks
-      @button_proc = nil
-      @space_bar_proc = nil
-      @cursor_up_proc = nil
-      @cursor_down_proc = nil
-      @cursor_left_proc = nil
-      @cursor_right_proc = nil
-      @mouse_button_left_proc = nil
-      @mouse_button_right_proc = nil
-
-      @background = Color.new(r: 0, g: 0, b: 0)
+      clear_entities
+      clear_callbacks
     end
 
     def mouse_position
@@ -151,6 +130,45 @@ module Global
 
     def seconds_in_scene
       Time.now - @scene_started_at
+    end
+
+    private
+
+    def clear_entities
+      @actors.clear
+      @hud_texts.clear
+      @hud_images.clear
+      @backgrounds.clear
+      @tile_maps.clear
+      @shapes.clear
+      @camera.position = Coordinates.zero
+
+      @clocks.reject(&:persistent?).each do |clock|
+        clock.stop unless clock.thread == Thread.current # no stop current Thread
+      end
+
+      @background = Color.new(r: 0, g: 0, b: 0)
+    end
+
+    def clear_callbacks
+      @button_proc = nil
+      @space_bar_proc = nil
+      @cursor_up_proc = nil
+      @cursor_down_proc = nil
+      @cursor_left_proc = nil
+      @cursor_right_proc = nil
+      @mouse_button_left_proc = nil
+      @mouse_button_right_proc = nil
+    end
+
+    def load_fonts
+      result = {}
+      result["small"] = Gosu::Font.new(20, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" })
+      result["medium"] = Gosu::Font.new(40, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" })
+      result["big"] = Gosu::Font.new(60, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" })
+      result["huge"] = Gosu::Font.new(100, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" })
+
+      result
     end
   end
 end

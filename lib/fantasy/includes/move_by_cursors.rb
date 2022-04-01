@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module MoveByCursor
+  # rubocop:disable
   def move_by_cursors
     if Gosu.button_down?(Cursor.down) && @move_with_cursors_down
       move_by(Coordinates.down)
@@ -22,22 +23,24 @@ module MoveByCursor
       jump
     end
   end
+  # rubocop:enable
 
+  # rubocop:disable Metrics/PerceivedComplexity
   def move_with_cursors(down: nil, up: nil, left: nil, right: nil, jump: false)
-    puts "#{@name}: move_with_cursors(down: #{down}, up: #{up}, left: #{left}, right: #{right}), jump: #{jump}"
-
     if down.nil? && up.nil? && left.nil? && right.nil?
       down = true
       up = true
       left = true
       right = true
     end
+
     @move_with_cursors_down = down || false
     @move_with_cursors_up = up || false
     @move_with_cursors_left = left || false
     @move_with_cursors_right = right || false
     @move_with_cursors_jump = jump || false
   end
+  # rubocop:enable Metrics/PerceivedComplexity
 
   def move_by(direction)
     @position += direction * @speed * Global.frame_time

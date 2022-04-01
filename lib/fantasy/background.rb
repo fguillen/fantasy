@@ -29,6 +29,7 @@ class Background
     @position - Global.camera.position
   end
 
+  # rubocop:disable Style/GuardClause
   def draw
     if @visible
       if @replicable
@@ -38,12 +39,14 @@ class Background
       end
     end
   end
+  # rubocop:enable Style/GuardClause
 
   def draw_normal
     @image.draw(x: position_in_camera.x, y: position_in_camera.y, scale: @scale)
   end
 
   # Camera relative Tiles
+  # rubocop:disable Metrics/AbcSize
   def draw_replicable
     tiles_delta_x = (position_in_camera.x % width) - width
     tiles_delta_y = (position_in_camera.y % height) - height
@@ -57,6 +60,7 @@ class Background
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   def destroy
     Global.backgrounds.delete(self)

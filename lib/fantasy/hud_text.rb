@@ -19,6 +19,7 @@ class HudText
 
   def move; end
 
+  # rubocop:disable Metrics/AbcSize
   def draw
     if visible
       unless @background_color.nil?
@@ -29,6 +30,7 @@ class HudText
 
     draw_debug if Global.debug
   end
+  # rubocop:enable Metrics/AbcSize
 
   def font
     found_font = Global.pixel_fonts[@size]

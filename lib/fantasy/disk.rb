@@ -5,8 +5,8 @@ require "ostruct"
 require "fileutils"
 
 module Disk
-  @@data_path = "#{Dir.pwd}/disk/data.json"
-  @@data = nil
+  @data_path = "#{Dir.pwd}/disk/data.json"
+  @data = nil
 
   def self.data
     @@data ||= OpenStruct.new(load)

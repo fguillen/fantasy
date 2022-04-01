@@ -35,6 +35,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency "gosu", "~> 1.4.1"
   spec.add_dependency "vector2d", "~> 2.2.3"
 
+  spec.required_ruby_version = ">= 3.0.0
+
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
 end

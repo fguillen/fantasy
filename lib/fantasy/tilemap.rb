@@ -34,15 +34,7 @@ class Tilemap
 
       line.each do |tile_index|
         unless tile_index.nil?
-          actor_template = @tiles[tile_index]
-
-          if actor_template.nil?
-            raise "Tilemap config error. Not found Tile for index '#{tile_index}'"
-          end
-
-          actor = actor_template.clone
-          actor.position.x = @position.x + (tile_position.x * @tile_width)
-          actor.position.y = @position.y + (tile_position.y * @tile_height)
+          render_tile(tile_index, tile_position)
         end
 
         tile_position.x += 1
@@ -52,10 +44,24 @@ class Tilemap
     end
   end
 
+  private
+
+  def render_tile(tile_index, tile_position)
+    actor_template = @tiles[tile_index]
+
+    if actor_template.nil?
+      raise "Tilemap config error. Not found Tile for index '#{tile_index}'"
+    end
+
+    actor = actor_template.clone
+    actor.position.x = @position.x + (tile_position.x * @tile_width)
+    actor.position.y = @position.y + (tile_position.y * @tile_height)
+  end
+
   class << self
     private
 
-    @@maps = {}
+    @maps = {}
 
     def load_grid(map_name)
       File.readlines(Tilemap.locate_map(map_name), chomp: true).map do |line|

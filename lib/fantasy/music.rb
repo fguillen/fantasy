@@ -2,8 +2,8 @@
 
 module Music
   class << self
-    @@musics = {}
-    @@actual_song = nil
+    @musics = {}
+    @actual_song = nil
 
     def play(music_name, volume: nil)
       stop

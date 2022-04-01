@@ -32,6 +32,7 @@ class Color < Gosu::Color
     attr_reader :palette
   end
 
+  # rubocop:disable Layout/FirstHashElementIndentation
   @palette =
     OpenStruct.new({
       "orange" => Color.new(r: 255, g: 165, b: 0, a: 255, name: "orange"),
@@ -186,4 +187,5 @@ class Color < Gosu::Color
       "black" => Color.new(r: 0, g: 0, b: 0, a: 255, name: "black"),
       "transparent" => Color.new(r: 0, g: 0, b: 0, a: 0, name: "transparent")
     })
+  # rubocop:enable Layout/FirstHashElementIndentation
 end

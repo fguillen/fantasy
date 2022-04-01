@@ -21,7 +21,7 @@ class Shape
   end
   # rubocop:enable Metrics/ParameterLists
 
-  def self.rectangle(position:, width:, height:, color: Color.palette.black)
+  def self.rectangle(position:, width:, height:, color: Color.palette.black, stroke_color: nil, stroke: 0)
     Shape.new(kind: "rectangle", position: position, width: width, height: height, color: color)
   end
 
@@ -40,15 +40,18 @@ class Shape
 
   private
 
+  # rubocop:disable Style/GuardClause
   def draw_rectangle
     if fill
       Gosu.draw_rect(@position.x, @position.y, @width, @height, @color)
     end
 
+
     unless stroke.zero?
       draw_frame(@position.x, @position.y, @width, @height, @stroke, @stroke_color || @color)
     end
   end
+  # rubocop:enable Style/GuardClause
 
   # rubocop:disable Metrics/ParameterLists
   def draw_frame(x, y, width, height, stroke, color)

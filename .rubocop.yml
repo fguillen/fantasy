@@ -16,7 +16,7 @@ Style/IfUnlessModifier:
   Enabled: false
 
 Naming/MethodParameterName:
-  AllowedNames: ["x", "y", "to", "r", "g", "b"]
+  AllowedNames: ["x", "y", "to", "r", "g", "b", "a", "up"]
 
 Naming/VariableNumber:
   EnforcedStyle: snake_case
@@ -26,3 +26,9 @@ Metrics/MethodLength:
 
 Style/AccessorGrouping:
   Enabled: false
+
+Metrics/ModuleLength:
+  Max: 180
+
+Metrics/ClassLength:
+  Max: 180
