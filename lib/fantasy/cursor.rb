@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Cursor
   def self.left
     Gosu::KB_LEFT
@@ -18,7 +20,6 @@ module Cursor
   def self.space_bar
     Gosu::KB_SPACE
   end
-
 
   def self.left?
     Gosu.button_down?(Cursor.left)

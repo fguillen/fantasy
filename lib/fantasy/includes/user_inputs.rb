@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module UserInputs
   # Set callbacks
   def on_cursor_down(&block)

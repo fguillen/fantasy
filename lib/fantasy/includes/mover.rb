@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mover
   def impulse(direction:, force:)
     add_force(direction.normalize * force)

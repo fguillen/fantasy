@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HudText
   attr_accessor :text, :size, :color, :background_color, :visible, :layer, :in_world, :position, :alignment
 
@@ -33,6 +35,7 @@ class HudText
     if found_font.nil?
       raise "HudText.size value not valid '#{@size}'. Valid values: 'small, medium, big, huge'"
     end
+
     found_font
   end
 
@@ -43,7 +46,6 @@ class HudText
   def width
     font.markup_width(text, 1)
   end
-
 
   private
 

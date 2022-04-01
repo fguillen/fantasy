@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mouse
   def self.left
     Gosu::MS_LEFT

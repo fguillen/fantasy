@@ -1,6 +1,10 @@
+# frozen_string_literal: true
+
 require "vector2d"
 
 class Coordinates < Vector2d
+  attr_writer :x, :y
+
   def self.zero
     Coordinates.new(0, 0)
   end
@@ -21,19 +25,11 @@ class Coordinates < Vector2d
     Coordinates.new(1, 0)
   end
 
-  def x=(value)
-    @x = value
-  end
-
-  def y=(value)
-    @y = value
-  end
-
   def clone
     Coordinates.new(@x, @y)
   end
 
   def zero?
-    @x == 0 && @y == 0
+    @x.zero? && @y.zero?
   end
 end

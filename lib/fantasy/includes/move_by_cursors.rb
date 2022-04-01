@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MoveByCursor
   def move_by_cursors
     if Gosu.button_down?(Cursor.down) && @move_with_cursors_down
@@ -24,7 +26,7 @@ module MoveByCursor
   def move_with_cursors(down: nil, up: nil, left: nil, right: nil, jump: false)
     puts "#{@name}: move_with_cursors(down: #{down}, up: #{up}, left: #{left}, right: #{right}), jump: #{jump}"
 
-    if down.nil? and up.nil? and left.nil? and right.nil?
+    if down.nil? && up.nil? && left.nil? && right.nil?
       down = true
       up = true
       left = true

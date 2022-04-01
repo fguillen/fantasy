@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Camera
   include MoveByCursor
 
@@ -19,10 +21,10 @@ class Camera
     calculate_direction_by_cursors if @moving_with_cursors
 
     if @direction != Coordinates.zero && !@speed.zero?
-      @position = @position + (@direction * @speed * Global.frame_time)
+      @position += (@direction * @speed * Global.frame_time)
     end
 
-    @on_after_move_callback.call unless @on_after_move_callback.nil?
+    @on_after_move_callback&.call
   end
 
   def on_after_move(&block)

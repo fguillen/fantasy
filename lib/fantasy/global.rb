@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "ostruct"
 
 module Global
@@ -33,10 +35,10 @@ module Global
       @debug = false
 
       @pixel_fonts = {}
-      @pixel_fonts["small"] = Gosu::Font.new(20, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" } )
-      @pixel_fonts["medium"] = Gosu::Font.new(40, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" } )
-      @pixel_fonts["big"] = Gosu::Font.new(60, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" } )
-      @pixel_fonts["huge"] = Gosu::Font.new(100, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" } )
+      @pixel_fonts["small"] = Gosu::Font.new(20, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" })
+      @pixel_fonts["medium"] = Gosu::Font.new(40, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" })
+      @pixel_fonts["big"] = Gosu::Font.new(60, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" })
+      @pixel_fonts["huge"] = Gosu::Font.new(100, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" })
 
       @d_key_pressed = false
       @references = OpenStruct.new
@@ -47,15 +49,15 @@ module Global
       @background = Color.new(r: 0, g: 0, b: 0)
 
       if @presentation_proc.nil?
-        on_presentation { Global.default_on_presentation  }
+        on_presentation { Global.default_on_presentation }
       end
 
       if @game_proc.nil?
-        on_game { Global.default_on_game  }
+        on_game { Global.default_on_game }
       end
 
       if @end_proc.nil?
-        on_end { Global.default_on_end  }
+        on_end { Global.default_on_end }
       end
     end
 

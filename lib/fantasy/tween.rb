@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Tween
   def self.move_towards(from:, to:, speed:)
     direction = to - from
@@ -6,6 +8,6 @@ module Tween
     return to if step.zero?
 
     direction = direction.normalize
-    return from + (direction * step)
+    from + (direction * step)
   end
 end

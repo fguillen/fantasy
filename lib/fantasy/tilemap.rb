@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Tilemap
   attr_accessor :position
 
@@ -5,7 +7,7 @@ class Tilemap
     @tile_width = tile_width || tile_size
     @tile_height = tile_height || tile_size
 
-    if(@tile_height.nil? or @tile_width.nil?)
+    if @tile_height.nil? || @tile_width.nil?
       raise("Tile size is not properly defined. Either you set a `tile_size` or a `tile_width` and `tile_height`")
     end
 
@@ -31,7 +33,7 @@ class Tilemap
       tile_position.x = 0
 
       line.each do |tile_index|
-        if !tile_index.nil?
+        unless tile_index.nil?
           actor_template = @tiles[tile_index]
 
           if actor_template.nil?
@@ -68,13 +70,13 @@ class Tilemap
 
       puts "Initialize map: '#{map_name}'"
 
-      file_name = Dir.entries(base_path).find { |e| e =~ /^#{map_name}($|\.)/  }
+      file_name = Dir.entries(base_path).find { |e| e =~ /^#{map_name}($|\.)/ }
 
       raise "Map file not found with name '#{map_name}' in #{base_path}" if file_name.nil?
 
       @@maps[map_name] = "#{base_path}/#{file_name}"
 
-      return @@maps[map_name]
+      @@maps[map_name]
     end
 
     def base_path

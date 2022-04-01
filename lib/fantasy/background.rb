@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Background
   attr_accessor :scale, :color, :visible, :position, :layer, :replicable
 
@@ -16,11 +18,11 @@ class Background
   end
 
   def width
-    @image.width() * @scale
+    @image.width * @scale
   end
 
   def height
-    @image.height() * @scale
+    @image.height * @scale
   end
 
   def position_in_camera

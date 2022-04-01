@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 class Game < Gosu::Window
   def initialize
     # TODO: require SCREEN_WIDTH and SCREEN_HEIGHT
     super(SCREEN_WIDTH, SCREEN_HEIGHT)
     Global.initialize
 
-    Global.presentation_proc.call()
+    Global.presentation_proc.call
   end
 
   def button_down(button_id)
@@ -18,38 +20,38 @@ class Game < Gosu::Window
     when Mouse.left then mouse_button_left_pressed
     end
 
-    Global.button_proc.call(button_id) unless Global.button_proc.nil?
+    Global.button_proc&.call(button_id)
 
     super
   end
 
   def cursor_down_pressed
-    Global.cursor_down_proc.call unless Global.cursor_down_proc.nil?
+    Global.cursor_down_proc&.call
     invoke_input_method("on_cursor_down_do")
   end
 
   def cursor_up_pressed
-    Global.cursor_up_proc.call unless Global.cursor_up_proc.nil?
+    Global.cursor_up_proc&.call
     invoke_input_method("on_cursor_up_do")
   end
 
   def cursor_left_pressed
-    Global.cursor_left_proc.call unless Global.cursor_left_proc.nil?
+    Global.cursor_left_proc&.call
     invoke_input_method("on_cursor_left_do")
   end
 
   def cursor_right_pressed
-    Global.cursor_right_proc.call unless Global.cursor_right_proc.nil?
+    Global.cursor_right_proc&.call
     invoke_input_method("on_cursor_right_do")
   end
 
   def space_bar_pressed
-    Global.space_bar_proc.call unless Global.space_bar_proc.nil?
+    Global.space_bar_proc&.call
     invoke_input_method("on_space_bar_do")
   end
 
   def mouse_button_left_pressed
-    Global.mouse_button_left_proc.call unless Global.mouse_button_left_proc.nil?
+    Global.mouse_button_left_proc&.call
 
     check_click
   end
@@ -66,21 +68,12 @@ class Game < Gosu::Window
   def update
     Global.update
 
-    Global.actors.each do |e|
-      e.move
-    end
-
-    Global.hud_texts.each do |e|
-      e.move
-    end
-
-    Global.hud_images.each do |e|
-      e.move
-    end
-
+    Global.actors.each(&:move)
+    Global.hud_texts.each(&:move)
+    Global.hud_images.each(&:move)
     Global.camera.move
 
-    Global.loop_proc.call() unless Global.loop_proc.nil?
+    Global.loop_proc&.call
   end
 
   def draw
@@ -93,9 +86,7 @@ class Game < Gosu::Window
       Global.hud_texts +
       Global.hud_images +
       Global.shapes
-    ).sort_by(&:layer).each do |e|
-      e.draw
-    end
+    ).sort_by(&:layer).each(&:draw)
   end
 
   def check_click

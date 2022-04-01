@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Global.setup_proc = nil
 Global.loop_proc = nil
 

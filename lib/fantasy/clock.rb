@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Clock
   attr_accessor :persistent
   attr_reader :thread
@@ -29,9 +31,9 @@ class Clock
     times_executed = 0
     @thread =
       Thread.new do
-        while(times_executed < times)
+        while times_executed < times
           @block.call
-          times_executed += 1;
+          times_executed += 1
 
           seconds_to_sleep = seconds.is_a?(Range) ? rand(seconds) : seconds
           sleep(seconds_to_sleep)

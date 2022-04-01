@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 class HudImage
   include Draggable
 
   attr_accessor :name, :scale, :color, :visible, :position, :layer
 
-  def initialize(position:, image_name: )
+  def initialize(position:, image_name:)
     @image = Image.new(image_name)
     @name = image_name
     @position = position
@@ -17,11 +19,11 @@ class HudImage
   end
 
   def width
-    @image.width() * @scale
+    @image.width * @scale
   end
 
   def height
-    @image.height() * @scale
+    @image.height * @scale
   end
 
   def move

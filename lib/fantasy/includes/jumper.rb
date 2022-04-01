@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Jumper
   def jump
     add_force(Coordinates.up * @jump_force)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Music
   class << self
     @@musics = {}
@@ -13,7 +15,7 @@ module Music
     end
 
     def stop
-      @@actual_song.stop unless @@actual_song.nil?
+      @@actual_song&.stop
     end
 
     def volume
@@ -35,7 +37,7 @@ module Music
 
       @@musics[music_name] = Gosu::Song.new("#{base_path}/#{file_name}")
 
-      return @@musics[music_name]
+      @@musics[music_name]
     end
 
     def preload_musics

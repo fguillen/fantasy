@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Sound
   class << self
     @@sounds = {}
@@ -17,7 +19,7 @@ module Sound
 
       @@sounds[sound_name] = Gosu::Sample.new("#{base_path}/#{file_name}")
 
-      return @@sounds[sound_name]
+      @@sounds[sound_name]
     end
 
     def preload_sounds

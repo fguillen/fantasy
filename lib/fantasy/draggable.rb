@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Draggable
   def drag
     mouse_position = Global.mouse_position

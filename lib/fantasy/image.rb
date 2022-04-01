@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Image
   def initialize(image_name)
     @image = Image.load(image_name)
@@ -37,13 +39,13 @@ class Image
 
       puts "Initialize image: '#{image_name}'"
 
-      file_name = Dir.entries(base_path).find { |e| e =~ /^#{image_name}($|\.)/  }
+      file_name = Dir.entries(base_path).find { |e| e =~ /^#{image_name}($|\.)/ }
 
       raise "Image file not found with name '#{image_name}' in #{base_path}" if file_name.nil?
 
       @@images[image_name] = Gosu::Image.new("#{base_path}/#{file_name}", { retro: true })
 
-      return @@images[image_name]
+      @@images[image_name]
     end
 
     def base_path
