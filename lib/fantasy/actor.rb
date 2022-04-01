@@ -160,6 +160,8 @@ class Actor
   end
 
   def manage_collisions(last_position)
+    @velocity ||= Coordinates.zero # In case it is not initialized yet
+
     collisions.each do |other|
       on_collision_do(other)
       other.on_collision_do(self)
