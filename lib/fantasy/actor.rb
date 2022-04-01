@@ -245,16 +245,18 @@ class Actor
   end
 
 
+  # rubocop:disable Style/Next
   def collisions
     Global.actors.reject { |e| e == self }.select { |e| e.solid? }.select do |other|
       if(
         (@collision_with == "all" || @collision_with.include?(other.name)) &&
-        (other.collision_with == "all" || other.collision_with.include?(self.name))
+        (other.collision_with == "all" || other.collision_with.include?(name))
       )
         Utils.collision? self, other
       end
     end
   end
+  # rubocop:enable Style/Next
 
   def destroy
     on_destroy_do
