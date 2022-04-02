@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class Game < Gosu::Window
-  def initialize
-    # TODO: require SCREEN_WIDTH and SCREEN_HEIGHT
-    super(SCREEN_WIDTH, SCREEN_HEIGHT)
+  def initialize(screen_width, screen_height)
     Camera.initialize
-    Global.initialize
+    Global.initialize(screen_width, screen_height)
+
+    super(Global.screen_width, Global.screen_height)
 
     Global.presentation_proc.call
   end
@@ -71,7 +71,7 @@ class Game < Gosu::Window
   end
 
   def draw
-    Gosu.draw_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Global.background)
+    Gosu.draw_rect(0, 0, Global.screen_width, Global.screen_height, Global.background)
 
     (
       Global.backgrounds +

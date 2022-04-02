@@ -164,7 +164,9 @@ end
 # start!
 # ```
 def start!
+  raise "'SCREEN_WIDTH' and 'SCREEN_HEIGHT' both have to be set at the beginning of the program" unless defined?(SCREEN_WIDTH) && defined?(SCREEN_HEIGHT)
+
   Global.setup
-  Global.game = Game.new
+  Global.game = Game.new(SCREEN_WIDTH, SCREEN_HEIGHT)
   Global.game.show
 end

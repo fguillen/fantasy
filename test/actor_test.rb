@@ -2,14 +2,10 @@
 
 require "test_helper"
 
-SCREEN_WIDTH = 10
-SCREEN_HEIGHT = 10
-
 class ActorTest < Minitest::Test
   def setup
     Global.game_proc = Proc.new {}
-    Global.game = Game.new
-    Global.initialize
+    Global.game = Game.new(100, 100)
     @actor = Actor.new("player")
   end
 
@@ -439,7 +435,7 @@ class ActorTest < Minitest::Test
   end
 
   def test_on_cursor_triggers
-    gosu_game = Game.new
+    gosu_game = Game.new(100, 100)
 
     actor = Actor.new("player")
 
@@ -460,7 +456,7 @@ class ActorTest < Minitest::Test
   end
 
   def test_on_click_do
-    gosu_game = Game.new
+    gosu_game = Game.new(100, 100)
     gosu_game.expects(:mouse_x).returns(1)
     gosu_game.expects(:mouse_y).returns(1)
 
@@ -470,7 +466,7 @@ class ActorTest < Minitest::Test
   end
 
   def test_no_on_click_do_when_mouse_coordinates_are_not_in_actor
-    gosu_game = Game.new
+    gosu_game = Game.new(100, 100)
     gosu_game.expects(:mouse_x).returns(100)
     gosu_game.expects(:mouse_y).returns(1)
 

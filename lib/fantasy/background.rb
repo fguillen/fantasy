@@ -85,7 +85,6 @@ class Background
   #   background = Background.new("background")
   def initialize(image_name:)
     @image = Image.new(image_name)
-    @name = image_name
     @position = Coordinates.zero
     @scale = 1
     @visible = true
@@ -142,8 +141,8 @@ class Background
     tiles_delta_x = (position_in_camera.x % width) - width
     tiles_delta_y = (position_in_camera.y % height) - height
 
-    tiles_needed_horizontal = ((SCREEN_WIDTH - (tiles_delta_x + width)) / width.to_f).ceil + 1
-    tiles_needed_vertical = ((SCREEN_HEIGHT - (tiles_delta_y + height)) / height.to_f).ceil + 1
+    tiles_needed_horizontal = ((Global.screen_width - (tiles_delta_x + width)) / width.to_f).ceil + 1
+    tiles_needed_vertical = ((Global.screen_height - (tiles_delta_y + height)) / height.to_f).ceil + 1
 
     tiles_needed_horizontal.times do |index_horizontal|
       tiles_needed_vertical.times do |index_vertical|

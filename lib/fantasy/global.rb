@@ -23,8 +23,10 @@ module Global
     attr_reader :references
     attr_reader :game_state
 
+    attr_reader :screen_width, :screen_height
+
     # rubocop:disable Metrics/MethodLength
-    def initialize
+    def initialize(screen_width, screen_height)
       log "Global.initialize"
       @actors = []
       @hud_texts = []
@@ -45,6 +47,9 @@ module Global
       @background = Color.new(r: 0, g: 0, b: 0)
 
       @frame_time = 0
+
+      @screen_width = screen_width
+      @screen_height = screen_height
 
       if @presentation_proc.nil?
         on_presentation { Global.default_on_presentation }

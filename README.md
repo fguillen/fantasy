@@ -314,8 +314,8 @@ player.on_collision do |other|
 end
 
 player.on_after_move do
-  if player.position.x > SCREEN_WIDTH
-    player.position.x = SCREEN_WIDTH
+  if player.position.x > Global.screen_width
+    player.position.x = Global.screen_width
   end
 
   if player.position.x < 0
