@@ -4,6 +4,8 @@ require "ostruct"
 
 module Global
   class << self
+    include Log
+
     attr_accessor :actors, :hud_texts, :hud_images, :backgrounds, :tile_maps, :clocks, :shapes
     attr_accessor :debug
     attr_accessor :setup_proc, :loop_proc, :button_proc
@@ -23,7 +25,7 @@ module Global
 
     # rubocop:disable Metrics/MethodLength
     def initialize
-      puts "Global.initialize"
+      log "Global.initialize"
       @actors = []
       @hud_texts = []
       @hud_images = []
@@ -41,6 +43,8 @@ module Global
       @game_state = Global.presentation_proc.nil? ? "game" : "presentation"
       @scene_started_at = Time.now
       @background = Color.new(r: 0, g: 0, b: 0)
+
+      @frame_time = 0
 
       if @presentation_proc.nil?
         on_presentation { Global.default_on_presentation }
@@ -89,21 +93,21 @@ module Global
     end
 
     def go_to_presentation
-      puts "Game stage 'presentation'"
+      log "Game stage 'presentation'"
 
       clear_state_elements
       @presentation_proc.call
     end
 
     def go_to_game
-      puts "Game stage 'game'"
+      log "Game stage 'game'"
 
       clear_state_elements
       game_proc.call
     end
 
     def go_to_end
-      puts "Game stage 'end'"
+      log "Game stage 'end'"
 
       clear_state_elements
       end_proc.call

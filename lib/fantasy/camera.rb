@@ -104,7 +104,6 @@ class Camera
 
     # @!visibility private
     def initialize
-      puts "Camera.initialize"
       reset
     end
 

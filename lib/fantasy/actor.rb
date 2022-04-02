@@ -242,7 +242,7 @@ class Actor
     @speed = 0
     @scale = 1
 
-    @solid = false
+    @solid = true
     @draggable_on_debug = true
     @dragging = false
     @dragging_offset = nil

@@ -18,6 +18,8 @@ class Image
   end
 
   class << self
+    include Log
+
     @@images = {}
 
     def load(image_name)
@@ -37,7 +39,7 @@ class Image
     def locate_image(image_name)
       return @@images[image_name] if @@images[image_name]
 
-      puts "Initialize image: '#{image_name}'"
+      log "Initialize image: '#{image_name}'"
 
       file_name = Dir.entries(base_path).find { |e| e =~ /^#{image_name}($|\.)/ }
 
@@ -49,7 +51,11 @@ class Image
     end
 
     def base_path
-      "#{Dir.pwd}/images"
+      if ENV["environment"] == "test"
+        "#{Dir.pwd}/test/fixtures/images"
+      else
+        "#{Dir.pwd}/images"
+      end
     end
   end
 end

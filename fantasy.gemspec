@@ -38,6 +38,8 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 3.0.0"
 
   spec.add_development_dependency "yard"
+  spec.add_development_dependency "minitest"
+  spec.add_development_dependency "mocha"
 
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html

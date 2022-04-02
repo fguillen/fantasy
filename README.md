@@ -339,13 +339,13 @@ class Player < Actor
     move_with_cursors
   end
 
-  on_collision do |other|
+  def on_collision_do(other)
     if other.name == "enemy"
       destroy
     end
   end
 
-  on_after_move do
+  def on_after_move_do
     if @position.x > SCREEN_WIDTH
       @position.x = SCREEN_WIDTH
     end
@@ -500,6 +500,10 @@ Clock.new { icon.visible = !icon.visible }.repeat(seconds: 1)
 - Rubocop is not passing
 - Tests are missing
 - Allow Ruby 2.5+
+
+## Assets
+
+- Images for the test fixtures: https://kenney.nl/
 
 ## Development
 
