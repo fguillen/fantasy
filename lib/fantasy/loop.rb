@@ -30,42 +30,33 @@ class Game < Gosu::Window
 
   def cursor_down_pressed
     Global.cursor_down_proc&.call
-    invoke_input_method("on_cursor_down_do")
+    invoke_input_method_in_entities("on_cursor_down_do")
   end
 
   def cursor_up_pressed
     Global.cursor_up_proc&.call
-    invoke_input_method("on_cursor_up_do")
+    invoke_input_method_in_entities("on_cursor_up_do")
   end
 
   def cursor_left_pressed
     Global.cursor_left_proc&.call
-    invoke_input_method("on_cursor_left_do")
+    invoke_input_method_in_entities("on_cursor_left_do")
   end
 
   def cursor_right_pressed
     Global.cursor_right_proc&.call
-    invoke_input_method("on_cursor_right_do")
+    invoke_input_method_in_entities("on_cursor_right_do")
   end
 
   def space_bar_pressed
     Global.space_bar_proc&.call
-    invoke_input_method("on_space_bar_do")
+    invoke_input_method_in_entities("on_space_bar_do")
   end
 
   def mouse_button_left_pressed
     Global.mouse_button_left_proc&.call
 
     check_click
-  end
-
-  def invoke_input_method(input_method_name)
-    (
-      Global.actors +
-      Global.shapes
-    ).sort_by(&:layer).each do |e|
-      e.send(input_method_name)
-    end
   end
 
   def update
@@ -100,4 +91,16 @@ class Game < Gosu::Window
       e.on_click_do if Utils.collision_at?(e, mouse_x, mouse_y)
     end
   end
+
+  private
+
+  def invoke_input_method_in_entities(input_method_name)
+    (
+      Global.actors +
+      Global.shapes
+    ).sort_by(&:layer).each do |e|
+      e.send(input_method_name)
+    end
+  end
+
 end

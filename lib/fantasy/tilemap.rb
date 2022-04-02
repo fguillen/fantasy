@@ -59,9 +59,7 @@ class Tilemap
   end
 
   class << self
-    private
-
-    @maps = {}
+    @@maps = {}
 
     def load_grid(map_name)
       File.readlines(Tilemap.locate_map(map_name), chomp: true).map do |line|

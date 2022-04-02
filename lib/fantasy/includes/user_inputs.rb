@@ -59,4 +59,8 @@ module UserInputs
     puts "XXX: on_click_do: #{@on_click_callback}"
     instance_exec(&@on_click_callback) unless @on_click_callback.nil?
   end
+
+  protected
+
+  attr_accessor :on_cursor_down_callback, :on_cursor_up_callback, :on_cursor_left_callback, :on_cursor_right_callback, :on_space_bar_callback, :on_mouse_button_left_callback
 end

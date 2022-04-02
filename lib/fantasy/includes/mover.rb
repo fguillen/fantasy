@@ -15,6 +15,7 @@ module Mover
     @velocity ||= Coordinates.zero
 
     @velocity += @acceleration
+
     @velocity.resize(max_speed) if @velocity.length > max_speed
 
     unless @velocity.length.zero?

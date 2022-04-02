@@ -307,9 +307,6 @@ class Actor
   end
 
   # @!visibility private
-  # TODO: I made more of this code while I was with Covid
-  # It looks horrible and it is crap
-  # I'll improve it some day :)
   def move
     mouse_position = Global.mouse_position + Camera.main.position
 
@@ -345,20 +342,6 @@ class Actor
         manage_collisions(last_position)
       end
 
-      # # Jump moving
-      # unless @jump_force.zero?
-      #   last_position = @position
-      #   add_force_by_jump
-      #   apply_forces(max_speed: @jump_speed || @jump_force)
-
-      #   # Check collision after jump moving
-      #   if @solid && @position != last_position
-      #    if manage_collisions(last_position)
-      #       @jumping = false
-      #    end
-      #   end
-      # end
-
       # Gravity force
       unless @gravity.zero?
         add_force_by_gravity
@@ -366,7 +349,7 @@ class Actor
 
       # Apply forces
       last_position = @position
-      apply_forces(max_speed: @speed)
+      apply_forces
 
       # Check collision after gravity moving
       if @solid && @position != last_position
@@ -557,7 +540,9 @@ class Actor
   end
 
 
-  private
+  protected
+
+  attr_accessor :image_name
 
   # TODO: make this work optimized
   # def position_top_left
@@ -599,7 +584,7 @@ class Actor
       on_collision_do(other)
       other.on_collision_do(self)
 
-      if other.position.y > (last_position.y + height)
+      if other.position.y >= (last_position.y + height)
         on_floor_do unless @on_floor
 
         @on_floor = true
@@ -607,7 +592,7 @@ class Actor
         @velocity.y = 0
       end
 
-      if other.position.y + other.height < last_position.y
+      if other.position.y + other.height <= last_position.y
         @velocity.y = 0
       end
     end
@@ -646,6 +631,5 @@ class Actor
   protected
 
   attr_accessor :on_after_move_callback, :on_collision_callback, :on_destroy_callback, :on_jumping_callback, :on_floor_callback
-  attr_accessor :on_cursor_down_callback, :on_cursor_up_callback, :on_cursor_left_callback, :on_cursor_right_callback, :on_space_bar_callback, :on_mouse_button_left_callback
   attr_accessor :on_click_callback
 end
