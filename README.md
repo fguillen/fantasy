@@ -401,7 +401,7 @@ on_presentation do
 end
 
 # Replicable (by default) Image
-# position is relative to Global.camera
+# position is relative to Camera.main
 on_game do
   background = Background.new(image_name: "beach")
   # background.replicable = false # if you don't want the image to replicate
@@ -430,7 +430,7 @@ Disk.data.sound_volume # => 12
 on_game do
   on_loop do
     # Camera follows player
-    Global.camera.position.y = player.position.y - (SCREEN_HEIGHT / 2)
+    Camera.main.position.y = player.position.y - (SCREEN_HEIGHT / 2)
   end
 end
 ```

@@ -2,7 +2,7 @@
 
 module Sound
   class << self
-    @sounds = {}
+    @@sounds = {}
 
     def play(sound_name, volume: 1)
       locate_sound(sound_name).play(volume)

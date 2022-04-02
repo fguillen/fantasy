@@ -18,7 +18,7 @@ module Draggable
       @draggable_on_debug &&
       !@dragging &&
       Gosu.button_down?(Gosu::MS_LEFT) &&
-      Utils.collision_at?(self, mouse_position.x, mouse_position.y
+      Utils.collision_at?(self, mouse_position.x, mouse_position.y)
     )
       @dragging = true
       @dragging_offset = mouse_position - @position

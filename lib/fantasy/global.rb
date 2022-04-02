@@ -19,7 +19,6 @@ module Global
     attr_reader :frame_time # delta_time
     attr_reader :pixel_fonts
     attr_reader :references
-    attr_reader :camera
     attr_reader :game_state
 
     # rubocop:disable Metrics/MethodLength
@@ -39,7 +38,6 @@ module Global
 
       @d_key_pressed = false
       @references = OpenStruct.new
-      @camera = Camera.new(position: Coordinates.zero)
       @game_state = Global.presentation_proc.nil? ? "game" : "presentation"
       @scene_started_at = Time.now
       @background = Color.new(r: 0, g: 0, b: 0)
@@ -141,13 +139,14 @@ module Global
       @backgrounds.clear
       @tile_maps.clear
       @shapes.clear
-      @camera.position = Coordinates.zero
 
       @clocks.reject(&:persistent?).each do |clock|
         clock.stop unless clock.thread == Thread.current # no stop current Thread
       end
 
       @background = Color.new(r: 0, g: 0, b: 0)
+
+      Camera.reset
     end
 
     def clear_callbacks

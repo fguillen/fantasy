@@ -1,0 +1,3 @@
+--no-private - README.md CHANGELOG.md
+--markup markdown
+--markup-provider redcarpet

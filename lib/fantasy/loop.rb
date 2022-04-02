@@ -4,6 +4,7 @@ class Game < Gosu::Window
   def initialize
     # TODO: require SCREEN_WIDTH and SCREEN_HEIGHT
     super(SCREEN_WIDTH, SCREEN_HEIGHT)
+    Camera.initialize
     Global.initialize
 
     Global.presentation_proc.call
@@ -73,7 +74,7 @@ class Game < Gosu::Window
     Global.actors.each(&:move)
     Global.hud_texts.each(&:move)
     Global.hud_images.each(&:move)
-    Global.camera.move
+    Camera.main.move
 
     Global.loop_proc&.call
   end

@@ -83,7 +83,7 @@ class HudText
 
   def screen_position
     if @in_world
-      @position - Global.camera.position
+      @position - Camera.main.position
     else
       @position
     end

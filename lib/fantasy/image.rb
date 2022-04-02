@@ -18,7 +18,7 @@ class Image
   end
 
   class << self
-    @images = {}
+    @@images = {}
 
     def load(image_name)
       locate_image(image_name)
