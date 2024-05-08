@@ -234,6 +234,10 @@ For easy creation of:
 
 Multiple movement animation effects like in [DoTween](http://dotween.demigiant.com/documentation.php) (TODO)
 
+### Externalized Variables (TODO)
+
+Values that can be changed while the game is running. They can be in a Variables file. The game "watch" this file and update the variable in real time.
+
 ## API
 
 ### Game Scenes
