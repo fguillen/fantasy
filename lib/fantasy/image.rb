@@ -41,6 +41,10 @@ class Image
 
       log "Initialize image: '#{image_name}'"
 
+      if !Dir.exists?("#{base_path}")
+        raise "The folder of images doesn't exists '#{base_path}', create the folder and put your image '#{image_name}' on it"
+      end
+
       file_name = Dir.entries(base_path).find { |e| e =~ /^#{image_name}($|\.)/ }
 
       raise "Image file not found with name '#{image_name}' in #{base_path}" if file_name.nil?

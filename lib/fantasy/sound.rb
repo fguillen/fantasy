@@ -13,9 +13,13 @@ module Sound
 
       puts "Initialize Sound: '#{sound_name}'"
 
+      if !Dir.exists?("#{base_path}")
+        raise "The folder of sounds doesn't exists '#{base_path}', create the folder and put your sound '#{sound_name}' on it"
+      end
+
       file_name = Dir.entries(base_path).find { |e| e =~ /^#{sound_name}($|\.)/ }
 
-      raise "Sound file not found with name '#{sound_name}'" if file_name.nil?
+      raise "Sound file not found with name '#{sound_name}' in #{base_path}" if file_name.nil?
 
       @@sounds[sound_name] = Gosu::Sample.new("#{base_path}/#{file_name}")
 

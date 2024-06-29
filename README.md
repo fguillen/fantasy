@@ -29,27 +29,46 @@ start!
 
 ### Action game
 
+This is a full playable game. Maybe not too challenging though :)
+
 ```ruby
+# Add assets dependencies
+# ./images/spaceship.<any>
+# ./images/laser.<any>
+# ./sounds/shoot.<any>
+# ./sounds/impact.<any>
+# ./sounds/game_over.<any>
+
+require "fantasy"
+
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 360
 
 on_game do
-  player = Actor.new("warrior")
+  player = Actor.new("spaceship")
   player.position = Coordinates.new(100, 100)
+  player.move_with_cursors
+  player.speed = 100
+
   points = HudText.new(position: Coordinates.new(10, 20))
   points.text = 0
 
+  10.times do
+    enemy = Actor.new("enemy")
+    enemy.position = Coordinates.new(rand * SCREEN_WIDTH, rand * SCREEN_HEIGHT)
+  end
+
   on_space_bar do
     Sound.play("shoot")
-    bullet = Actor.new("bullet")
-    bullet.position = player.position
-    bullet.speed = 100
-    bullet.direction = Coordinates.up
-    bullet.on_collision do |other|
+    laser = Actor.new("laser")
+    laser.position = player.position + Coordinates.new(0, -10)
+    laser.speed = 400
+    laser.direction = Coordinates.up
+    laser.on_collision do |other|
       if other.name == "enemy"
         Sound.play("impact")
         other.destroy
-        bullet.destroy
+        laser.destroy
         points.text += 1
       end
     end
@@ -77,6 +96,7 @@ start!
 ## Examples
 
 See the [Ruby in Fantasy Games Collection](https://github.com/fguillen/RubyInFantasyGames).
+It is a collection of full playable games. For fun and for educational purposes.
 
 ## Installation
 
@@ -253,6 +273,7 @@ on_presentation do
   # Game elements running when the game loads
 end
 
+# (Required)
 on_game do
   # Game elements running when in game Scene
 end
@@ -372,11 +393,11 @@ player.move_with_cursors(left: true, right: true, up: false, down: false, jump: 
 
 player.on_jumping do
   Sound.play("jump")
-  player.image = "warrior_jump")
+  player.image = "warrior_jump"
 end
 
 player.on_floor do
-  player.image = "warrior")
+  player.image = "warrior"
 end
 ```
 
