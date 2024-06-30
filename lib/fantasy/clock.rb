@@ -75,6 +75,10 @@ class Clock
   # Executes the clock's block in an independent thread after a certain amount of `seconds`.
   # @example The clock will be triggered after 2 seconds
   #   clock.run_on(seconds: 2)
+  # @example The clock will be triggered after 100 milliseconds
+  #   clock.run_on(seconds: 0.1)
+  # @example The clock will be triggered after random amount of seconds between 1 and 10
+  #   clock.run_on(seconds: rand(1..10))
   # @param seconds [Number] the amount of seconds to wait before the block is executed
   def run_on(seconds:)
     @thread =
