@@ -5,7 +5,7 @@
 /pkg/
 /spec/reports/
 /tmp/
-/docs/
+/docs
 
 .vscode/
 .ruby-version
