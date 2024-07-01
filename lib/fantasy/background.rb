@@ -11,6 +11,7 @@
 # end
 # ```
 class Background
+  include Indexable
 
   # In which layer the image of the Background is rendered.
   # Smaller numbers are rendered behind higher numbers.
@@ -21,7 +22,6 @@ class Background
   #   background = Background.new("image")
   #   background.layer = -50
   attr_accessor :layer
-
 
   # Coordinates object where x and y represent the position of the Background in the World
   # (no necessarily in the Screen).
@@ -93,7 +93,7 @@ class Background
     @layer = -100
     @replicable = true
 
-    Global.backgrounds.push(self)
+    Global.backgrounds&.push(self)
   end
 
   # @return [Fixnum] the Background width in pixels

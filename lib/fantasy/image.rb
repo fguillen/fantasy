@@ -5,8 +5,9 @@ class Image
     @image = Image.load(image_name)
   end
 
-  def draw(x:, y:, scale: 1)
-    @image.draw(x, y, 0, scale, scale)
+  def draw(x:, y:, scale: 1, rotation: 0)
+    # draw_rot(x, y, z = 0, angle = 0, center_x = 0.5, center_y = 0.5, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default) ⇒ void
+    @image.draw_rot(x + (width / 2), y + (height / 2), 0, rotation, 0.5, 0.5, scale, scale)
   end
 
   def width
@@ -29,8 +30,8 @@ class Image
     def preload_images
       return unless Dir.exist?(base_path)
 
-      Dir.each_child(base_path) do |file_name|
-        locate_image(file_name) unless file_name.start_with?(".")
+      Dir.children(base_path).select { |e| e =~ /\.(png|jpg|jpeg)$/ }.each do |file_name|
+        locate_image(file_name)
       end
     end
 
@@ -39,17 +40,19 @@ class Image
     def locate_image(image_name)
       return @@images[image_name] if @@images[image_name]
 
-      log "Initialize image: '#{image_name}'"
+      log "Initializing image: '#{image_name}' ..."
 
-      if !Dir.exists?("#{base_path}")
+      unless Dir.exist?(base_path.to_s)
         raise "The folder of images doesn't exists '#{base_path}', create the folder and put your image '#{image_name}' on it"
       end
 
-      file_name = Dir.entries(base_path).find { |e| e =~ /^#{image_name}($|\.)/ }
+      file_name = Dir.children(base_path).find { |e| e =~ /^#{image_name}($|\.)/ }
 
       raise "Image file not found with name '#{image_name}' in #{base_path}" if file_name.nil?
 
       @@images[image_name] = Gosu::Image.new("#{base_path}/#{file_name}", { retro: true })
+
+      log "Initialized image: '#{image_name}'"
 
       @@images[image_name]
     end

@@ -2,11 +2,12 @@
 
 class Shape
   include UserInputs
+  include Indexable
 
   attr_accessor :kind, :position, :width, :height, :stroke, :color, :fill, :stroke_color, :layer
 
   # rubocop:disable Metrics/ParameterLists
-  def initialize(kind:, position:, width:, height:, stroke: 1, fill: true, color: Color.palette.black, stroke_color: nil)
+  def initialize(kind: "rectangle", position: Coordinates.zero, width: 10, height: 10, stroke: 1, fill: true, color: Color.palette.gold, stroke_color: nil)
     @kind = kind
     @position = position
     @width = width
@@ -17,11 +18,11 @@ class Shape
     @stroke_color = stroke_color
     @layer = 1
 
-    Global.shapes << self
+    Global.shapes&.push(self)
   end
   # rubocop:enable Metrics/ParameterLists
 
-  def self.rectangle(position:, width:, height:, color: Color.palette.black, stroke_color: nil, stroke: 0)
+  def self.rectangle(position: Coordinates.zero, width: 10, height: 10, stroke: 1, fill: true, color: Color.palette.gold, stroke_color: nil)
     Shape.new(kind: "rectangle", position: position, width: width, height: height, color: color)
   end
 
@@ -45,7 +46,6 @@ class Shape
     if fill
       Gosu.draw_rect(@position.x, @position.y, @width, @height, @color)
     end
-
 
     unless stroke.zero?
       draw_frame(@position.x, @position.y, @width, @height, @stroke, @stroke_color || @color)

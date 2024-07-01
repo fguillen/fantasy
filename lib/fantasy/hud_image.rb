@@ -2,10 +2,11 @@
 
 class HudImage
   include Draggable
+  include Indexable
 
   attr_accessor :name, :scale, :color, :visible, :position, :layer
 
-  def initialize(position:, image_name:)
+  def initialize(image_name:, position: Coordinates.zero)
     @image = Image.new(image_name)
     @name = image_name
     @position = position
@@ -15,7 +16,7 @@ class HudImage
     @dragging = false
     @layer = 100
 
-    Global.hud_images.push(self)
+    Global.hud_images&.push(self)
   end
 
   def width

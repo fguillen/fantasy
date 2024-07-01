@@ -13,7 +13,7 @@ module Sound
 
       puts "Initialize Sound: '#{sound_name}'"
 
-      if !Dir.exists?("#{base_path}")
+      unless Dir.exist?(base_path.to_s)
         raise "The folder of sounds doesn't exists '#{base_path}', create the folder and put your sound '#{sound_name}' on it"
       end
 

@@ -76,11 +76,11 @@ class Game < Gosu::Window
     (
       Global.backgrounds +
       Global.tile_maps +
-      Global.actors +
+      Global.actors.select(&:visible) +
       Global.hud_texts +
       Global.hud_images +
       Global.shapes
-    ).sort_by(&:layer).each(&:draw)
+    ).group_by(&:layer).sort.map { |e| e[1] }.each { |e| e.sort_by(&:creation_index).each(&:draw) }
   end
 
   def check_click
@@ -102,5 +102,4 @@ class Game < Gosu::Window
       e.send(input_method_name)
     end
   end
-
 end

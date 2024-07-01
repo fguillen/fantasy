@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 class HudText
+  include Indexable
+
   attr_accessor :text, :size, :color, :background_color, :visible, :layer, :in_world, :position, :alignment
 
-  def initialize(position:, text: "")
+  def initialize(text: "", position: Coordinates.zero)
     @position = position
     @text = text
     @size = "medium"
@@ -14,7 +16,7 @@ class HudText
     @in_world = false
     @alignment = "top-left"
 
-    Global.hud_texts.push(self)
+    Global.hud_texts&.push(self)
   end
 
   def move; end

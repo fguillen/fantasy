@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class Tilemap
+  include Indexable
+  extend Log
+
   attr_accessor :position
 
   def initialize(map_name:, tiles:, tile_size: nil, tile_width: nil, tile_height: nil)
@@ -72,7 +75,11 @@ class Tilemap
     def locate_map(map_name)
       return @@maps[map_name] if @@maps[map_name]
 
-      puts "Initialize map: '#{map_name}'"
+      log "Initializing map: '#{map_name}' ..."
+
+      unless Dir.exist?(base_path.to_s)
+        raise "The folder of maps doesn't exists '#{base_path}', create the folder and put your map file '#{image_name}' on it"
+      end
 
       file_name = Dir.entries(base_path).find { |e| e =~ /^#{map_name}($|\.)/ }
 
@@ -80,11 +87,17 @@ class Tilemap
 
       @@maps[map_name] = "#{base_path}/#{file_name}"
 
+      log "Initialized map: '#{map_name}' ..."
+
       @@maps[map_name]
     end
 
     def base_path
-      "#{Dir.pwd}/maps"
+      if ENV["environment"] == "test"
+        "#{Dir.pwd}/test/fixtures/maps"
+      else
+        "#{Dir.pwd}/maps"
+      end
     end
   end
 end

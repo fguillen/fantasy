@@ -59,12 +59,14 @@
 #     end
 #   end
 class Actor
+  include Log
   include MoveByCursor
   include MoveByDirection
   include Mover
   include Gravitier
   include Jumper
   include UserInputs
+  include Indexable
 
   # Coordinates object where x and y represent the position of the Actor in the World (no necessarily in the Screen).
   #
@@ -164,6 +166,22 @@ class Actor
   #   actor.scale = 6
   attr_accessor :scale
 
+  # The the angle to rotate the image of the Actor when drawn (in degrees).
+  # If the value is `90` the image will rendered rotated 1 quarter of circle in clockwise direction.
+  # If the value is `-90` the image will rendered rotated 1 quarter of circle in counterclockwise direction.
+  # If the value is `180` the image will rendered rotated and rendered heads down.
+  #
+  # @note Collisions will be calculated based on the rotation = 0
+  #
+  # Default `0`.
+  #
+  # @return [Float] the rotation in degrees
+  #
+  # @example Set image heads down
+  #   actor = Actor.new("image")
+  #   actor.rotation = 180
+  attr_accessor :rotation
+
   # The value to internal name of this Actor.
   #
   # It is useful for collision management for example.
@@ -217,6 +235,18 @@ class Actor
   #   actor.collision_with = "all"
   attr_accessor :collision_with
 
+  # Represents the visibility of the image.
+  #
+  # Default `true`.
+  #
+  # @return [bool] the actual value of `visible`
+  #
+  # @example Make an Actor no visible
+  #   actor = Actor.new("image")
+  #   actor.visible = false
+  #
+  attr_accessor :visible
+
   # Generate an Actor with all the default attribute values
   # @example Generate an Actor
   #   actor = Actor.new("image")
@@ -234,13 +264,15 @@ class Actor
   # @param image_name [string] the name of the image file from `./images/*`
   # @return [Actor] the Actor
   def initialize(image_name)
-    @image_name = image_name
-    @image = Image.new(image_name)
+    self.image = image_name
+
     @name = image_name
     @position = Coordinates.zero
     @direction = Coordinates.zero
     @speed = 0
     @scale = 1
+    @rotation = 0
+    @visible = true
 
     @solid = true
     @draggable_on_debug = true
@@ -259,18 +291,27 @@ class Actor
     @on_jumping_callback = nil
     @on_floor_callback = nil
 
-    Global.actors << self
+    Global.actors&.push(self)
   end
 
-
   # Set a new image to the Actor.
-  # @param image_name [String] The image file from `./images/*`
+  # @param image_name [String] The image file from `./images.(png|jpg|jpeg)`
   #
   # @example Set a new image
   #   actor = Actor.new("player_walk")
-  #   actor.image_name = "player_jump"
+  #   actor.image = "player_jump"
   def image=(image_name)
+    @image_name = image_name
     @image = Image.new(image_name)
+  end
+
+  # Get image name of the Actor.
+  #
+  # @example Get the image name
+  #   actor = Actor.new("player")
+  #   actor.image # => "player_jump"
+  def image
+    @image_name
   end
 
   # @return [Fixnum] the Actor width in pixels
@@ -301,7 +342,7 @@ class Actor
 
   # @!visibility private
   def draw
-    @image.draw(x: position_in_camera.x, y: position_in_camera.y, scale: @scale)
+    @image.draw(x: position_in_camera.x, y: position_in_camera.y, scale: @scale, rotation: @rotation)
 
     draw_debug if Global.debug
   end
@@ -539,6 +580,9 @@ class Actor
     instance_exec(&@on_floor_callback) unless @on_floor_callback.nil?
   end
 
+  def to_s
+    "Actor (#{object_id}): #{name} (#{position.x},#{position.y})"
+  end
 
   protected
 
@@ -561,14 +605,16 @@ class Actor
   # end
 
   def draw_debug
-    Shape.rectangle(
-      position: position_in_camera,
-      width: width,
-      height: height,
-      color: Color.palette.transparent,
-      stroke_color: Color.palette.red,
-      stroke: 1
-    ) if solid
+    if solid
+      Shape.rectangle(
+        position: position_in_camera,
+        width: width,
+        height: height,
+        color: Color.palette.transparent,
+        stroke_color: Color.palette.red,
+        stroke: 1
+      )
+    end
 
     Global.pixel_fonts["medium"].draw_text("#{@position.x.floor},#{@position.y.floor}", position_in_camera.x, position_in_camera.y - 20, 1)
   end
@@ -618,17 +664,14 @@ class Actor
   # rubocop:disable Style/Next
   def collisions
     Global.actors.reject { |e| e == self }.select(&:solid?).select do |other|
-      if(
-        (@collision_with == "all" || @collision_with.include?(other.name)) &&
-        (other.collision_with == "all" || other.collision_with.include?(name))
-      )
+      if (@collision_with == "all" || @collision_with.include?(other.name)) &&
+         (other.collision_with == "all" || other.collision_with.include?(name))
+
         Utils.collision? self, other
       end
     end
   end
   # rubocop:enable Style/Next
-
-  protected
 
   attr_accessor :on_after_move_callback, :on_collision_callback, :on_destroy_callback, :on_jumping_callback, :on_floor_callback
   attr_accessor :on_click_callback
