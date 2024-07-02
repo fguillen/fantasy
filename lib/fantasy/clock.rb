@@ -170,7 +170,7 @@ class Clock
     @thread = nil
     @persistent = false # if persistent, clock is not stopped when loading new scene
 
-    Global.clocks << self
+    Global.clocks&.push(self)
   end
 
   # Executes the clock's block in an independent thread.

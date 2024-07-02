@@ -3,11 +3,6 @@
 require "test_helper"
 
 class ClockTest < Minitest::Test
-  def setup
-    Global.game_proc = Proc.new {}
-    Global.game = Game.new(100, 100)
-  end
-
   def test_default_values
     clock = Clock.new { "block" }
     assert_nil(clock.thread)
@@ -15,6 +10,9 @@ class ClockTest < Minitest::Test
   end
 
   def test_when_created_is_automatically_added_to_global_clocks
+    Global.game_proc = Proc.new {}
+    Global.game = Game.new(100, 100)
+
     clock = Clock.new { "block" }
     assert_includes(Global.clocks, clock)
   end
