@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    fantasy (0.1.19)
+    fantasy (0.1.20)
       gosu (~> 1.4.1)
       vector2d (~> 2.2.3)
 

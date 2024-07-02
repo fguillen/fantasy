@@ -61,4 +61,30 @@ class ClockTest < Minitest::Test
 
   # TODO: test_stop
   # TODO: test_when_persistent_is_true_the_clock_is_not_stopped_when_loading_new_scene
+
+  # Class methods :: INI
+  def text_class_method_run_now
+    a = 0
+    clock = Clock.run_now { a = 1 }
+    clock.thread.join
+
+    assert_equal(1, a)
+  end
+
+  def test_class_method_run_on
+    a = 0
+    clock = Clock.run_on(seconds: 0.01) { a = 1 }
+    clock.thread.join
+
+    assert_equal(1, a)
+  end
+
+  def test_class_method_repeat
+    a = 0
+    clock = Clock.repeat(seconds: 0.01, times: 2) { a += 1 }
+    clock.thread.join
+
+    assert_equal(2, a)
+  end
+  # Class methods :: END
 end

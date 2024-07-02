@@ -57,7 +57,8 @@
 #     eye_5 = Actor.new("eye_open")
 #     eye_5.position = Coordinates.new(120, 440)
 #     # this eye will blink every 1 to 4 seconds
-#     Clock.new { blink(eye_5) }.repeat(seconds: 1..4)
+#     # Same as before. Using the class method version.
+#     Clock.repeat(seconds: 1..4) { blink(eye_5) }
 #
 #     eye_6 = Actor.new("eye_open")
 #     eye_6.position = Coordinates.new(120, 505)
@@ -94,6 +95,68 @@ class Clock
   # @return [Thread] the thread that executes the block
   attr_reader :thread
 
+  # Class methods are shortcuts for the instance methods
+  #
+  # @example These are equivalents
+  #   # Class method version
+  #   Clock.run_now { puts "I'm a clock" }
+  #
+  #   # Instance method version
+  #   clock = Clock.new { puts "I'm a clock" }
+  #   clock.run_now
+  #
+  class << self
+    # Class method version of `#run_now`. It works as a shortcut for the instance method.
+    # Executes the clock's block in an independent thread.
+    #
+    # @see #run_now
+    #
+    # @param block [Proc] the block to be exectued in a new thread
+    #
+    # @example
+    #   Clock.run_now { puts "I'm a clock" }
+    def run_now(&block)
+      clock = Clock.new(&block)
+      clock.run_now
+      clock
+    end
+
+    # Class method version of `#run_on`. It works as a shortcut for the instance method.
+    # Executes the clock's block in an independent thread after a certain amount of `seconds`.
+    #
+    # @see #run_on
+    #
+    # @param seconds [Number] The amount of seconds to wait
+    # @param block [Proc] the block to be exectued in a new thread
+    #
+    # @example The clock will be triggered after 2 seconds
+    #   Clock.run_on(seconds: 2) { puts "I'm a clock" }
+    def run_on(seconds:, &block)
+      clock = Clock.new(&block)
+      clock.run_on(seconds: seconds)
+      clock
+    end
+
+    # Class method version of `#repeat`. It works as a shortcut for the instance method.
+    # Executes the clock's block in an independent thread.
+    #   and repeats the execution every certain amount of `seconds` for a certain amount of `times`.
+    #
+    # @see #repeat
+    #
+    # @param seconds [Number, Range] the amount of seconds to wait after each execution.
+    #   If a Ranged is passed. A random number between the range will be evaluated every iteration and used to wait for the next iteration.
+    # @param times [Integer] the amount of times to repeat the execution
+    # @param block [Proc] the block to be exectued in a new thread
+    #
+    # @example Repeat 3 times, every 2 seconds.
+    #   Clock.repeat(seconds: 2, times: 3) { puts "I'm a clock" }
+    def repeat(seconds: 1, times: Float::INFINITY, &block)
+      clock = Clock.new(&block)
+      clock.repeat(seconds: seconds, times: times)
+      clock
+    end
+  end
+
   # Generate a Clock with all defaults. The Clock won't run until invoked.
   # @example Generate a Clock
   #   clock = Clock.new { puts "I'm a clock" }
@@ -111,6 +174,8 @@ class Clock
   end
 
   # Executes the clock's block in an independent thread.
+  # @see Clock.run_now The Class method version of this method.
+  #
   # @example
   #   clock.run_now
   def run_now
@@ -121,6 +186,9 @@ class Clock
   end
 
   # Executes the clock's block in an independent thread after a certain amount of `seconds`.
+  #
+  # @see Clock.run_on The Class method version of this method.
+  #
   # @example The clock will be triggered after 2 seconds
   #   clock.run_on(seconds: 2)
   # @example The clock will be triggered after 100 milliseconds
@@ -137,14 +205,16 @@ class Clock
   end
 
   # Executes the clock's block in an independent thread.
-  # and repeats the execution every certain amount of `seconds` for a certain amount of `times`.
+  #   and repeats the execution every certain amount of `seconds` for a certain amount of `times`.
+  #
+  # @see Clock.repeat The Class method version of this method.
   #
   # @example The clock will be repeated every 2 seconds for 5 times
   #   clock.repeat(seconds: 2, times: 5)
   # @example The clock will be repeated every randome amount of seconds between 1 and 10, Infinity times.
   #   clock.repeat(seconds: 1..10)
-  # @param seconds [Number | Range] the amount of seconds to wait after each execution.
-  # If a Ranged is passed. A random number between the range will be evaluated every iteration and used to wait for the next iteration.
+  # @param seconds [Number, Range] the amount of seconds to wait after each execution.
+  #   If a Ranged is passed. A random number between the range will be evaluated every iteration and used to wait for the next iteration.
   # @param times [Integer] the amount of times to repeat the execution
   def repeat(seconds: 1, times: Float::INFINITY)
     times_executed = 0
