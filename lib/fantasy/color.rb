@@ -2,25 +2,67 @@
 
 require "ostruct"
 
+# Represents a color. Based on the Red, Green, Blue, and Alpha values.
+# Colors can be created using the class method `Color.new`. And setting the color components.
+# @example Create a color
+#   Color.new(r: 255, g: 0, b: 0)
+#
+# Or we can get them directly from the `Color.palette`
+# @example Get color from palette
+#   Color.palette.rosy_brown
+#
 class Color < Gosu::Color
-  attr_reader :a, :r, :g, :b, :name
 
+  # @return [Integer] The Red value of the color
+  attr_reader :r
+
+  # @return [Integer] The Green value of the color
+  attr_reader :g
+
+  # @return [Integer] The Blue value of the color
+  attr_reader :b
+
+  # @return [Integer] The Alpha value of the color
+  attr_reader :a
+
+  # @return [String] The name of the color
+  attr_reader :name
+
+  # Generate a Color from the Red, Green, Blue, and Alpha values
+  # @example Generate a Color
+  #   color = Color.new(r: 255, g: 10, b: 12)
+  #   color.r # => 255
+  #   color.g # => 10
+  #   color.b # => 12
+  #   color.a # => 255
+  #   color.name # => nil
+  #
+  # @param r [Integer] the Red value
+  # @param g [Integer] the Green value
+  # @param b [Integer] the Blue value
+  # @param a [Integer] the Alpha value
+  # @param name [String] the name of the color
+  #
+  # @return [Color] the Color object
   def initialize(r:, g:, b:, a: 255, name: nil)
     super(a, r, g, b)
 
-    @a = a
     @r = r
     @g = g
     @b = b
+    @a = a
+
     @name = name
   end
 
+  # @return [String] the hex value of the color
   def hex
     [@r, @g, @b].map do |e|
       e.to_s(16).rjust(2, "0")
     end.join
   end
 
+  # @return [String] the string representation of the color
   def to_s
     result = "r:#{@r}, g:#{@g}, b:#{@b}, a:#{@a}, hex:#{hex}"
     result += " (#{name})" unless name.nil?
@@ -29,6 +71,12 @@ class Color < Gosu::Color
   end
 
   class << self
+    # A collection of colors ready to use.
+    # @example Get palette color
+    #   Color.palette.dark_goldenrod
+    # {https://github.com/fguillen/fantasy/blob/main/COLOR_PALETTE.md See full palette}
+    #
+    # @return [OpenStruct] the palette of colors
     attr_reader :palette
   end
 
