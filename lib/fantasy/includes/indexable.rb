@@ -30,8 +30,6 @@ module Indexable
       end
     end
 
-    private
-
     define_method :set_creation_index do
       @creation_index = Indexable.last_creation_index + 1
       Indexable.last_creation_index = @creation_index
