@@ -23,7 +23,7 @@ class Shape
   # rubocop:enable Metrics/ParameterLists
 
   def self.rectangle(position: Coordinates.zero, width: 10, height: 10, stroke: 1, fill: true, color: Color.palette.gold, stroke_color: nil)
-    Shape.new(kind: "rectangle", position: position, width: width, height: height, color: color)
+    Shape.new(kind: "rectangle", position:, width:, height:, stroke:, fill:, color:, stroke_color:)
   end
 
   def draw

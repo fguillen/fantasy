@@ -11,7 +11,7 @@
 #   player.speed = 200
 #   player.layer = 1
 #   player.move_with_cursors
-#   player.collision_with = ["enemy", "bullets"] # default "all"
+#   player.collision_with = ["enemy", "bullets"] # default "none"
 #
 #   player.on_collision do |other|
 #     if other.name == "enemy"
@@ -38,7 +38,7 @@
 #       @speed = 200
 #       @layer = 1
 #       @direction = Coordinates.zero
-#       @collision_with = ["enemy", "bullets"] # default "all"
+#       @collision_with = ["enemy", "bullets"] # default "none"
 #       move_with_cursors
 #     end
 #
@@ -219,10 +219,10 @@ class Actor
   #   actor.layer = -1
   attr_accessor :layer
 
-  # Array of strings (or "all").
+  # Array of strings (or "all", or "none").
   # Represents with which other solid Actors this Actor collide.
   #
-  # Default `"all"`.
+  # Default `"none"`.
   #
   # @return [Array, String] the actual list of names of Actors to collide with
   #
@@ -230,9 +230,20 @@ class Actor
   #   actor = Actor.new("image")
   #   actor.collision_with = ["enemy", "bullet"]
   #
+  # @example Set this Actors collides only with enemies
+  #   actor = Actor.new("image")
+  #   actor.collision_with = ["enemy"]
+  #   # or using the shortcut:
+  #   actor.collision_with = "enemy"
+  #
   # @example Set this Actors collides with all other Actors
   #   actor = Actor.new("image")
   #   actor.collision_with = "all"
+  #
+  # @example Set this Actors collides with none other Actors
+  #   actor = Actor.new("image")
+  #   actor.collision_with = "none" # it is the default
+  #
   attr_accessor :collision_with
 
   # Represents the visibility of the image.
@@ -259,7 +270,7 @@ class Actor
   #   actor.layer # => 0
   #   actor.gravity # => 0
   #   actor.jump_force # => 0
-  #   actor.collision_with # => "all"
+  #   actor.collision_with # => "none"
   #
   # @param image_name [string] the name of the image file from `./images/*`
   # @return [Actor] the Actor
@@ -281,7 +292,7 @@ class Actor
     @layer = 0
     @gravity = 0
     @jump_force = 0
-    @collision_with = "all"
+    @collision_with = "none"
 
     @on_floor = false
 
@@ -303,6 +314,14 @@ class Actor
   def image=(image_name)
     @image_name = image_name
     @image = Image.new(image_name)
+  end
+
+  def collision_with=(value)
+    if value.is_a?(String) && value != "all" && value != "none"
+      value = [value]
+    end
+
+    @collision_with = value
   end
 
   # Get image name of the Actor.
@@ -610,7 +629,7 @@ class Actor
         position: position_in_camera,
         width: width,
         height: height,
-        color: Color.palette.transparent,
+        fill: false,
         stroke_color: Color.palette.red,
         stroke: 1
       )
@@ -663,10 +682,10 @@ class Actor
 
   # rubocop:disable Style/Next
   def collisions
-    Global.actors.reject { |e| e == self }.select(&:solid?).select do |other|
-      if (@collision_with == "all" || @collision_with.include?(other.name)) &&
-         (other.collision_with == "all" || other.collision_with.include?(name))
+    return [] if @collision_with == "none"
 
+    Global.actors.reject { |e| e == self }.select(&:solid?).select do |other|
+      if (@collision_with == "all" || @collision_with.include?(other.name))
         Utils.collision? self, other
       end
     end

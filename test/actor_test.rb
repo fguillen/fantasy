@@ -20,7 +20,7 @@ class ActorTest < Minitest::Test
     assert_equal(1, @actor.scale)
     assert_equal("player", @actor.name)
     assert_equal(0, @actor.layer)
-    assert_equal("all", @actor.collision_with)
+    assert_equal("none", @actor.collision_with)
   end
 
   def test_change_position
@@ -71,8 +71,23 @@ class ActorTest < Minitest::Test
     assert_equal(10, @actor.layer)
   end
 
+  def test_change_collision_none
+    @actor.collision_with = "none"
+    assert_equal("none", @actor.collision_with)
+  end
+
+  def test_change_collision_all
+    @actor.collision_with = "all"
+    assert_equal("all", @actor.collision_with)
+  end
+
   def test_change_collision_with
     @actor.collision_with = ["enemy"]
+    assert_equal(["enemy"], @actor.collision_with)
+  end
+
+  def test_change_collision_with_using_shortcut
+    @actor.collision_with = "enemy"
     assert_equal(["enemy"], @actor.collision_with)
   end
   # Attributes :: END
@@ -152,7 +167,7 @@ class ActorTest < Minitest::Test
     assert_equal("LAYER", other_actor.layer)
     assert_equal("GRAVITY", other_actor.gravity)
     assert_equal("JUMP_FORCE", other_actor.jump_force)
-    assert_equal("COLLISION_WITH", other_actor.collision_with)
+    assert_equal(["COLLISION_WITH"], other_actor.collision_with)
 
     assert_equal("ON_AFTER_MOVE_CALLBACK", other_actor.instance_variable_get("@on_after_move_callback"))
     assert_equal("ON_COLLISION_CALLBACK", other_actor.instance_variable_get("@on_collision_callback"))
@@ -321,6 +336,7 @@ class ActorTest < Minitest::Test
   # Collision :: INI
   def test_collision_after_moving_by_direction
     @actor.position = Coordinates.zero
+    @actor.collision_with = "all"
     other_actor = Actor.new("player")
     other_actor.position = Coordinates.new(@actor.width, 0)
 
@@ -347,6 +363,7 @@ class ActorTest < Minitest::Test
 
   def test_collision_after_moving_by_cursor
     @actor.position = Coordinates.zero
+    @actor.collision_with = "all"
     @actor.move_with_cursors
     other_actor = Actor.new("player")
     other_actor.position = Coordinates.new(@actor.width, 0)
@@ -374,6 +391,7 @@ class ActorTest < Minitest::Test
 
   def test_collision_after_gravity
     @actor.position = Coordinates.zero
+    @actor.collision_with = "all"
     other_actor = Actor.new("player")
     other_actor.position = Coordinates.new(0, @actor.height)
 
