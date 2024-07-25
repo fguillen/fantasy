@@ -1,0 +1,5 @@
+[core]
+    sshCommand = ssh -i ~/.ssh/id_rsa -F /dev/null
+
+[user]
+	name = fguillen
