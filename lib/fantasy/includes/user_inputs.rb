@@ -56,7 +56,6 @@ module UserInputs
   end
 
   def on_click_do
-    puts "XXX: on_click_do: #{@on_click_callback}"
     instance_exec(&@on_click_callback) unless @on_click_callback.nil?
   end
 

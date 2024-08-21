@@ -2,7 +2,7 @@
 
 module MoveByCursor
   # rubocop:disable Metrics/PerceivedComplexity
-  def move_with_cursors(down: nil, up: nil, left: nil, right: nil, jump: false)
+  def move_with_cursors(down: nil, up: nil, left: nil, right: nil, jump: false, continuous: false)
     if down.nil? && up.nil? && left.nil? && right.nil?
       down = true
       up = true
@@ -15,6 +15,8 @@ module MoveByCursor
     @move_with_cursors_left = left || false
     @move_with_cursors_right = right || false
     @move_with_cursors_jump = jump || false
+
+    @continuous = continuous
   end
   # rubocop:enable Metrics/PerceivedComplexity
 
@@ -23,19 +25,19 @@ module MoveByCursor
   # @!visibility private
   def move_by_cursors
     if Gosu.button_down?(Cursor.down) && @move_with_cursors_down
-      move_by(Coordinates.down)
-    end
+      move_in_direction(Coordinates.down)
 
-    if Gosu.button_down?(Cursor.up) && @move_with_cursors_up
-      move_by(Coordinates.up)
-    end
+    elsif Gosu.button_down?(Cursor.up) && @move_with_cursors_up
+      move_in_direction(Coordinates.up)
 
-    if Gosu.button_down?(Cursor.right) && @move_with_cursors_right
-      move_by(Coordinates.right)
-    end
+    elsif Gosu.button_down?(Cursor.right) && @move_with_cursors_right
+      move_in_direction(Coordinates.right)
 
-    if Gosu.button_down?(Cursor.left) && @move_with_cursors_left
-      move_by(Coordinates.left)
+    elsif Gosu.button_down?(Cursor.left) && @move_with_cursors_left
+      move_in_direction(Coordinates.left)
+
+    elsif !@continuous
+      move_in_direction(Coordinates.zero)
     end
 
     if Gosu.button_down?(Cursor.space_bar) && !@jumping && @on_floor && @move_with_cursors_jump
@@ -46,7 +48,8 @@ module MoveByCursor
 
   private
 
-  def move_by(direction)
-    @position += direction * @speed * Global.frame_time
+  def move_in_direction(direction)
+    @direction = direction
+    # @position += direction * @speed * Global.frame_time
   end
 end

@@ -5,9 +5,14 @@ class Image
     @image = Image.load(image_name)
   end
 
-  def draw(x:, y:, scale: 1, rotation: 0)
+  def draw(x:, y:, scale: 1, rotation: 0, flip: "none")
+    scale_x = scale
+    scale_y = scale
+    scale_x *= -1 if flip == "horizontal" || flip == "both"
+    scale_y *= -1 if flip == "vertical" || flip == "both"
+
     # draw_rot(x, y, z = 0, angle = 0, center_x = 0.5, center_y = 0.5, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default) ⇒ void
-    @image.draw_rot(x + (width / 2), y + (height / 2), 0, rotation, 0.5, 0.5, scale, scale)
+    @image.draw_rot(x + (width / 2), y + (height / 2), 0, rotation, 0.5, 0.5, scale_x, scale_y)
   end
 
   def width

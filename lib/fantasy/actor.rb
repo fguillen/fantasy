@@ -182,7 +182,10 @@ class Actor
   #   actor.rotation = 180
   attr_accessor :rotation
 
-  # The value to internal name of this Actor.
+  # The actual value of the image flip
+  attr_reader :flip
+
+  # The value of the internal name of this Actor.
   #
   # It is useful for collision management for example.
   #
@@ -266,6 +269,8 @@ class Actor
   #   actor.speed # => 0
   #   actor.scale # => 1
   #   actor.solid # => true
+  #   actor.rotation # => 0
+  #   actor.flip # => "none"
   #   actor.draggable_on_debug # => true
   #   actor.layer # => 0
   #   actor.gravity # => 0
@@ -283,6 +288,7 @@ class Actor
     @speed = 0
     @scale = 1
     @rotation = 0
+    @flip = "none" # "horizontal" or "vertical" or "none" or "both"
     @visible = true
 
     @solid = true
@@ -324,6 +330,35 @@ class Actor
     @collision_with = value
   end
 
+  # Configure the flip of the image.
+  # Default `"none"`.
+  #
+  # @param value [String] "horizontal" or "vertical" or "none" or "both"
+  #
+  # @example Set flip horizontal
+  #   actor = Actor.new("player_walk")
+  #   actor.flip = "horizontal"
+  # @example Set flip vertical
+  #   actor = Actor.new("player_walk")
+  #   actor.flip = "vertical"
+  # @example Unset any flip
+  #   actor = Actor.new("player_walk")
+  #   actor.flip = "none"
+  # @example Set flip in both coordinates horizontal and vertical
+  #   actor = Actor.new("player_walk")
+  #   actor.flip = "both"
+  def flip(value)
+    valid_values = ["horizontal", "vertical", "none", "both"]
+    if !valid_values.include?(value)
+      raise ArgumentError, "The value must be one of: #{valid_values.join(", ")}"
+    end
+
+    puts "Set flip to: #{value}"
+
+    @flip = value
+  end
+
+
   # Get image name of the Actor.
   #
   # @example Get the image name
@@ -361,7 +396,7 @@ class Actor
 
   # @!visibility private
   def draw
-    @image.draw(x: position_in_camera.x, y: position_in_camera.y, scale: @scale, rotation: @rotation)
+    @image.draw(x: position_in_camera.x, y: position_in_camera.y, scale: @scale, rotation: @rotation, flip: @flip)
 
     draw_debug if Global.debug
   end
