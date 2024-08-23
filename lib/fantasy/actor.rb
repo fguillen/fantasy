@@ -189,7 +189,7 @@ class Actor
   #
   # It is useful for collision management for example.
   #
-  # Default (same as `image_name`).
+  # Default (taken from the constructor parameter).
   #
   # @return [String] the actual name
   #
@@ -276,13 +276,22 @@ class Actor
   #   actor.gravity # => 0
   #   actor.jump_force # => 0
   #   actor.collision_with # => "none"
+  #   actor.name # => "image"
   #
-  # @param image_name [string] the name of the image file from `./images/*`
+  # @param image_name_or_image_or_animation [string | Image | Animation] the name of the image file from `./images/*`. Or an Image object. Or an Animation object
   # @return [Actor] the Actor
-  def initialize(image_name)
-    self.image = image_name
+  def initialize(image_name_or_image_or_animation)
+    self.sprite = image_name_or_image_or_animation
 
-    @name = image_name
+    @name =
+      if image_name_or_image_or_animation.is_a?(Animation)
+        image_name_or_image_or_animation.name
+      elsif image_name_or_image_or_animation.is_a?(String)
+        image_name_or_image_or_animation
+      else
+        nil
+      end
+
     @position = Coordinates.zero
     @direction = Coordinates.zero
     @speed = 0
@@ -311,15 +320,25 @@ class Actor
     Global.actors&.push(self)
   end
 
-  # Set a new image to the Actor.
-  # @param image_name [String] The image file from `./images.(png|jpg|jpeg)`
+  # Set a new graphical represenation of the Actor.
+  # @param image_name_or_animation [String|Animation] The image file from `./images.(png|jpg|jpeg)`. Or an Animation
   #
   # @example Set a new image
   #   actor = Actor.new("player_walk")
-  #   actor.image = "player_jump"
-  def image=(image_name)
-    @image_name = image_name
-    @image = Image.new(image_name)
+  #   actor.sprite = "player_jump"
+  #
+  # @example Set a new animation
+  #   animation = Animation.new(names: ["apple_1", "apple_2"])
+  #   actor = Actor.new("player_walk")
+  #   actor.sprite = animation
+  def sprite=(image_name_or_image_or_animation)
+    if image_name_or_image_or_animation.is_a?(Animation)
+      @sprite = image_name_or_image_or_animation
+    elsif image_name_or_image_or_animation.is_a?(Image)
+      @sprite = image_name_or_image_or_animation
+    else
+      @sprite = Image.new(image_name_or_image_or_animation)
+    end
   end
 
   def collision_with=(value)
@@ -358,24 +377,14 @@ class Actor
     @flip = value
   end
 
-
-  # Get image name of the Actor.
-  #
-  # @example Get the image name
-  #   actor = Actor.new("player")
-  #   actor.image # => "player_jump"
-  def image
-    @image_name
-  end
-
   # @return [Fixnum] the Actor width in pixels
   def width
-    @image.width * @scale
+    @sprite.width * @scale
   end
 
   # @return [Fixnum] the Actor height in pixels
   def height
-    @image.height * @scale
+    @sprite.height * @scale
   end
 
   # @return [Boolean] the value of `@solid`
@@ -396,7 +405,7 @@ class Actor
 
   # @!visibility private
   def draw
-    @image.draw(x: position_in_camera.x, y: position_in_camera.y, scale: @scale, rotation: @rotation, flip: @flip)
+    @sprite.draw(x: position_in_camera.x, y: position_in_camera.y, scale: @scale, rotation: @rotation, flip: @flip)
 
     draw_debug if Global.debug
   end
@@ -417,6 +426,10 @@ class Actor
     if @dragging
       @position = mouse_position - @dragging_offset
     else
+      # Cursors moving
+      last_position = @position
+      move_by_cursors
+
       # Direction moving
       unless @direction.zero?
         last_position = @position
@@ -427,10 +440,6 @@ class Actor
           manage_collisions(last_position)
         end
       end
-
-      # Cursors moving
-      last_position = @position
-      move_by_cursors
 
       # Check collision after cursor moving
       if @solid && @position != last_position
@@ -471,8 +480,7 @@ class Actor
 
   # @!visibility private
   def clone
-    actor = self.class.new(@image_name)
-    actor.image_name = @image_name
+    actor = self.class.new(@sprite)
     actor.name = @name
     actor.position = @position.clone
     actor.direction = @direction.clone
@@ -549,7 +557,7 @@ class Actor
   # @example Change image when jumping
   #   actor = Actor.new("walk")
   #   actor.on_jumping do
-  #     actor.image_name = "jump"
+  #     actor.sprite = "jump"
   #   end
   def on_jumping(&block)
     @on_jumping_callback = block
@@ -560,8 +568,8 @@ class Actor
   # @example Change image when jumping
   #   actor = Actor.new("walk")
   #   actor.on_floor do
-  #     actor.image_name = "land"
-  #     Clock.new { actor.image_name = "walk" }.run_on(seconds: 0.8)
+  #     actor.sprite = "land"
+  #     Clock.new { actor.sprite = "walk" }.run_on(seconds: 0.8)
   #   end
   def on_floor(&block)
     @on_floor_callback = block
@@ -614,7 +622,7 @@ class Actor
   # @example Change image when jumping
   #   class Player < Actor
   #     def on_jumping_do
-  #       self.image_name = "jump"
+  #       self.sprite = "jump"
   #     end
   #   end
   def on_jumping_do
@@ -626,8 +634,8 @@ class Actor
   # @example Change image when jumping
   #   class Player < Actor
   #     def.on_floor_do
-  #       self.image_name = "land"
-  #       Clock.new { self.image_name = "walk" }.run_on(seconds: 0.8)
+  #       self.sprite = "land"
+  #       Clock.new { self.sprite = "walk" }.run_on(seconds: 0.8)
   #     end
   #   end
   def on_floor_do
@@ -639,8 +647,6 @@ class Actor
   end
 
   protected
-
-  attr_accessor :image_name
 
   # TODO: make this work optimized
   # def position_top_left

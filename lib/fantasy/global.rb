@@ -6,7 +6,7 @@ module Global
   class << self
     include Log
 
-    attr_accessor :actors, :hud_texts, :hud_images, :backgrounds, :tile_maps, :clocks, :shapes
+    attr_accessor :actors, :hud_texts, :hud_images, :animations, :backgrounds, :tile_maps, :clocks, :shapes
     attr_accessor :debug
     attr_accessor :setup_proc, :loop_proc, :button_proc
     attr_accessor :presentation_proc, :game_proc, :end_proc
@@ -31,6 +31,7 @@ module Global
       @actors = []
       @hud_texts = []
       @hud_images = []
+      @animations = []
       @backgrounds = []
       @tile_maps = []
       @clocks = []
@@ -145,6 +146,7 @@ module Global
       @actors.clear
       @hud_texts.clear
       @hud_images.clear
+      @animations.clear
       @backgrounds.clear
       @tile_maps.clear
       @shapes.clear

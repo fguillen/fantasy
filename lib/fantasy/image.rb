@@ -1,8 +1,14 @@
 # frozen_string_literal: true
 
 class Image
-  def initialize(image_name)
-    @image = Image.load(image_name)
+  attr_reader :image
+
+  def initialize(image_name_or_gosu_image)
+    if(image_name_or_gosu_image.is_a?(Gosu::Image))
+      @image = image_name_or_gosu_image
+    else
+      @image = Image.load(image_name_or_gosu_image)
+    end
   end
 
   def draw(x:, y:, scale: 1, rotation: 0, flip: "none")

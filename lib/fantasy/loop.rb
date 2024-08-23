@@ -65,6 +65,8 @@ class Game < Gosu::Window
     Global.actors.each(&:move)
     Global.hud_texts.each(&:move)
     Global.hud_images.each(&:move)
+    Global.hud_images.each(&:move)
+    Global.animations.each(&:update)
     Camera.main.move
 
     Global.loop_proc&.call
