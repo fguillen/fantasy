@@ -429,7 +429,7 @@ end
 # position is relative to Camera.main
 on_game do
   background = Background.new(image_name: "beach")
-  # background.replicable = false # if you don't want the image to replicate
+  # background.repeat = false # if you don't want the image to replicate
   background.scale = 6
 end
 ```

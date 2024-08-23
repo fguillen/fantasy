@@ -15,7 +15,7 @@ class BackgroundTest < Minitest::Test
     assert_equal(1, @background.scale)
     assert(@background.visible)
     assert_equal(-100, @background.layer)
-    assert_equal(true, @background.replicable)
+    assert_equal(false, @background.repeat)
   end
 
   def test_change_position
@@ -39,9 +39,12 @@ class BackgroundTest < Minitest::Test
     refute(@background.visible)
   end
 
-  def test_change_replicable
-    @background.replicable = false
-    refute(@background.replicable)
+  def test_change_repeat
+    @background.repeat = false
+    refute(@background.repeat)
+
+    @background.repeat = true
+    assert(@background.repeat)
   end
   # Attributes :: END
 
@@ -66,7 +69,7 @@ class BackgroundTest < Minitest::Test
     @background.destroy
   end
 
-  def test_draw_replicable
+  def test_draw_repeat
     @background.scale = 2
     Global.instance_variable_set("@screen_width", 16)
     Global.instance_variable_set("@screen_height", 16)
@@ -81,7 +84,7 @@ class BackgroundTest < Minitest::Test
     @background.draw
   end
 
-  def test_draw_replicable_when_camera_moves
+  def test_draw_repeat_when_camera_moves
     @background.scale = 2
     Global.instance_variable_set("@screen_width", 16)
     Global.instance_variable_set("@screen_height", 16)
