@@ -261,6 +261,22 @@ class Actor
   #
   attr_accessor :visible
 
+  # TODO: Change the name, I don't like to say `kill``
+  # When active the Actor will be removed when
+  # it is outside of the screen (by 100 pixels).
+  #
+  # When an Actor is autokilled, the on_destroy method will NOT be called.
+  #
+  # Default `true`.
+  #
+  # @return [bool] the actual value of `autokill`
+  #
+  # @example Make an Actor to not autokill when out of the screen
+  #   actor = Actor.new("image")
+  #   actor.autokill = false
+  #
+  attr_accessor :autokill
+
   # Generate an Actor with all the default attribute values
   # @example Generate an Actor
   #   actor = Actor.new("image")
@@ -271,6 +287,7 @@ class Actor
   #   actor.solid # => true
   #   actor.rotation # => 0
   #   actor.flip # => "none"
+  #   actor.autokill # => "true"
   #   actor.draggable_on_debug # => true
   #   actor.layer # => 0
   #   actor.gravity # => 0
@@ -299,6 +316,7 @@ class Actor
     @rotation = 0
     @flip = "none" # "horizontal" or "vertical" or "none" or "both"
     @visible = true
+    @autokill = true
 
     @solid = true
     @draggable_on_debug = true
@@ -450,6 +468,7 @@ class Actor
       end
     end
 
+    checking_autokill if @autokill
     on_after_move_do
   end
 
@@ -480,6 +499,7 @@ class Actor
     actor.gravity = @gravity
     actor.jump_force = @jump_force
     actor.collision_with = @collision_with
+    actor.autokill = @autokill
 
     actor.on_after_move_callback = @on_after_move_callback
     actor.on_collision_callback = @on_collision_callback
@@ -720,6 +740,21 @@ class Actor
     end
   end
   # rubocop:enable Style/Next
+
+  # If actor is out of the screen by 100 pixels, destroy it
+  def checking_autokill
+    margin_pixels = 100
+
+    if(
+      position_in_camera.x < -margin_pixels ||
+      position_in_camera.x > Global.screen_width + margin_pixels ||
+      position_in_camera.y < -margin_pixels ||
+      position_in_camera.y > Global.screen_height + margin_pixels
+    )
+      puts ">>>> Autokill: #{self.name}"
+      Global.actors.delete(self)
+    end
+  end
 
   attr_accessor :on_after_move_callback, :on_collision_callback, :on_destroy_callback, :on_jumping_callback, :on_floor_callback
   attr_accessor :on_click_callback
