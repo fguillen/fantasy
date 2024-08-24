@@ -16,6 +16,7 @@ module MoveByCursor
     @move_with_cursors_right = right || false
     @move_with_cursors_jump = jump || false
 
+    @move_with_cursors_activated = true
     @continuous = continuous
   end
   # rubocop:enable Metrics/PerceivedComplexity
@@ -24,6 +25,8 @@ module MoveByCursor
 
   # @!visibility private
   def move_by_cursors
+    return if !@move_with_cursors_activated
+
     if Gosu.button_down?(Cursor.down) && @move_with_cursors_down
       move_in_direction(Coordinates.down)
 
@@ -48,8 +51,8 @@ module MoveByCursor
 
   private
 
-  def move_in_direction(direction)
-    @direction = direction
+  def move_in_direction(cursor_direction)
+    @direction = cursor_direction
     # @position += direction * @speed * Global.frame_time
   end
 end

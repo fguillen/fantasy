@@ -434,16 +434,6 @@ class Actor
       unless @direction.zero?
         last_position = @position
         move_by_direction
-
-        # Check collision after cursor moving
-        if @solid && @position != last_position
-          manage_collisions(last_position)
-        end
-      end
-
-      # Check collision after cursor moving
-      if @solid && @position != last_position
-        manage_collisions(last_position)
       end
 
       # Gravity force
@@ -452,12 +442,10 @@ class Actor
       end
 
       # Apply forces
-      last_position = @position
       apply_forces
 
-      # Check collision after gravity moving
-      if @solid && @position != last_position
-        @on_floor = false
+      # Check collisions after moving
+      if @solid
         manage_collisions(last_position)
       end
     end
