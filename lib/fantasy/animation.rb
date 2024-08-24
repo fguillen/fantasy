@@ -12,8 +12,12 @@ class Animation
   # Default `0`.
   #
   # @example Get the actual image frame
-  #   animation = Animatino.new(secuence: "image_secuence", columns: 3)
+  #   animation = Animation.new(secuence: "image_secuence", columns: 3)
   #   animation.frame # => 0
+  #
+  # @example Set the initial frame in the constructor
+  #   animation = Animation.new(secuence: "image_secuence", columns: 3, frame: 2)
+  #   animation.frame # => 2
   attr_accessor :frame
 
   # The speed of the animation in frames per second.
@@ -21,10 +25,10 @@ class Animation
   # Default `10`.
   #
   # @example Get the animation speed
-  #   animation = Animatino.new(secuence: "image_secuence", columns: 3)
+  #   animation = Animation.new(secuence: "image_secuence", columns: 3)
   #   animation.speed # => 10
   # @example Set the animation speed
-  #   animation = Animatino.new(secuence: "image_secuence", columns: 3)
+  #   animation = Animation.new(secuence: "image_secuence", columns: 3)
   #   animation.speed = 20
   attr_accessor :speed
 
@@ -33,10 +37,10 @@ class Animation
   #
   #
   # @example Get the name
-  #   animation = Animatino.new(secuence: "image_secuence", columns: 3)
+  #   animation = Animation.new(secuence: "image_secuence", columns: 3)
   #   animation.name # => "image_secuence"
   # @example Set the name
-  #   animation = Animatino.new(secuence: "image_secuence", columns: 3)
+  #   animation = Animation.new(secuence: "image_secuence", columns: 3)
   #   animation.name = "new_name"
   attr_accessor :name
 
@@ -62,7 +66,8 @@ class Animation
   #
   # Other params:
   # @param speed [integer] the number frames per second. Default `10`.
-  def initialize(names: nil, secuence: nil, columns: nil, rows: nil, speed: 10)
+  # @param frame [integer] the initial frame. Default `0`.
+  def initialize(names: nil, secuence: nil, columns: nil, rows: nil, speed: 10, frame: 0)
     if names.nil? && secuence.nil?
       raise ArgumentError, "'names' or 'secuence' must be provided"
     end
@@ -103,7 +108,7 @@ class Animation
       end
     end
 
-    @frame = 0
+    @frame = frame
     @speed = speed
     @last_frame_set_at = Global.seconds_in_scene
 
