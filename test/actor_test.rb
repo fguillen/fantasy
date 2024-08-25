@@ -115,10 +115,10 @@ class ActorTest < Minitest::Test
   end
 
   def test_image_setter
-    old_image = @actor.instance_variable_get("@image")
-    @actor.image = "zombie"
-    assert_instance_of(Image, @actor.instance_variable_get("@image"))
-    refute_equal(old_image, @actor.instance_variable_get("@image"))
+    old_sprite = @actor.instance_variable_get("@sprite")
+    @actor.sprite = "zombie"
+    assert_instance_of(Image, @actor.instance_variable_get("@sprite"))
+    refute_equal(old_sprite, @actor.instance_variable_get("@sprite"))
   end
   # Helper methods :: END
 
@@ -492,5 +492,20 @@ class ActorTest < Minitest::Test
     actor.expects(:on_click_do).never
     gosu_game.button_down(Mouse.left)
   end
-  # Callbacks :: INI
+  # Callbacks :: END
+
+  def test_on_state_and_state
+    jumping = false
+    @actor.on_state(:jumping) do
+      jumping = true
+    end
+
+    refute(jumping)
+    @actor.state(:jumping)
+    assert(jumping)
+  end
+
+  def test_raise_error_if_calling_not_existing_state
+    assert_raises(ArgumentError) { @actor.state(:unknown) }
+  end
 end

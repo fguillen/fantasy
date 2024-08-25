@@ -27,19 +27,29 @@ module MoveByCursor
   def move_by_cursors
     return if !@move_with_cursors_activated
 
+    any_direction = false
+
     if Gosu.button_down?(Cursor.down) && @move_with_cursors_down
       move_in_direction(Coordinates.down)
+      any_direction = true
+    end
 
-    elsif Gosu.button_down?(Cursor.up) && @move_with_cursors_up
+    if Gosu.button_down?(Cursor.up) && @move_with_cursors_up
       move_in_direction(Coordinates.up)
+      any_direction = true
+    end
 
-    elsif Gosu.button_down?(Cursor.right) && @move_with_cursors_right
+    if Gosu.button_down?(Cursor.right) && @move_with_cursors_right
       move_in_direction(Coordinates.right)
+      any_direction = true
+    end
 
-    elsif Gosu.button_down?(Cursor.left) && @move_with_cursors_left
+    if Gosu.button_down?(Cursor.left) && @move_with_cursors_left
       move_in_direction(Coordinates.left)
+      any_direction = true
+    end
 
-    elsif !@continuous
+    if !@continuous && !any_direction
       move_in_direction(Coordinates.zero)
     end
 
@@ -52,7 +62,7 @@ module MoveByCursor
   private
 
   def move_in_direction(cursor_direction)
-    @direction = cursor_direction
+    @direction += cursor_direction
     # @position += direction * @speed * Global.frame_time
   end
 end

@@ -335,15 +335,23 @@ class Actor
     @on_jumping_callback = nil
     @on_floor_callback = nil
 
+    @states = {}
+    @state = nil
+
     Global.actors&.push(self)
   end
 
   # Set a new graphical represenation of the Actor.
-  # @param image_name_or_animation [String|Animation] The image file from `./images.(png|jpg|jpeg)`. Or an Animation
+  # @param image_name_or_animation [String|Image|Animation] The image file from `./images.(png|jpg|jpeg)`. Or an Image. Or an Animation
   #
-  # @example Set a new image
+  # @example Set a new image by name
   #   actor = Actor.new("player_walk")
   #   actor.sprite = "player_jump"
+  #
+  # @example Set a new image
+  #   image = Image.new("player_idle")
+  #   actor = Actor.new("player_walk")
+  #   actor.sprite = image
   #
   # @example Set a new animation
   #   animation = Animation.new(names: ["apple_1", "apple_2"])
@@ -419,6 +427,44 @@ class Actor
   def direction=(value)
     @direction = value
     @direction = @direction.normalize unless @direction.zero?
+  end
+
+  # Configure a specific behavior on a state of the Actor
+  #
+  # @param value [Symbol] The name of the state to be configured
+  #
+  # @example Set a behavior on the Actor when it is walking
+  #   actor = Actor.new("player")
+  #   actor.on_state(:walking) do
+  #     puts "I'm walking"
+  #   end
+  #
+  # @example Change the image of the Actor when it is walking
+  #   image = Image.new("player_walk")
+  #   actor = Actor.new("player")
+  #   actor.on_state(:walking) do
+  #     actor.sprite = image
+  #   end
+  def on_state(state_name, &block)
+    @states[state_name.to_sym] = block
+  end
+
+  # Activate a state on the Actor
+  #
+  # @param value [Symbol] The name of the state to be activated
+  #
+  # @example Activate the state 'walking'
+  #   actor = Actor.new("player")
+  #   actor.state(:walking)
+  def state(state_name)
+    state_name = state_name.to_sym
+
+    if @states[state_name].nil?
+      raise ArgumentError, "The state '#{state_name}' has not been defined. Available states: '#{@states.keys.join(", ")}'"
+    end
+
+    @states[state_name].call
+    @state = state_name
   end
 
   # @!visibility private
