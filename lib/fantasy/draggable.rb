@@ -3,8 +3,6 @@
 module Draggable
   # rubocop:disable Style/GuardClause
   def drag
-    mouse_position = Global.mouse_position
-
     start_dragging?
     stop_dragging?
     drag?

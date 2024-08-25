@@ -64,6 +64,5 @@ module MoveByCursor
   def add_direction(cursor_direction)
     @direction += cursor_direction
     @direction = @direction.normalize if @direction != Coordinates.zero
-    # @position += direction * @speed * Global.frame_time
   end
 end

@@ -222,32 +222,11 @@ class Actor
   #   actor.layer = -1
   attr_accessor :layer
 
-  # Array of strings (or "all", or "none").
-  # Represents with which other solid Actors this Actor collide.
+  # Returns the list of collection of objects
+  # that the Actor collided with.
   #
-  # Default `"none"`.
-  #
-  # @return [Array, String] the actual list of names of Actors to collide with
-  #
-  # @example Set with which other Actors this Actor is colliding:
-  #   actor = Actor.new("image")
-  #   actor.collision_with = ["enemy", "bullet"]
-  #
-  # @example Set this Actors collides only with enemies
-  #   actor = Actor.new("image")
-  #   actor.collision_with = ["enemy"]
-  #   # or using the shortcut:
-  #   actor.collision_with = "enemy"
-  #
-  # @example Set this Actors collides with all other Actors
-  #   actor = Actor.new("image")
-  #   actor.collision_with = "all"
-  #
-  # @example Set this Actors collides with none other Actors
-  #   actor = Actor.new("image")
-  #   actor.collision_with = "none" # it is the default
-  #
-  attr_accessor :collision_with
+  # Default 'none'.
+  attr_reader :collision_with
 
   # Represents the visibility of the image.
   #
@@ -367,6 +346,31 @@ class Actor
     end
   end
 
+  # Array of strings (or "all", or "none").
+  # Represents with which other solid Actors this Actor collide.
+  #
+  # Default `"none"`.
+  #
+  # @return [Array, String] the actual list of names of Actors to collide with
+  #
+  # @example Set with which other Actors this Actor is colliding:
+  #   actor = Actor.new("image")
+  #   actor.collision_with = ["enemy", "bullet"]
+  #
+  # @example Set this Actors collides only with enemies
+  #   actor = Actor.new("image")
+  #   actor.collision_with = ["enemy"]
+  #   # or using the shortcut:
+  #   actor.collision_with = "enemy"
+  #
+  # @example Set this Actors collides with all other Actors
+  #   actor = Actor.new("image")
+  #   actor.collision_with = "all"
+  #
+  # @example Set this Actors collides with none other Actors
+  #   actor = Actor.new("image")
+  #   actor.collision_with = "none" # it is the default
+  #
   def collision_with=(value)
     if value.is_a?(String) && value != "all" && value != "none"
       value = [value]
@@ -392,7 +396,7 @@ class Actor
   # @example Set flip in both coordinates horizontal and vertical
   #   actor = Actor.new("player_walk")
   #   actor.flip = "both"
-  def flip(value)
+  def flip=(value)
     valid_values = ["horizontal", "vertical", "none", "both"]
     if !valid_values.include?(value)
       raise ArgumentError, "The value must be one of: #{valid_values.join(", ")}"

@@ -15,7 +15,7 @@ class BackgroundTest < Minitest::Test
     assert_equal(1, @background.scale)
     assert(@background.visible)
     assert_equal(-100, @background.layer)
-    assert_equal(false, @background.repeat)
+    assert_equal(true, @background.repeat)
   end
 
   def test_change_position
@@ -77,9 +77,14 @@ class BackgroundTest < Minitest::Test
     image = @background.instance_variable_get("@image")
 
     image.expects(:draw).with(x: -16, y: -16, scale: 2)
-    image.expects(:draw).with(x: 0, y: -16, scale: 2)
     image.expects(:draw).with(x: -16, y: 0, scale: 2)
+    image.expects(:draw).with(x: -16, y: 16, scale: 2)
+    image.expects(:draw).with(x: 0, y: -16, scale: 2)
     image.expects(:draw).with(x: 0, y: 0, scale: 2)
+    image.expects(:draw).with(x: 0, y: 16, scale: 2)
+    image.expects(:draw).with(x: 16, y: -16, scale: 2)
+    image.expects(:draw).with(x: 16, y: 0, scale: 2)
+    image.expects(:draw).with(x: 16, y: 16, scale: 2)
 
     @background.draw
   end
@@ -95,8 +100,14 @@ class BackgroundTest < Minitest::Test
 
     image.expects(:draw).with(x: -4, y: -4, scale: 2)
     image.expects(:draw).with(x: -4, y: 12, scale: 2)
+    image.expects(:draw).with(x: -4, y: 28, scale: 2)
     image.expects(:draw).with(x: 12, y: -4, scale: 2)
     image.expects(:draw).with(x: 12, y: 12, scale: 2)
+    image.expects(:draw).with(x: 12, y: 28, scale: 2)
+    image.expects(:draw).with(x: 28, y: -4, scale: 2)
+    image.expects(:draw).with(x: 28, y: 12, scale: 2)
+    image.expects(:draw).with(x: 28, y: 28, scale: 2)
+
 
     @background.draw
   end
