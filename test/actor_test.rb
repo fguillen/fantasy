@@ -295,8 +295,8 @@ class ActorTest < Minitest::Test
 
     @actor.move
 
-    assert_equal(10, @actor.position.x)
-    assert_equal(-10, @actor.position.y)
+    assert_equal(7.07, @actor.position.x.round(2))
+    assert_equal(-7.07, @actor.position.y.round(2))
   end
 
   def test_move_with_impulse

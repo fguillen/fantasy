@@ -30,27 +30,27 @@ module MoveByCursor
     any_direction = false
 
     if Gosu.button_down?(Cursor.down) && @move_with_cursors_down
-      move_in_direction(Coordinates.down)
+      add_direction(Coordinates.down)
       any_direction = true
     end
 
     if Gosu.button_down?(Cursor.up) && @move_with_cursors_up
-      move_in_direction(Coordinates.up)
+      add_direction(Coordinates.up)
       any_direction = true
     end
 
     if Gosu.button_down?(Cursor.right) && @move_with_cursors_right
-      move_in_direction(Coordinates.right)
+      add_direction(Coordinates.right)
       any_direction = true
     end
 
     if Gosu.button_down?(Cursor.left) && @move_with_cursors_left
-      move_in_direction(Coordinates.left)
+      add_direction(Coordinates.left)
       any_direction = true
     end
 
     if !@continuous && !any_direction
-      move_in_direction(Coordinates.zero)
+      @direction = Coordinates.zero
     end
 
     if Gosu.button_down?(Cursor.space_bar) && !@jumping && @on_floor && @move_with_cursors_jump
@@ -61,8 +61,9 @@ module MoveByCursor
 
   private
 
-  def move_in_direction(cursor_direction)
+  def add_direction(cursor_direction)
     @direction += cursor_direction
+    @direction = @direction.normalize if @direction != Coordinates.zero
     # @position += direction * @speed * Global.frame_time
   end
 end
