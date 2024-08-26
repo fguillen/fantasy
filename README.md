@@ -165,6 +165,14 @@ Add animations to an Actor and activate them when special state triggered
 - Stop (TODO)
 - Callback when finished (TODO)
 
+### Events queue / Signals (TODO)
+
+Inspiration from:
+
+- [LÖVE](https://love2d.org/wiki/love.event)
+- [Godot](https://docs.godotengine.org/en/stable/classes/class_signal.html)
+
+
 ### UI
 
 #### Button (TODO)
