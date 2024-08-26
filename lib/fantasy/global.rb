@@ -6,7 +6,7 @@ module Global
   class << self
     include Log
 
-    attr_accessor :actors, :hud_texts, :hud_images, :animations, :backgrounds, :tile_maps, :clocks, :shapes
+    attr_accessor :actors, :hud_texts, :hud_images, :animations, :backgrounds, :tile_maps, :clocks, :shapes, :tweens
     attr_accessor :debug
     attr_accessor :setup_proc, :loop_proc, :button_proc
     attr_accessor :presentation_proc, :game_proc, :end_proc
@@ -36,6 +36,8 @@ module Global
       @tile_maps = []
       @clocks = []
       @shapes = []
+      @tweens = []
+
       @last_frame_at = Time.now
       @debug = false
 
@@ -150,6 +152,7 @@ module Global
       @backgrounds.clear
       @tile_maps.clear
       @shapes.clear
+      @tweens.clear
 
       @clocks.reject(&:persistent?).each do |clock|
         clock.stop unless clock.thread == Thread.current # no stop current Thread
