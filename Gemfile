@@ -7,6 +7,4 @@ ruby ">= 3.0.0"
 # Specify your gem's dependencies in fantasy.gemspec
 gemspec
 
-gem "minitest", "~> 5.0"
-gem "rake", "~> 13.0"
-gem "rubocop", "~> 1.21"
+gem "tween", "~> 0.1.2", git: "https://github.com/fguillen/tween.git", branch: "main"

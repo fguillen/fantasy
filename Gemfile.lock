@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/fguillen/tween.git
+  revision: bc74a2c286e0be0cb2357bc2dfc890db5963f9c9
+  branch: main
+  specs:
+    tween (0.1.2)
+
 PATH
   remote: .
   specs:
@@ -55,6 +62,7 @@ DEPENDENCIES
   mocha
   rake (~> 13.0)
   rubocop (~> 1.21)
+  tween (~> 0.1.2)!
   yard
 
 RUBY VERSION
