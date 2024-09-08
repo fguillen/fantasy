@@ -42,46 +42,46 @@ require "tween"
 class Tweeni
   # The full list of available easers
   EASERS = [
-    Linear,
+    Tween::Linear,
 
-    Sine::In,
-    Sine::Out,
-    Sine::InOut,
+    Tween::Sine::In,
+    Tween::Sine::Out,
+    Tween::Sine::InOut,
 
-    Circ::In,
-    Circ::Out,
-    Circ::InOut,
+    Tween::Circ::In,
+    Tween::Circ::Out,
+    Tween::Circ::InOut,
 
-    Bounce::Out,
-    Bounce::In,
-    Bounce::InOut,
+    Tween::Bounce::Out,
+    Tween::Bounce::In,
+    Tween::Bounce::InOut,
 
-    Back::In,
-    Back::Out,
-    Back::InOut,
+    Tween::Back::In,
+    Tween::Back::Out,
+    Tween::Back::InOut,
 
-    Cubic::In,
-    Cubic::Out,
-    Cubic::InOut,
+    Tween::Cubic::In,
+    Tween::Cubic::Out,
+    Tween::Cubic::InOut,
 
-    Expo::In,
-    Expo::Out,
-    Expo::InOut,
+    Tween::Expo::In,
+    Tween::Expo::Out,
+    Tween::Expo::InOut,
 
-    Quad::In,
-    Quad::Out,
-    Quad::InOut,
+    Tween::Quad::In,
+    Tween::Quad::Out,
+    Tween::Quad::InOut,
 
-    Quart::In,
-    Quart::Out,
-    Quart::InOut,
+    Tween::Quart::In,
+    Tween::Quart::Out,
+    Tween::Quart::InOut,
 
-    Quint::In,
-    Quint::Out,
-    Quint::InOut,
+    Tween::Quint::In,
+    Tween::Quint::Out,
+    Tween::Quint::InOut,
 
-    Elastic::In,
-    Elastic::Out
+    Tween::Elastic::In,
+    Tween::Elastic::Out
   ]
 
   # @return [Boolean] true if the tween is already finished.

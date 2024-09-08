@@ -12,14 +12,14 @@ class AnimationTest < Minitest::Test
 
   def test_validations
     assert_raises(ArgumentError) { Animation.new }
-    assert_raises(ArgumentError) { Animation.new(names: ["apple_1"], secuence: "apple_secuence") }
-    assert_raises(ArgumentError) { Animation.new(secuence: "apple_secuence") }
+    assert_raises(ArgumentError) { Animation.new(names: ["apple_1"], sequence: "apple_sequence") }
+    assert_raises(ArgumentError) { Animation.new(sequence: "apple_sequence") }
     assert_raises(ArgumentError) { Animation.new(names: ["apple_1"], columns: 1) }
     assert_raises(ArgumentError) { Animation.new(names: ["apple_1"], rows: 1) }
   end
 
-  def test_default_values_secuence
-    animation = Animation.new(secuence: "apple_secuence", columns: 17)
+  def test_default_values_sequence
+    animation = Animation.new(sequence: "apple_sequence", columns: 17)
     assert_equal(17, animation.length)
     assert_equal(32, animation.width)
     assert_equal(32, animation.height)
@@ -41,9 +41,9 @@ class AnimationTest < Minitest::Test
     assert_equal("apple_1", animation.name)
   end
 
-  def test_name_when_secuence
-    animation = Animation.new(secuence: "apple_secuence", columns: 17)
-    assert_equal("apple_secuence", animation.name)
+  def test_name_when_sequence
+    animation = Animation.new(sequence: "apple_sequence", columns: 17)
+    assert_equal("apple_sequence", animation.name)
   end
 
   def test_update_when_speed_is_1

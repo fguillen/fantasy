@@ -12,11 +12,11 @@ class Animation
   # Default `0`.
   #
   # @example Get the actual image frame
-  #   animation = Animation.new(secuence: "image_secuence", columns: 3)
+  #   animation = Animation.new(sequence: "image_sequence", columns: 3)
   #   animation.frame # => 0
   #
   # @example Set the initial frame in the constructor
-  #   animation = Animation.new(secuence: "image_secuence", columns: 3, frame: 2)
+  #   animation = Animation.new(sequence: "image_sequence", columns: 3, frame: 2)
   #   animation.frame # => 2
   attr_accessor :frame
 
@@ -25,10 +25,10 @@ class Animation
   # Default `10`.
   #
   # @example Get the animation speed
-  #   animation = Animation.new(secuence: "image_secuence", columns: 3)
+  #   animation = Animation.new(sequence: "image_sequence", columns: 3)
   #   animation.speed # => 10
   # @example Set the animation speed
-  #   animation = Animation.new(secuence: "image_secuence", columns: 3)
+  #   animation = Animation.new(sequence: "image_sequence", columns: 3)
   #   animation.speed = 20
   attr_accessor :speed
 
@@ -37,10 +37,10 @@ class Animation
   #
   #
   # @example Get the name
-  #   animation = Animation.new(secuence: "image_secuence", columns: 3)
-  #   animation.name # => "image_secuence"
+  #   animation = Animation.new(sequence: "image_sequence", columns: 3)
+  #   animation.name # => "image_sequence"
   # @example Set the name
-  #   animation = Animation.new(secuence: "image_secuence", columns: 3)
+  #   animation = Animation.new(sequence: "image_sequence", columns: 3)
   #   animation.name = "new_name"
   attr_accessor :name
 
@@ -56,32 +56,32 @@ class Animation
   #   animation = Animation.new(names: ["image1", "image2", "image3"])
   #
   # Using:
-  # @param secuence [string] the name of the image that contains the frames of the animation.
+  # @param sequence [string] the name of the image that contains the frames of the animation.
   # @param columns [integer] the number of images per column.
   # @param rows [integer] the number of images per row.
   # Only 'columns' or 'rows' is required. If not provided default is 1.
   #
   # @example Instantiate an Animation from an image with multiple frames
-  #   animation = Animation.new(secuence: "image_secuence", columns: 3, rows: 1)
+  #   animation = Animation.new(sequence: "image_sequence", columns: 3, rows: 1)
   #
   # Other params:
   # @param speed [integer] the number frames per second. Default `10`.
   # @param frame [integer] the initial frame. Default `0`.
-  def initialize(names: nil, secuence: nil, columns: nil, rows: nil, speed: 10, frame: 0)
-    if names.nil? && secuence.nil?
-      raise ArgumentError, "'names' or 'secuence' must be provided"
+  def initialize(names: nil, sequence: nil, columns: nil, rows: nil, speed: 10, frame: 0)
+    if names.nil? && sequence.nil?
+      raise ArgumentError, "'names' or 'sequence' must be provided"
     end
 
-    if names && secuence
-      raise ArgumentError, "only one of 'names' or 'secuence' must be provided"
+    if names && sequence
+      raise ArgumentError, "only one of 'names' or 'sequence' must be provided"
     end
 
     if names && (columns || rows)
       raise ArgumentError, "'columns' and 'rows' are not needed if 'names' is provided"
     end
 
-    if secuence && (columns.nil? && rows.nil?)
-      raise ArgumentError, "'columns' and/or 'rows' must be provided if 'secuence' is provided"
+    if sequence && (columns.nil? && rows.nil?)
+      raise ArgumentError, "'columns' and/or 'rows' must be provided if 'sequence' is provided"
     end
 
     if names
@@ -89,19 +89,19 @@ class Animation
       @name = names.first
     end
 
-    if secuence
+    if sequence
       # we only require one, if the other is not present we use the default: 1
       columns ||= 1
       rows ||= 1
-      @name = secuence
+      @name = sequence
       @images = []
 
-      secuence_image = Image.new(secuence)
+      sequence_image = Image.new(sequence)
       columns.times.each do |column|
         rows.times.each do |row|
-          gosu_image = secuence_image.image
-          frame_width = secuence_image.width / columns
-          frame_height = secuence_image.height / rows
+          gosu_image = sequence_image.image
+          frame_width = sequence_image.width / columns
+          frame_height = sequence_image.height / rows
           gosu_subimage = gosu_image.subimage(column * frame_width, row * frame_height, frame_width, frame_height)
           @images << Image.new(gosu_subimage)
         end
