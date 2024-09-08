@@ -2,8 +2,6 @@
 
 require "tween"
 
-# frozen_string_literal: true
-
 # Represents a Tween transition. It modify
 # a number from one value to another. It can be used
 # to create animation effects.
@@ -33,7 +31,7 @@ require "tween"
 #    Tweeni.start(from: 1, to: 1.8, seconds: 0.5, ease: Elastic::Out) do |value|
 #      background.scale = value
 #    end
-#  tween.on_end do
+#  tween.on_finished do
 #    sleep(1)
 #    tween = Tweeni.start(from: 1.8, to: 1, seconds: 0.5, ease: Linear) do |value|
 #      background.scale = value
@@ -41,7 +39,7 @@ require "tween"
 #  end
 class Tweeni
   # The full list of available easers
-  EASERS = [
+  EASES = [
     Tween::Linear,
 
     Tween::Sine::In,
@@ -93,26 +91,26 @@ class Tweeni
     # @param from [Number] the initial value
     # @param to [Number] the final value
     # @param seconds [Number] the time in seconds
-    # @param ease [Function] the easing function @see EASERS. Default `Linear`
-    # @param on_end [Proc] the block to be executed when the tween ends. Default `nil`
+    # @param ease [Function] the easing function @see EASES. Default `Linear`
+    # @param on_finished [Proc] the block to be executed when the tween ends. Default `nil`
     # @param block [Proc] the block to be executed during the tween
     # @return [Tweeni]
-    def start(from:, to:, seconds:, ease: Tween::Linear, on_end: nil, &block)
-      Tweeni.new(from:, to:, seconds:, ease:, on_end:, &block)
+    def start(from:, to:, seconds:, ease: Tween::Linear, on_finished: nil, &block)
+      Tweeni.new(from:, to:, seconds:, ease:, on_finished:, &block)
     end
   end
 
   # @!visibility private
-  def initialize(from:, to:, seconds:, ease: Tween::Linear, on_end: nil, &block)
+  def initialize(from:, to:, seconds:, ease: Tween::Linear, on_finished: nil, &block)
     @from = from
     @to = to
     @seconds = seconds
     @ease = ease
     @block = block
-    @on_end = on_end
+    @on_finished = on_finished
     @finished = false
 
-    @init_at = Global.seconds_in_scene
+    @last_updated_at = Global.seconds_in_scene
     @tween = Tween.new(@from, @to, @ease, @seconds)
 
     Global.tweens&.push(self)
@@ -120,13 +118,14 @@ class Tweeni
 
   # @!visibility private
   def update
-    @tween.update(Global.seconds_in_scene - @init_at)
+    @tween.update(Global.seconds_in_scene - @last_updated_at)
     @block.call(@tween.value)
+    @last_updated_at = Global.seconds_in_scene
 
     if(@tween.done)
       Global.tweens.delete(self)
       @finished = true
-      @on_end.call if @on_end
+      @on_finished.call if @on_finished
     end
   end
 
@@ -135,10 +134,10 @@ class Tweeni
   # @param block [Proc] the block to be executed when the tween ends
   #
   # @example Set a block to be executed when the tween ends
-  #   tween.on_end do
+  #   tween.on_finished do
   #     puts "The tween has ended"
   #   end
-  def on_end(&block)
-    @on_end = block
+  def on_finished(&block)
+    @on_finished = block
   end
 end

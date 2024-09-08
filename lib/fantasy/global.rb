@@ -62,9 +62,9 @@ module Global
         on_game { Global.default_on_game }
       end
 
-      if @end_proc.nil?
-        on_end { Global.default_on_end }
-      end
+      return unless @end_proc.nil?
+
+      on_end { Global.default_on_end }
     end
     # rubocop:enable Metrics/MethodLength
 
