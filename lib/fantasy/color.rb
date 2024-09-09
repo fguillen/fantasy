@@ -78,6 +78,15 @@ class Color < Gosu::Color
     #
     # @return [OpenStruct] the palette of colors
     attr_reader :palette
+
+    # Create a color from a hex value
+    # @param hex [String] the hex value of the color
+    # @return [Color] the Color object
+    # @example Create a color from a hex value
+    #   Color.from_hex("ff0a0c")
+    def from_hex(hex)
+      Color.new(r: hex[0..1].to_i(16), g: hex[2..3].to_i(16), b: hex[4..5].to_i(16))
+    end
   end
 
   # rubocop:disable Layout/FirstHashElementIndentation

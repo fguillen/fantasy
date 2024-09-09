@@ -119,7 +119,12 @@ class Tweeni
   # @!visibility private
   def update
     @tween.update(Global.seconds_in_scene - @last_updated_at)
-    @block.call(@tween.value)
+
+    value = @tween.value
+    step = @tween.time.to_f / @tween.duration
+    value_normalized = Utils.remap(value, from_ini: @from, from_end: @to)
+
+    @block.call(value, step, value_normalized)
     @last_updated_at = Global.seconds_in_scene
 
     if(@tween.done)

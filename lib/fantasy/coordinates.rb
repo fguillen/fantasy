@@ -32,4 +32,14 @@ class Coordinates < Vector2d
   def zero?
     @x.zero? && @y.zero?
   end
+
+  def direction(other)
+    vector = other - self
+    vector = vector.normalize
+    Coordinates.from_vector(vector)
+  end
+
+  def self.from_vector(vector)
+    Coordinates.new(vector.x, vector.y)
+  end
 end

@@ -23,7 +23,7 @@ module Utils
     )
   end
 
-  def self.remap(value:, from_ini:, from_end:, to_ini:, to_end:)
+  def self.remap(value, from_ini:, from_end:, to_ini: 0, to_end: 1)
     to_ini + (value - from_ini) * (to_end - to_ini) / (from_end - from_ini)
   end
 end
