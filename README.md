@@ -47,6 +47,7 @@ SCREEN_HEIGHT = 360
 
 on_game do
   player = Actor.new("spaceship")
+  player.collision_with = "enemy"
   player.position = Coordinates.new(100, 100)
   player.move_with_cursors
   player.speed = 100
@@ -62,6 +63,7 @@ on_game do
   on_space_bar do
     Sound.play("shoot")
     laser = Actor.new("laser")
+    laser.collision_with = "enemy"
     laser.position = player.position + Coordinates.new(0, -10)
     laser.speed = 400
     laser.direction = Coordinates.up
@@ -84,7 +86,7 @@ on_game do
 end
 
 on_end do
-  HudText.new(position: Coordinates.new(10, 100), text: "You are dead. Press space to re-tart")
+  HudText.new(position: Coordinates.new(10, 100), text: "You are dead. Press space to restart")
 
   on_space_bar do
     Global.go_to_game
