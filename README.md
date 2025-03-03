@@ -34,6 +34,7 @@ This is a full playable game. Maybe not too challenging though :)
 ```ruby
 # Add assets dependencies
 # ./images/spaceship.<any>
+# ./images/enemy.<any>
 # ./images/laser.<any>
 # ./sounds/shoot.<any>
 # ./sounds/impact.<any>

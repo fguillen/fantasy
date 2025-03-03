@@ -10,6 +10,7 @@ PATH
   specs:
     fantasy (0.1.20)
       gosu (~> 1.4.1)
+      tween (~> 0.1.2)
       vector2d (~> 2.2.3)
 
 GEM
@@ -53,6 +54,7 @@ GEM
     yard (0.9.36)
 
 PLATFORMS
+  arm64-darwin-24
   x86_64-darwin-19
   x86_64-darwin-22
 
