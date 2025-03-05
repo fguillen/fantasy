@@ -138,6 +138,9 @@ class Background
   # Camera relative Tiles
   # rubocop:disable Metrics/AbcSize
   def draw_repeat
+    # TODO: optimize this. Looks to me that we are rendering more copies of the image
+    #   than we need. Also if the camera is very far away from the Background
+    #   we should only draw the images that will be shown in the screen
     tiles_delta_x = (position_in_camera.x % width) - width
     tiles_delta_y = (position_in_camera.y % height) - height
 
@@ -146,7 +149,12 @@ class Background
 
     tiles_needed_horizontal.times do |index_horizontal|
       tiles_needed_vertical.times do |index_vertical|
-        @image.draw(x: tiles_delta_x + (width * index_horizontal), y: tiles_delta_y + (height * index_vertical), scale: @scale)
+        drawing_position =
+          Coordinates.new(
+            tiles_delta_x + (width * index_horizontal),
+            tiles_delta_y + (height * index_vertical)
+          )
+        @image.draw(x: drawing_position.x, y: drawing_position.y, scale: @scale)
       end
     end
   end

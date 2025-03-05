@@ -18,7 +18,7 @@ class Image
     scale_y *= -1 if %w[vertical both].include?(flip)
 
     # draw_rot(x, y, z = 0, angle = 0, center_x = 0.5, center_y = 0.5, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default) ⇒ void
-    @image.draw_rot(x + (width / 2), y + (height / 2), 0, rotation, 0.5, 0.5, scale_x, scale_y)
+    @image.draw_rot(x + ((width * scale) / 2), y + ((height * scale) / 2), 0, rotation, 0.5, 0.5, scale_x, scale_y)
   end
 
   def width
