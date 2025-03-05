@@ -66,8 +66,9 @@ class Animation
   #
   # Other params:
   # @param speed [integer] the number frames per second. Default `10`.
-  # @param frame [integer] the initial frame. Default `0`.
-  def initialize(names: nil, sequence: nil, columns: nil, rows: nil, speed: 10, frame: 0)
+  # @param initial_frame [integer] the initial frame index. Default `0`.
+  # @param frames [integer] a list of frames from the image, if `nil` all the frames are selected
+  def initialize(names: nil, sequence: nil, columns: nil, rows: nil, speed: 10, initial_frame: 0, frames: nil)
     if names.nil? && sequence.nil?
       raise ArgumentError, "'names' or 'sequence' must be provided"
     end
@@ -99,6 +100,8 @@ class Animation
       sequence_image = Image.new(sequence)
       columns.times.each do |column|
         rows.times.each do |row|
+          next if !frames.nil? && !frames.include?(column + (row * columns))
+
           gosu_image = sequence_image.image
           frame_width = sequence_image.width / columns
           frame_height = sequence_image.height / rows
@@ -108,9 +111,11 @@ class Animation
       end
     end
 
-    @frame = frame
+    @frame = initial_frame
     @speed = speed
     @last_frame_set_at = Global.seconds_in_scene
+
+    puts ">>> @images.length: #{@images.length}"
 
     Global.animations&.push(self)
   end

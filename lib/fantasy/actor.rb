@@ -274,6 +274,10 @@ class Actor
   #   actor.collision_with # => "none"
   #   actor.name # => "image"
   #
+  # @example Generate an Actor from an animation
+  #   animation = Animation.new(images: ["image1", "image2", "image3"])
+  #   actor = Actor.new(animation)
+  #
   # @param image_name_or_image_or_animation [string | Image | Animation] the name of the image file from `./images/*`. Or an Image object. Or an Animation object
   # @return [Actor] the Actor
   def initialize(image_name_or_image_or_animation)
