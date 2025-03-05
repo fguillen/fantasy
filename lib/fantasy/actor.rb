@@ -805,7 +805,7 @@ class Actor
       position_in_camera.y < -margin_pixels ||
       position_in_camera.y > Global.screen_height + margin_pixels
     )
-      puts ">>>> Autokill: #{self.name}"
+      log "Autokill: #{self.name}"
       Global.actors.delete(self)
     end
   end
