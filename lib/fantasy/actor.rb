@@ -402,11 +402,9 @@ class Actor
   #   actor.flip = "both"
   def flip=(value)
     valid_values = ["horizontal", "vertical", "none", "both"]
-    if !valid_values.include?(value)
+    unless valid_values.include?(value)
       raise ArgumentError, "The value must be one of: #{valid_values.join(", ")}"
     end
-
-    puts "Set flip to: #{value}"
 
     @flip = value
   end
