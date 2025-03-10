@@ -310,12 +310,12 @@ class Actor
     @layer = 0
     @gravity = 0
     @jump_force = 0
-    @collision_with = "none"
+
+    @colliders = []
 
     @on_floor = false
 
     @on_after_move_callback = nil
-    @on_collision_callback = nil
     @on_destroy_callback = nil
     @on_jumping_callback = nil
     @on_floor_callback = nil
@@ -353,39 +353,6 @@ class Actor
     else
       @sprite = Image.new(image_name_or_image_or_animation)
     end
-  end
-
-  # Array of strings (or "all", or "none").
-  # Represents with which other solid Actors this Actor collide.
-  #
-  # Default `"none"`.
-  #
-  # @return [Array, String] the actual list of names of Actors to collide with
-  #
-  # @example Set with which other Actors this Actor is colliding:
-  #   actor = Actor.new("image")
-  #   actor.collision_with = ["enemy", "bullet"]
-  #
-  # @example Set this Actors collides only with enemies
-  #   actor = Actor.new("image")
-  #   actor.collision_with = ["enemy"]
-  #   # or using the shortcut:
-  #   actor.collision_with = "enemy"
-  #
-  # @example Set this Actors collides with all other Actors
-  #   actor = Actor.new("image")
-  #   actor.collision_with = "all"
-  #
-  # @example Set this Actors collides with none other Actors
-  #   actor = Actor.new("image")
-  #   actor.collision_with = "none" # it is the default
-  #
-  def collision_with=(value)
-    if value.is_a?(String) && value != "all" && value != "none"
-      value = [value]
-    end
-
-    @collision_with = value
   end
 
   # Configure the flip of the image.
@@ -555,11 +522,10 @@ class Actor
     actor.layer = @layer
     actor.gravity = @gravity
     actor.jump_force = @jump_force
-    actor.collision_with = @collision_with
     actor.autokill = @autokill
+    actor.colliders = @colliders.clone
 
     actor.on_after_move_callback = @on_after_move_callback
-    actor.on_collision_callback = @on_collision_callback
     actor.on_destroy_callback = @on_destroy_callback
     actor.on_jumping_callback = @on_jumping_callback
     actor.on_floor_callback = @on_floor_callback
@@ -591,19 +557,6 @@ class Actor
   #   end
   def on_after_move(&block)
     @on_after_move_callback = block
-  end
-
-  # The block to be executed when Actor collides with another Actor
-  #
-  # @example Collision detected with _"bullet"_
-  #   actor = Actor.new("image")
-  #   actor.on_collision do |other|
-  #     if other.name == "bullet"
-  #       actor.destroy
-  #     end
-  #   end
-  def on_collision(&block)
-    @on_collision_callback = block
   end
 
   # The block to be executed before the Actor is destroyed
@@ -654,20 +607,6 @@ class Actor
   #   end
   def on_after_move_do
     instance_exec(&@on_after_move_callback) unless @on_after_move_callback.nil?
-  end
-
-  # This method is triggered when Actor collides with another Actor
-  #
-  # @example Limit Actor movement horizontally
-  #   class Player < Actor
-  #     def on_collision_do(other)
-  #       if other.name == "bullet"
-  #         destroy
-  #       end
-  #     end
-  #   end
-  def on_collision_do(other)
-    instance_exec(other, &@on_collision_callback) unless @on_collision_callback.nil?
   end
 
   # This method is triggered before the Actor is destroyed
@@ -788,7 +727,9 @@ class Actor
 
   # rubocop:disable Style/Next
   def collisions
-    return [] if @collision_with == "none"
+    XXXXX Continue HERE XXXXX
+    return [] if @colliders.empty?
+    # return [] if @collision_with == "none"
 
     Global.actors.reject { |e| e == self }.select(&:solid?).select do |other|
       if (@collision_with == "all" || @collision_with.include?(other.name))
