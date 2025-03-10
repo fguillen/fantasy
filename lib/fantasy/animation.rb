@@ -44,6 +44,8 @@ class Animation
   #   animation.name = "new_name"
   attr_accessor :name
 
+  attr_reader :finished
+
   # Generates an Animation.
   #
   # There are two ways to instantiate an Animation:
@@ -68,7 +70,12 @@ class Animation
   # @param speed [integer] the number frames per second. Default `10`.
   # @param initial_frame [integer] the initial frame index. Default `0`.
   # @param frames [integer] a list of frames from the image, if `nil` all the frames are selected
-  def initialize(names: nil, sequence: nil, columns: nil, rows: nil, speed: 10, initial_frame: 0, frames: nil)
+  # @param loops [integer|String] the number of times the animation will be played. Default `"infinite"`.
+  def initialize(names: nil, sequence: nil, columns: nil, rows: nil, speed: 10, initial_frame: 0, frames: nil, loops: "infinite")
+    if loops != "infinite" && (!loops.is_a?(Integer) || loops < 1)
+      raise ArgumentError, "'loops' must be 'infinite' or a positive integer"
+    end
+
     if names.nil? && sequence.nil?
       raise ArgumentError, "'names' or 'sequence' must be provided"
     end
@@ -112,12 +119,18 @@ class Animation
     end
 
     @frame = initial_frame
+    @loops = loops
+    @loop_counter = 0
+    @finished = false
     @speed = speed
     @last_frame_set_at = Global.seconds_in_scene
-
-    puts ">>> @images.length: #{@images.length}"
+    @on_finished_callback = nil
 
     Global.animations&.push(self)
+  end
+
+  def on_finished(&block)
+    @on_finished_callback = block
   end
 
   def draw(x:, y:, scale: 1, rotation: 0, flip: "none")
@@ -137,14 +150,41 @@ class Animation
   end
 
   def update
+    return if @finished
+
     seconds_since_last_frame = Global.seconds_in_scene - @last_frame_set_at
     last_frame = @frame
     frames_offset = seconds_since_last_frame * @speed
+
     @frame += frames_offset.floor
     @frame %= length
 
-    if last_frame != @frame
+    if last_frame != @frame || (frames_offset > 1 && length == 1)
       @last_frame_set_at = Global.seconds_in_scene
     end
+
+    if last_frame > @frame || (frames_offset > 1 && length == 1)
+      @loop_counter += 1
+
+      if @loops != "infinite" && @loop_counter >= @loops
+        mark_as_finished
+      end
+    end
+  end
+
+  def reset
+    @last_frame_set_at = Global.seconds_in_scene
+    @frame = 0
+    @loop_counter = 0
+    @finished = false
+  end
+
+  def mark_as_finished
+    @finished = true
+    on_finished_do
+  end
+
+  def on_finished_do
+    instance_exec(&@on_finished_callback) unless @on_finished_callback.nil?
   end
 end

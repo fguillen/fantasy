@@ -256,6 +256,8 @@ class Actor
   #
   attr_accessor :autokill
 
+  attr_reader :pocket
+
   # Generate an Actor with all the default attribute values
   # @example Generate an Actor
   #   actor = Actor.new("image")
@@ -321,6 +323,8 @@ class Actor
     @states = {}
     @state = nil
 
+    @pocket = {}
+
     Global.actors&.push(self)
   end
 
@@ -340,6 +344,7 @@ class Actor
   #   animation = Animation.new(names: ["apple_1", "apple_2"])
   #   actor = Actor.new("player_walk")
   #   actor.sprite = animation
+  # TODO: Change name to something more generic like "graphic/visual"
   def sprite=(image_name_or_image_or_animation)
     if image_name_or_image_or_animation.is_a?(Animation)
       @sprite = image_name_or_image_or_animation
