@@ -62,7 +62,7 @@ class Game < Gosu::Window
   def update
     Global.update
 
-    Global.actors.each(&:move)
+    Global.actors.select(&:active).each(&:move)
     Global.hud_texts.each(&:move)
     Global.hud_images.each(&:move)
     Global.hud_images.each(&:move)
@@ -71,6 +71,8 @@ class Game < Gosu::Window
     Camera.main.move
 
     Global.loop_proc&.call
+
+    CollisionResolver.resolve_collisions
   end
 
   def draw
@@ -79,7 +81,7 @@ class Game < Gosu::Window
     (
       Global.backgrounds +
       Global.tile_maps +
-      Global.actors.select(&:visible) +
+      Global.actors.select(&:active) +
       Global.hud_texts +
       Global.hud_images +
       Global.shapes

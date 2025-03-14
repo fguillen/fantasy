@@ -232,13 +232,13 @@ class Actor
   #
   # Default `true`.
   #
-  # @return [bool] the actual value of `visible`
+  # @return [bool] the actual value of `active`
   #
-  # @example Make an Actor no visible
+  # @example Make an Actor no active
   #   actor = Actor.new("image")
-  #   actor.visible = false
+  #   actor.active = false
   #
-  attr_accessor :visible
+  attr_accessor :active
 
   # TODO: Change the name, I don't like to say `kill``
   # When active the Actor will be removed when
@@ -296,11 +296,12 @@ class Actor
 
     @position = Coordinates.zero
     @direction = Coordinates.zero
+    @last_frame_position = @position.clone
     @speed = 0
     @scale = 1
     @rotation = 0
     @flip = "none" # "horizontal" or "vertical" or "none" or "both"
-    @visible = true
+    @active = true
     @autokill = true
 
     @solid = true
@@ -311,13 +312,14 @@ class Actor
     @gravity = 0
     @jump_force = 0
 
-    @colliders = []
+    @components = []
 
     @on_floor = false
 
     @on_after_move_callback = nil
     @on_destroy_callback = nil
     @on_jumping_callback = nil
+    @on_collision_callback = nil
     @on_floor_callback = nil
 
     @states = {}
@@ -346,13 +348,13 @@ class Actor
   #   actor.sprite = animation
   # TODO: Change name to something more generic like "graphic/visual"
   def sprite=(image_name_or_image_or_animation)
-    if image_name_or_image_or_animation.is_a?(Animation)
-      @sprite = image_name_or_image_or_animation
-    elsif image_name_or_image_or_animation.is_a?(Image)
-      @sprite = image_name_or_image_or_animation
-    else
-      @sprite = Image.new(image_name_or_image_or_animation)
-    end
+    @sprite = if image_name_or_image_or_animation.is_a?(Animation)
+                image_name_or_image_or_animation
+              elsif image_name_or_image_or_animation.is_a?(Image)
+                image_name_or_image_or_animation
+              else
+                Image.new(image_name_or_image_or_animation)
+              end
   end
 
   # Configure the flip of the image.
@@ -373,7 +375,7 @@ class Actor
   #   actor = Actor.new("player_walk")
   #   actor.flip = "both"
   def flip=(value)
-    valid_values = ["horizontal", "vertical", "none", "both"]
+    valid_values = %w[horizontal vertical none both]
     unless valid_values.include?(value)
       raise ArgumentError, "The value must be one of: #{valid_values.join(", ")}"
     end
@@ -469,12 +471,12 @@ class Actor
       @position = mouse_position - @dragging_offset
     else
       # Cursors moving
-      last_position = @position
+      @last_frame_position = @position.clone
       move_by_cursors
 
       # Direction moving
       unless @direction.zero?
-        last_position = @position
+        @last_frame_position = @position.clone
         move_by_direction
       end
 
@@ -485,24 +487,20 @@ class Actor
 
       # Apply forces
       apply_forces
-
-      # Check collisions after moving
-      if @solid
-        manage_collisions(last_position)
-      end
     end
 
     checking_autokill if @autokill
     on_after_move_do
   end
 
-  # Destroy this Actor is not longer, moved, or rendered, or cause any collision.
+  # Destroy this Actor is not longer, moved, or rendered
   #
   # @example Destroy an Actor
   #   actor = Actor.new("image")
   #   actor.destroy
   def destroy
     on_destroy_do
+    components.each(&:destroy)
     Global.actors.delete(self)
   end
 
@@ -514,6 +512,7 @@ class Actor
     actor = self.class.new(@sprite)
     actor.name = @name
     actor.position = @position.clone
+    actor.last_frame_position = @position.clone
     actor.direction = @direction.clone
 
     actor.speed = @speed
@@ -528,6 +527,7 @@ class Actor
     actor.on_after_move_callback = @on_after_move_callback
     actor.on_destroy_callback = @on_destroy_callback
     actor.on_jumping_callback = @on_jumping_callback
+    actor.on_collision_callback = @on_collision_callback
     actor.on_floor_callback = @on_floor_callback
 
     actor.on_cursor_down_callback = @on_cursor_down_callback
@@ -593,80 +593,36 @@ class Actor
     @on_floor_callback = block
   end
 
-  # Execute callbacks
+  private
 
-  # This method is triggered after each frame
-  #
-  # @example Limit Actor movement horizontally
-  #   class Player < Actor
-  #     def on_after_move_do
-  #       if @position.x > 100
-  #         @position.x = 100
-  #       end
-  #     end
-  #   end
+  # Execute callbacks
   def on_after_move_do
     instance_exec(&@on_after_move_callback) unless @on_after_move_callback.nil?
   end
 
-  # This method is triggered before the Actor is destroyed
-  #
-  # @example Executes when destroyed
-  #   class Player < Actor
-  #     def on_destroy_do
-  #       Sound.play("explosion")
-  #     end
-  #   end
   def on_destroy_do
     instance_exec(&@on_destroy_callback) unless @on_destroy_callback.nil?
   end
 
-  # This method is triggered when the Actor starts jumping
-  #
-  # @example Change image when jumping
-  #   class Player < Actor
-  #     def on_jumping_do
-  #       self.sprite = "jump"
-  #     end
-  #   end
   def on_jumping_do
     instance_exec(&@on_jumping_callback) unless @on_jumping_callback.nil?
   end
 
-  # This method is triggered when the Actor touches floor
-  #
-  # @example Change image when jumping
-  #   class Player < Actor
-  #     def.on_floor_do
-  #       self.sprite = "land"
-  #       Clock.new { self.sprite = "walk" }.run_on(seconds: 0.8)
-  #     end
-  #   end
   def on_floor_do
     instance_exec(&@on_floor_callback) unless @on_floor_callback.nil?
+  end
+
+  def on_collision_do(self_collider, other_collider)
+    if self_collider.solid? && other_collider.solid?
+      collision_with_solid(other_collider)
+    end
+
+    instance_exec(&@on_collision_callback) unless @on_collision_callback.nil?
   end
 
   def to_s
     "Actor (#{object_id}): #{name} (#{position.x},#{position.y})"
   end
-
-  protected
-
-  # TODO: make this work optimized
-  # def position_top_left
-  #   @position - position_delta
-  # end
-
-  # def position_delta
-  #   case @alignment
-  #   when "top-left"
-  #     Coordinates.zero
-  #   when "center"
-  #     Coordinates.new(width/2, height/2)
-  #   else
-  #     raise "Actor.alignment value not valid '#{@alignment}'. Valid values: 'top-left, center'"
-  #   end
-  # end
 
   def draw_debug
     if solid
@@ -687,73 +643,41 @@ class Actor
     @position - Camera.main.position
   end
 
-  def manage_collisions(last_position)
+  def collision_with_solid(other_collider)
     @velocity ||= Coordinates.zero # In case it is not initialized yet
 
-    collisions.each do |other|
-      on_collision_do(other)
-      other.on_collision_do(self)
+    if other_collider.position.y >= (last_position.y + height)
+      on_floor_do unless @on_floor
 
-      if other.position.y >= (last_position.y + height)
-        on_floor_do unless @on_floor
-
-        @on_floor = true
-        @jumping = false
-        @velocity.y = 0
-      end
-
-      if other.position.y + other.height <= last_position.y
-        @velocity.y = 0
-      end
+      @on_floor = true
+      @jumping = false
+      @velocity.y = 0
     end
 
-    # # Reset position pixel by pixel
-    # was_collision = false
-    # while collisions.any? && @position != last_position
-    #   was_collision = true
-    #   last_position_direction = last_position - @position
-    #   @position += last_position_direction.normalize
-    # end
-    # was_collision
-
-    if collisions.any? # we don't cache collisions because position may be changed on collision callback
-      @position = last_position
-
-      return true
+    if other_collider.position.y + other_collider.height <= @last_frame_position.y
+      @velocity.y = 0
     end
 
-    false
+    @position = @last_frame_position.clone
   end
-
-  # rubocop:disable Style/Next
-  def collisions
-    XXXXX Continue HERE XXXXX
-    return [] if @colliders.empty?
-    # return [] if @collision_with == "none"
-
-    Global.actors.reject { |e| e == self }.select(&:solid?).select do |other|
-      if (@collision_with == "all" || @collision_with.include?(other.name))
-        Utils.collision? self, other
-      end
-    end
-  end
-  # rubocop:enable Style/Next
 
   # If actor is out of the screen by 100 pixels, destroy it
   def checking_autokill
     margin_pixels = 100
 
-    if(
-      position_in_camera.x < -margin_pixels ||
-      position_in_camera.x > Global.screen_width + margin_pixels ||
-      position_in_camera.y < -margin_pixels ||
-      position_in_camera.y > Global.screen_height + margin_pixels
-    )
-      log "Autokill: #{self.name}"
+    if position_in_camera.x < -margin_pixels ||
+       position_in_camera.x > Global.screen_width + margin_pixels ||
+       position_in_camera.y < -margin_pixels ||
+       position_in_camera.y > Global.screen_height + margin_pixels
+
+      log "Autokill: #{name}"
       Global.actors.delete(self)
     end
   end
 
-  attr_accessor :on_after_move_callback, :on_collision_callback, :on_destroy_callback, :on_jumping_callback, :on_floor_callback
-  attr_accessor :on_click_callback
+  attr_accessor :on_after_move_callback,
+                :on_collision_callback,
+                :on_destroy_callback,
+                :on_jumping_callback,
+                :on_floor_callback
 end

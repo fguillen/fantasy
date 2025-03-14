@@ -1,19 +1,25 @@
 class Collider
-  def initialize(position:, width:, height:, actor:, group:)
+  include Log
+
+  def initialize(position:, width:, height:, actor:, group:, name: nil, solid: false)
+    @name = name
     @position = position
     @width = width
     @height = height
     @actor = actor
     @group = group
-    @collision_with = "none"
+    @solid = solid
+    @collision_with = "all"
     @on_collision_callback = nil
     @active = true
+
+    Global.colliders&.push(self)
   end
 
   # Array of strings (or "all", or "none").
   # Represents with which other collider group this collider collides.
   #
-  # Default `"none"`.
+  # Default `"all"`.
   #
   # @return [Array, String] the actual list of names of Colliders to collide with
   #
@@ -29,11 +35,11 @@ class Collider
   #
   # @example Set this Colliders collides with all other Colliders
   #   collider = Collider.new()
-  #   collider.collision_with = "all"
+  #   collider.collision_with = "all" # it is the default
   #
   # @example Set this Colliders collides with none other Colliders
   #   collider = Collider.new()
-  #   collider.collision_with = "none" # it is the default
+  #   collider.collision_with = "none"
   #
   def collision_with=(value)
     if value.is_a?(String) && value != "all" && value != "none"
@@ -43,83 +49,53 @@ class Collider
     @collision_with = value
   end
 
-  # The block to be executed when Actor collides with another Actor
+  # The block to be executed when Collider collides with another Collider
   #
   # @example Collision detected with _"bullet"_
-  #   actor = Actor.new("image")
-  #   actor.on_collision do |other|
+  #   collider.on_collision do |other|
   #     if other.name == "bullet"
-  #       actor.destroy
+  #       collider.actor.destroy
   #     end
   #   end
   def on_collision(&block)
     @on_collision_callback = block
   end
 
+  # Destroy this Collider
+  def destroy
+    Global.colliders.delete(self)
+  end
+
+  def world_position
+    @position + actor.position
+  end
+
+  def world_width
+    @width * actor.scale.x
+  end
+
+  def world_height
+    @height * actor.scale
+  end
+
+  # rubocop:disable Metrics/AbcSize
+  def collides_with?(other)
+    # https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+    (
+      world_position.x < (other.world_position.x + other.world_width) &&
+      (world_position.x + world_width) > other.world_position.x &&
+      world_position.y < (other.world_position.y + other.world_heigh) &&
+      world_position.y + world_heigh > other.world_position.y
+    )
+  end
+  # rubocop:enable Metrics/AbcSize
+
   private
 
-  # This method is triggered when Actor collides with another Actor
-  #
-  # @example Limit Actor movement horizontally
-  #   class Player < Actor
-  #     def on_collision_do(other)
-  #       if other.name == "bullet"
-  #         destroy
-  #       end
-  #     end
-  #   end
   def on_collision_do(other)
-    instance_exec(other, &@on_collision_callback) unless @on_collision_callback.nil?
+    other_name = other.respond_to?(:name) ? other.name : "no-name"
+    log("Collision detected with [#{other.object_id}] [#{other_name}]")
+    actor.on_collision_do(self, other)
+    @on_collision_callback&.call(other)
   end
 end
-
-# class CircleCollider
-#   attr_accessor :x, :y, :radius
-
-#   def initialize(x, y, radius)
-#     @x = x
-#     @y = y
-#     @radius = radius
-#   end
-
-#   def collides_with?(other_collider)
-#     distance = Math.sqrt((other_collider.x - @x)**2 + (other_collider.y - @y)**2)
-#     distance < @radius + other_collider.radius
-#   end
-
-#   def on_collision(other_collider)
-#     puts "Circle collided with circle"
-#   end
-# end
-
-# class BoxCollider
-#   attr_accessor :x, :y, :width, :height
-
-#   def initialize(x, y, width, height)
-#     @x = x
-#     @y = y
-#     @width = width
-#     @height = height
-#   end
-
-#   def collides_with?(other_collider)
-#     @x < other_collider.x + other_collider.width &&
-#       @x + @width > other_collider.x &&
-#       @y < other_collider.y + other_collider.height &&
-#       @y + @height > other_collider.y
-#   end
-
-#   def on_collision(other_collider)
-#     puts "Box collided with box"
-#   end
-# end
-
-# collider = Collider.new
-# collider.add_collider(CircleCollider.new(10, 10, 5))
-# collider.add_collider(BoxCollider.new(10, 10, 5, 5))
-# collider.check_collisions
-
-# # Output:
-# # Circle collided with circle
-# # Box collided with box
-# end
