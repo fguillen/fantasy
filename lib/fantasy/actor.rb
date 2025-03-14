@@ -607,13 +607,25 @@ class Actor
       collision_with_solid(other_collider)
     end
 
+    do_on_collision(other_collider.actor)
     instance_exec(&@on_collision_callback) unless @on_collision_callback.nil?
+  end
+
+  # protected
+
+  def do_after_move
+    # To be overriden
+  end
+
+  def do_on_collision(other)
+    # To be overriden
   end
 
   private
 
   # Execute callbacks
   def on_after_move_do
+    do_after_move
     instance_exec(&@on_after_move_callback) unless @on_after_move_callback.nil?
   end
 
