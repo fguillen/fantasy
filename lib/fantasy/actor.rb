@@ -151,6 +151,9 @@ class Actor
   #   actor.solid = false
   attr_accessor :solid
 
+  # @!visibility private
+  attr_reader :components
+
   # The value to scale the image of the Actor when drawn.
   # If the value is `2` the image will rendered at double of size.
   # If the value is `0.5` the image will rendered at half of size.
@@ -593,6 +596,20 @@ class Actor
     @on_floor_callback = block
   end
 
+  # !visibility private
+  def position_in_camera
+    @position - Camera.main.position
+  end
+
+  # !visibility private
+  def on_collision_do(self_collider, other_collider)
+    if self_collider.solid? && other_collider.solid?
+      collision_with_solid(other_collider)
+    end
+
+    instance_exec(&@on_collision_callback) unless @on_collision_callback.nil?
+  end
+
   private
 
   # Execute callbacks
@@ -610,14 +627,6 @@ class Actor
 
   def on_floor_do
     instance_exec(&@on_floor_callback) unless @on_floor_callback.nil?
-  end
-
-  def on_collision_do(self_collider, other_collider)
-    if self_collider.solid? && other_collider.solid?
-      collision_with_solid(other_collider)
-    end
-
-    instance_exec(&@on_collision_callback) unless @on_collision_callback.nil?
   end
 
   def to_s
@@ -639,14 +648,10 @@ class Actor
     Global.pixel_fonts["medium"].draw_text("#{@position.x.floor},#{@position.y.floor}", position_in_camera.x, position_in_camera.y - 20, 1)
   end
 
-  def position_in_camera
-    @position - Camera.main.position
-  end
-
   def collision_with_solid(other_collider)
     @velocity ||= Coordinates.zero # In case it is not initialized yet
 
-    if other_collider.position.y >= (last_position.y + height)
+    if other_collider.position.y >= (@last_frame_position.y + height)
       on_floor_do unless @on_floor
 
       @on_floor = true

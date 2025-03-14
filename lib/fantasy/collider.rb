@@ -1,11 +1,23 @@
 class Collider
   include Log
+  include Indexable
 
-  def initialize(position:, width:, height:, actor:, group:, name: nil, solid: false)
+  attr_accessor :name,
+                :position,
+                :width,
+                :height,
+                :group,
+                :solid,
+                :collision_with,
+                :active
+
+  attr_reader :actor
+
+  def initialize(actor:, position: Coordinates.zero, width: nil, height: nil, group: "all", name: nil, solid: false)
     @name = name
     @position = position
-    @width = width
-    @height = height
+    @width = width || (actor.width / actor.scale)
+    @height = height || (actor.height / actor.scale)
     @actor = actor
     @group = group
     @solid = solid
@@ -13,6 +25,7 @@ class Collider
     @on_collision_callback = nil
     @active = true
 
+    actor.components.push(self)
     Global.colliders&.push(self)
   end
 
@@ -66,15 +79,15 @@ class Collider
     Global.colliders.delete(self)
   end
 
-  def world_position
+  def position_in_world
     @position + actor.position
   end
 
-  def world_width
-    @width * actor.scale.x
+  def width_in_world
+    @width * actor.scale
   end
 
-  def world_height
+  def height_in_world
     @height * actor.scale
   end
 
@@ -82,20 +95,55 @@ class Collider
   def collides_with?(other)
     # https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
     (
-      world_position.x < (other.world_position.x + other.world_width) &&
-      (world_position.x + world_width) > other.world_position.x &&
-      world_position.y < (other.world_position.y + other.world_heigh) &&
-      world_position.y + world_heigh > other.world_position.y
+      position_in_world.x < (other.position_in_world.x + other.width_in_world) &&
+      (position_in_world.x + width_in_world) > other.position_in_world.x &&
+      position_in_world.y < (other.position_in_world.y + other.height_in_world) &&
+      position_in_world.y + height_in_world > other.position_in_world.y
     )
   end
   # rubocop:enable Metrics/AbcSize
 
-  private
+
+  # @!visibility private
+  def draw
+    draw_debug if Global.debug
+  end
+
+  def world_active
+    @active && actor.active
+  end
+
+  def layer
+    actor.layer
+  end
+
+  def position_in_camera
+    actor.position_in_camera + @position
+  end
 
   def on_collision_do(other)
     other_name = other.respond_to?(:name) ? other.name : "no-name"
     log("Collision detected with [#{other.object_id}] [#{other_name}]")
     actor.on_collision_do(self, other)
     @on_collision_callback&.call(other)
+  end
+
+  def solid?
+    @solid
+  end
+
+  private
+
+  def draw_debug
+    Shape.rectangle(
+      position: position_in_camera,
+      width: width_in_world,
+      height: height_in_world,
+      fill: false,
+      stroke_color: Color.palette.yellow,
+      stroke: 1
+    )
+
+    Global.pixel_fonts["medium"].draw_text("#{@position.x.floor},#{@position.y.floor}", position_in_camera.x, position_in_camera.y - 20, 1)
   end
 end
