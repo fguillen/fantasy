@@ -28,6 +28,11 @@ class Graphic
     Global.graphics&.push(self)
   end
 
+  def destroy
+    actor.parts.remove(self)
+    Global.graphics.delete(self)
+  end
+
   def draw
     raise NotImplementedError, "You must implement the draw method"
   end

@@ -1,9 +1,9 @@
-# Declares the ActorComponent module,
+# Declares the ActorPart module,
 # which is included in all components that are attached to an actor.
 # This module provides methods to get the position, width, height,
 # and layer of the component in the world and in the camera,
 # based on the position, scale, and layer of the actor it is attached to.
-module ActorComponent
+module ActorPart
   def active_in_world
     active && actor.active
   end

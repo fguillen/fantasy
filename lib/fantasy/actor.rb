@@ -152,7 +152,7 @@ class Actor
   attr_accessor :solid
 
   # @!visibility private
-  attr_reader :components
+  attr_reader :parts
 
   # The value to scale the image of the Actor when drawn.
   # If the value is `2` the image will rendered at double of size.
@@ -286,7 +286,7 @@ class Actor
   # @param image_name_or_image_or_animation [string | Image | Animation] the name of the image file from `./images/*`. Or an Image object. Or an Animation object
   # @return [Actor] the Actor
   def initialize(image_name_or_image_or_animation)
-    @components = []
+    @parts = []
 
     self.graphic = image_name_or_image_or_animation
 
@@ -359,9 +359,9 @@ class Actor
         Sprite.new(image_name_or_image_or_animation, actor: self)
       end
 
-    previous_graphics = @components.select { |component| component.is_a?(Graphic) }
+    previous_graphics = @parts.select { |component| component.is_a?(Graphic) }
     previous_graphics.each(&:destroy)
-    @components.push(graphic)
+    @parts.push(graphic)
   end
 
   # Configure the flip of the image.
@@ -392,12 +392,12 @@ class Actor
 
   # @return [Fixnum] the Actor width in pixels
   def width
-    @components.find { |component| component.is_a?(Graphic) }.width * @scale
+    @parts.find { |component| component.is_a?(Graphic) }.width * @scale
   end
 
   # @return [Fixnum] the Actor height in pixels
   def height
-    @components.find { |component| component.is_a?(Graphic) }.height * @scale
+    @parts.find { |component| component.is_a?(Graphic) }.height * @scale
   end
 
   # @return [Boolean] the value of `@solid`
@@ -505,7 +505,7 @@ class Actor
   #   actor.destroy
   def destroy
     on_destroy_do
-    components.each(&:destroy)
+    parts.each(&:destroy)
     Global.actors.delete(self)
   end
 
@@ -520,7 +520,7 @@ class Actor
     actor.last_frame_position = @position.clone
     actor.direction = @direction.clone
 
-    # actot.components = @components.clone # TODO: Fix this
+    # actot.parts = @parts.clone # TODO: Fix this
 
     actor.speed = @speed
     actor.scale = @scale

@@ -1,7 +1,7 @@
 class Collider
   include Log
   include Indexable
-  include ActorComponent
+  include ActorPart
 
   attr_accessor :name,
                 :position,
@@ -24,7 +24,7 @@ class Collider
     @on_collision_callback = nil
     @active = true
 
-    actor.components.push(self)
+    actor.parts.push(self)
     Global.colliders&.push(self)
   end
 
@@ -75,7 +75,7 @@ class Collider
 
   # Destroy this Collider
   def destroy
-    actor.components.remove(self)
+    actor.parts.remove(self)
     Global.colliders.delete(self)
   end
 
