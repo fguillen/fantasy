@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Represents one active entity in the game.
-# An actor can be the Player sprite. Or one of the enemies. Or the bullet.
+# An actor can be the Player. Or one of the enemies. Or the bullet.
 # An actor can also be a tree, or a wall
 #
 # @example Actor can be used directly
@@ -286,7 +286,9 @@ class Actor
   # @param image_name_or_image_or_animation [string | Image | Animation] the name of the image file from `./images/*`. Or an Image object. Or an Animation object
   # @return [Actor] the Actor
   def initialize(image_name_or_image_or_animation)
-    self.sprite = image_name_or_image_or_animation
+    @components = []
+
+    self.graphic = image_name_or_image_or_animation
 
     @name =
       if image_name_or_image_or_animation.is_a?(Animation)
@@ -315,8 +317,6 @@ class Actor
     @gravity = 0
     @jump_force = 0
 
-    @components = []
-
     @on_floor = false
 
     @on_after_move_callback = nil
@@ -334,30 +334,34 @@ class Actor
   end
 
   # Set a new graphical represenation of the Actor.
-  # @param image_name_or_animation [String|Image|Animation] The image file from `./images.(png|jpg|jpeg)`. Or an Image. Or an Animation
+  # @param image_name_or_image_or_animation [String|Image|Animation] The image file from `./images.(png|jpg|jpeg)`. Or an Image. Or an Animation
   #
   # @example Set a new image by name
   #   actor = Actor.new("player_walk")
-  #   actor.sprite = "player_jump"
+  #   actor.graphic = "player_jump"
   #
   # @example Set a new image
   #   image = Image.new("player_idle")
   #   actor = Actor.new("player_walk")
-  #   actor.sprite = image
+  #   actor.graphic = image
   #
   # @example Set a new animation
   #   animation = Animation.new(names: ["apple_1", "apple_2"])
   #   actor = Actor.new("player_walk")
-  #   actor.sprite = animation
-  # TODO: Change name to something more generic like "graphic/visual"
-  def sprite=(image_name_or_image_or_animation)
-    @sprite = if image_name_or_image_or_animation.is_a?(Animation)
-                image_name_or_image_or_animation
-              elsif image_name_or_image_or_animation.is_a?(Image)
-                image_name_or_image_or_animation
-              else
-                Image.new(image_name_or_image_or_animation)
-              end
+  #   actor.graphic = animation
+  def graphic=(image_name_or_image_or_animation)
+    graphic =
+      if image_name_or_image_or_animation.is_a?(Animation)
+        image_name_or_image_or_animation
+      elsif image_name_or_image_or_animation.is_a?(Sprite)
+        image_name_or_image_or_animation
+      else
+        Sprite.new(image_name_or_image_or_animation, actor: self)
+      end
+
+    previous_graphics = @components.select { |component| component.is_a?(Graphic) }
+    previous_graphics.each(&:destroy)
+    @components.push(graphic)
   end
 
   # Configure the flip of the image.
@@ -388,12 +392,12 @@ class Actor
 
   # @return [Fixnum] the Actor width in pixels
   def width
-    @sprite.width * @scale
+    @components.find { |component| component.is_a?(Graphic) }.width * @scale
   end
 
   # @return [Fixnum] the Actor height in pixels
   def height
-    @sprite.height * @scale
+    @components.find { |component| component.is_a?(Graphic) }.height * @scale
   end
 
   # @return [Boolean] the value of `@solid`
@@ -426,7 +430,7 @@ class Actor
   #   image = Image.new("player_walk")
   #   actor = Actor.new("player")
   #   actor.on_state(:walking) do
-  #     actor.sprite = image
+  #     actor.graphic = image
   #   end
   def on_state(state_name, &block)
     @states[state_name.to_sym] = block
@@ -452,8 +456,6 @@ class Actor
 
   # @!visibility private
   def draw
-    @sprite.draw(x: position_in_camera.x, y: position_in_camera.y, scale: @scale, rotation: @rotation, flip: @flip)
-
     draw_debug if Global.debug
   end
 
@@ -512,11 +514,13 @@ class Actor
 
   # @!visibility private
   def clone
-    actor = self.class.new(@sprite)
+    actor = self.class.new
     actor.name = @name
     actor.position = @position.clone
     actor.last_frame_position = @position.clone
     actor.direction = @direction.clone
+
+    # actot.components = @components.clone # TODO: Fix this
 
     actor.speed = @speed
     actor.scale = @scale
@@ -578,7 +582,7 @@ class Actor
   # @example Change image when jumping
   #   actor = Actor.new("walk")
   #   actor.on_jumping do
-  #     actor.sprite = "jump"
+  #     actor.graphic = "jump"
   #   end
   def on_jumping(&block)
     @on_jumping_callback = block
@@ -589,8 +593,8 @@ class Actor
   # @example Change image when jumping
   #   actor = Actor.new("walk")
   #   actor.on_floor do
-  #     actor.sprite = "land"
-  #     Clock.new { actor.sprite = "walk" }.run_on(seconds: 0.8)
+  #     actor.graphic = "land"
+  #     Clock.new { actor.graphic = "walk" }.run_on(seconds: 0.8)
   #   end
   def on_floor(&block)
     @on_floor_callback = block

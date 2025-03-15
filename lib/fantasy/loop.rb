@@ -82,7 +82,8 @@ class Game < Gosu::Window
       Global.backgrounds +
       Global.tile_maps +
       Global.actors.select(&:active) +
-      Global.colliders.select(&:world_active) +
+      Global.graphics.select(&:active) +
+      Global.colliders.select(&:active_in_world) +
       Global.hud_texts +
       Global.hud_images +
       Global.shapes

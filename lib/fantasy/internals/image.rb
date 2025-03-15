@@ -1,32 +1,9 @@
-# frozen_string_literal: true
+class Image < Gosu::Image
+  attr_reader :name
 
-class Image
-  attr_reader :image
-
-  def initialize(image_name_or_gosu_image)
-    @image = if image_name_or_gosu_image.is_a?(Gosu::Image)
-               image_name_or_gosu_image
-             else
-               Image.load(image_name_or_gosu_image)
-             end
-  end
-
-  def draw(x:, y:, scale: 1, rotation: 0, flip: "none")
-    scale_x = scale
-    scale_y = scale
-    scale_x *= -1 if %w[horizontal both].include?(flip)
-    scale_y *= -1 if %w[vertical both].include?(flip)
-
-    # draw_rot(x, y, z = 0, angle = 0, center_x = 0.5, center_y = 0.5, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default) ⇒ void
-    @image.draw_rot(x + ((width * scale) / 2), y + ((height * scale) / 2), 0, rotation, 0.5, 0.5, scale_x, scale_y)
-  end
-
-  def width
-    @image.width
-  end
-
-  def height
-    @image.height
+  def initialize(file_path)
+    super(file_path, { retro: true })
+    @name = File.basename(file_path)
   end
 
   class << self
@@ -59,9 +36,9 @@ class Image
 
       file_path = all_images.find { |e| File.basename(e) =~ /^#{image_name}($|\.)/ }
 
-      raise "Image file not found with name '#{image_name}' in '#{base_path}' folder or any of its subfolders" if file_path.nil?
+      raise "Sprite file not found with name '#{image_name}' in '#{base_path}' folder or any of its subfolders" if file_path.nil?
 
-      @@images[image_name] = Gosu::Image.new(file_path, { retro: true })
+      @@images[image_name] = Image.new(file_path)
 
       log "Initialized image: '#{image_name}'"
 

@@ -1,6 +1,7 @@
 class Collider
   include Log
   include Indexable
+  include ActorComponent
 
   attr_accessor :name,
                 :position,
@@ -10,8 +11,6 @@ class Collider
                 :solid,
                 :collision_with,
                 :active
-
-  attr_reader :actor
 
   def initialize(actor:, position: Coordinates.zero, width: nil, height: nil, group: "all", name: nil, solid: false)
     @name = name
@@ -76,19 +75,8 @@ class Collider
 
   # Destroy this Collider
   def destroy
+    actor.components.remove(self)
     Global.colliders.delete(self)
-  end
-
-  def position_in_world
-    @position + actor.position
-  end
-
-  def width_in_world
-    @width * actor.scale
-  end
-
-  def height_in_world
-    @height * actor.scale
   end
 
   # rubocop:disable Metrics/AbcSize
@@ -107,18 +95,6 @@ class Collider
   # @!visibility private
   def draw
     draw_debug if Global.debug
-  end
-
-  def world_active
-    @active && actor.active
-  end
-
-  def layer
-    actor.layer
-  end
-
-  def position_in_camera
-    actor.position_in_camera + @position
   end
 
   def on_collision_do(other)

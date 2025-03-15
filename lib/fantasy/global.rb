@@ -7,6 +7,7 @@ module Global
     include Log
 
     attr_accessor :actors,
+                  :graphics,
                   :hud_texts,
                   :hud_images,
                   :animations,
@@ -39,6 +40,7 @@ module Global
     def initialize(screen_width, screen_height)
       log "Global.initialize"
       @actors = []
+      @graphics = []
       @hud_texts = []
       @hud_images = []
       @animations = []
@@ -157,6 +159,7 @@ module Global
 
     def clear_entities
       @actors.clear
+      @graphics.clear
       @hud_texts.clear
       @hud_images.clear
       @animations.clear
