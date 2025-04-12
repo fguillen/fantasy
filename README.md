@@ -6,7 +6,7 @@ An upper layer over Gosu library to offer a more friendly API for an easy and le
 
 Specially intended to use Ruby as a learning language to introduce children into programming.
 
-**Attention**: This project is in early development phase, right now it is just an experiment
+**Attention**: This project is in early development phase, right now it is just an experiment.
 
 ## Use
 
