@@ -592,7 +592,7 @@ class Actor
   # !visibility private
   def on_collision_do(self_collider, other_collider)
     if self_collider.solid? && other_collider.solid?
-      collision_with_solid(other_collider)
+      collision_with_solid(self_collider, other_collider)
     end
 
     do_on_collision(other_collider.actor)
@@ -651,8 +651,10 @@ class Actor
     Global.pixel_fonts["medium"].draw_text("#{@position.x.floor},#{@position.y.floor}", position_in_camera.x, position_in_camera.y - 20, 1)
   end
 
-  def collision_with_solid(other_collider)
+  def collision_with_solid(self_collider, other_collider)
     @velocity ||= Coordinates.zero # In case it is not initialized yet
+    rollback_movement = @position - @last_frame_position
+    movement = CollisionResolver.movement_until_collision(self_collider, other_collider, rollback_movement, @direction)
 
     # Collision with the floor
     if other_collider.position_in_world.y >= @last_frame_position.y
@@ -668,17 +670,19 @@ class Actor
       @velocity.y = 0
     end
 
-    @position = @last_frame_position.clone
+    @position += movement
+    @last_frame_position = @position
   end
 
   def on_floor?
-    return false
     result =
       parts.select { |part| part.is_a?(Collider) && part.solid? }.any? do |collider|
         CollisionResolver.any_collision_down_with_solid?(collider)
       end
 
     @is_on_floor = result
+
+    puts ">>>> #{name} is on floor: #{result}"
 
     result
   end

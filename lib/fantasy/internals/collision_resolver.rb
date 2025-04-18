@@ -4,7 +4,7 @@ class CollisionResolver
 
     collisionable_colliders_cached.each do |collider|
       collisionable_colliders_cached.each do |other|
-        if colliders_collide?(collider, other)
+        if colliders_can_collide?(collider, other) && collider.collides_with?(other)
           collider.on_collision_do(other)
         end
       end
@@ -16,13 +16,29 @@ class CollisionResolver
     collider_down.position.y += 1
 
     collisionable_colliders.select(&:solid).each do |other|
-      if colliders_collide?(collider, other)
+      if colliders_can_collide?(collider, other) && collider_down.collides_with?(other)
         return true
       end
     end
 
     collider_down.destroy
   end
+
+  def self.movement_until_collision(collider, other, rollback_movement, direction)
+    collider_dup = collider.duplicate
+    collider_dup.position -= rollback_movement
+
+    collider_dup.position += direction
+    collider_dup.position += direction until collider_dup.collides_with?(other)
+
+    movement = collider_dup.position - collider.position
+
+    collider_dup.destroy
+
+    movement
+  end
+
+  private
 
   def self.collisionable_colliders
     Global.colliders.select do |collider|
@@ -34,7 +50,7 @@ class CollisionResolver
     end
   end
 
-  def self.colliders_collide?(collider, other)
+  def self.colliders_can_collide?(collider, other)
     return false if collider == other
     return false if collider.actor == other.actor
     return true if collider.collision_with == "all"

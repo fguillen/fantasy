@@ -101,7 +101,7 @@ class Collider
 
   # Destroy this Collider
   def destroy
-    actor&.parts&.remove(self)
+    actor&.parts&.delete(self)
     Global.colliders.delete(self)
   end
 
