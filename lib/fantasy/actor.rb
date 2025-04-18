@@ -303,7 +303,7 @@ class Actor
     @on_destroy_callback = nil
     @on_jumping_callback = nil
     @on_collision_callback = nil
-    @is_on_floor_callback = nil
+    @on_floor_callback = nil
 
     @states = {}
     @state = nil
@@ -472,9 +472,7 @@ class Actor
       end
 
       # Gravity force
-      unless @gravity.zero?
-        add_force_by_gravity
-      end
+      add_force_by_gravity
 
       # Apply forces
       apply_forces
@@ -520,7 +518,7 @@ class Actor
     actor.on_destroy_callback = @on_destroy_callback
     actor.on_jumping_callback = @on_jumping_callback
     actor.on_collision_callback = @on_collision_callback
-    actor.on_floor_callback = @is_on_floor_callback
+    actor.on_floor_callback = @on_floor_callback
 
     actor.on_cursor_down_callback = @on_cursor_down_callback
     actor.on_cursor_up_callback = @on_cursor_up_callback
@@ -583,7 +581,7 @@ class Actor
   #     Clock.new { actor.graphic = "walk" }.run_on(seconds: 0.8)
   #   end
   def on_floor(&block)
-    @is_on_floor_callback = block
+    @on_floor_callback = block
   end
 
   # !visibility private
@@ -638,7 +636,7 @@ class Actor
   end
 
   def on_floor_do
-    instance_exec(&@is_on_floor_callback) unless @is_on_floor_callback.nil?
+    instance_exec(&@on_floor_callback) unless @on_floor_callback.nil?
   end
 
   def to_s
@@ -673,9 +671,21 @@ class Actor
     @position = @last_frame_position.clone
   end
 
+  def on_floor?
+    return false
+    result =
+      parts.select { |part| part.is_a?(Collider) && part.solid? }.any? do |collider|
+        CollisionResolver.any_collision_down_with_solid?(collider)
+      end
+
+    @is_on_floor = result
+
+    result
+  end
+
   # If actor is out of the screen by 100 pixels, destroy it
   def checking_autokill
-    margin_pixels = 100
+    margin_pixels = Global.screen_width / 2
 
     if position_in_camera.x < -margin_pixels ||
        position_in_camera.x > Global.screen_width + margin_pixels ||
@@ -683,7 +693,7 @@ class Actor
        position_in_camera.y > Global.screen_height + margin_pixels
 
       log "Autokill: #{name}"
-      Global.actors.delete(self)
+      destroy
     end
   end
 

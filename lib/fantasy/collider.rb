@@ -134,6 +134,23 @@ class Collider
     @solid
   end
 
+  def duplicate
+    new_collider =
+      Collider.new(
+        actor: @actor,
+        position: @position.dup,
+        width: @width,
+        height: @height,
+        group: @group,
+        name: @name,
+        solid: @solid
+      )
+
+    new_collider.collision_with = @collision_with
+
+    new_collider
+  end
+
   private
 
   def draw_debug

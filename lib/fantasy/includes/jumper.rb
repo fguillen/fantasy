@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 module Jumper
+  include Log
+
   def jump
-    puts ">>>> jump"
+    log "jump"
     impulse(direction: Coordinates.up, force: @jump_force)
     @jumping = true
     @is_on_floor = false

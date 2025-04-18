@@ -53,7 +53,7 @@ module MoveByCursor
       @direction = Coordinates.zero
     end
 
-    if Gosu.button_down?(Cursor.space_bar) && !@jumping && @is_on_floor && @move_with_cursors_jump
+    if Gosu.button_down?(Cursor.space_bar) && !@jumping && on_floor? && @move_with_cursors_jump
       jump
     end
   end

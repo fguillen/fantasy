@@ -8,8 +8,7 @@ class Sprite < Graphic
   def initialize(
     image_name_or_gosu_image,
     actor: nil,
-    position: Coordinates.zero,
-    name: nil
+    position: Coordinates.zero
   )
     super(actor: actor, position: position, name: name)
 
@@ -19,8 +18,6 @@ class Sprite < Graphic
       else
         Image.load(image_name_or_gosu_image)
       end
-
-    @name ||= @image.name
   end
 
   def width
