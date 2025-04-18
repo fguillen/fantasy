@@ -7,7 +7,6 @@
 # @example Actor can be used directly
 #   player = Actor.new("warrior") # ./images/warrior.png
 #   player.position = Coordinates.new(100, 100)
-#   player.solid = true
 #   player.speed = 200
 #   player.layer = 1
 #   player.move_with_cursors
@@ -34,7 +33,6 @@
 #     def initialize
 #       super("warrior") # ./images/warrior.png
 #       @position = Coordinates.new(100, 100)
-#       @solid = true
 #       @speed = 200
 #       @layer = 1
 #       @direction = Coordinates.zero
@@ -135,21 +133,6 @@ class Actor
   #   actor = Actor.new("image")
   #   actor.gravity = 10
   attr_accessor :gravity
-
-  # When `true` the Actor will cause and respond to collisions.
-  #
-  # When `false` the Actor won't cause neither respond to collisions.
-  #
-  # Default `true`.
-  #
-  # @return [Boolean] the actual solid value
-  #
-  # @param solid [true, false] only true or false
-  #
-  # @example Set solid
-  #   actor = Actor.new("image")
-  #   actor.solid = false
-  attr_accessor :solid
 
   # @!visibility private
   attr_reader :parts
@@ -268,7 +251,6 @@ class Actor
   #   actor.direction # => Coordinates.zero
   #   actor.speed # => 0
   #   actor.scale # => 1
-  #   actor.solid # => true
   #   actor.rotation # => 0
   #   actor.flip # => "none"
   #   actor.autokill # => "true"
@@ -305,7 +287,6 @@ class Actor
     @active = true
     @autokill = true
 
-    @solid = true
     @draggable_on_debug = true
     @dragging = false
     @dragging_offset = nil
@@ -390,17 +371,20 @@ class Actor
 
   # @return [Fixnum] the Actor width in pixels
   def width
-    @parts.find { |component| component.is_a?(Graphic) }.width * @scale
+    if @graphic
+      @graphic.width_in_world
+    else
+      0
+    end
   end
 
   # @return [Fixnum] the Actor height in pixels
   def height
-    @parts.find { |component| component.is_a?(Graphic) }.height * @scale
-  end
-
-  # @return [Boolean] the value of `@solid`
-  def solid?
-    @solid
+    if @graphic
+      @graphic.height_in_world
+    else
+      0
+    end
   end
 
   # @param value [Coordinates] set a new direction to the Actor.
@@ -523,7 +507,6 @@ class Actor
 
     actor.speed = @speed
     actor.scale = @scale
-    actor.solid = @solid
     actor.layer = @layer
     actor.gravity = @gravity
     actor.jump_force = @jump_force
@@ -614,6 +597,16 @@ class Actor
     instance_exec(&@on_collision_callback) unless @on_collision_callback.nil?
   end
 
+  def add_part(part)
+    @parts.push(part)
+    part.actor = self
+  end
+
+  def remove_part(part)
+    @parts.delete(part)
+    part.actor = nil
+  end
+
   # protected
 
   def do_after_move
@@ -649,15 +642,8 @@ class Actor
   end
 
   def draw_debug
-    if solid
-      Shape.rectangle(
-        position: position_in_camera,
-        width: width,
-        height: height,
-        fill: false,
-        stroke_color: Color.palette.red,
-        stroke: 1
-      )
+    @parts.each do |part|
+      part.draw_debug if part.respond_to?(:draw_debug)
     end
 
     Global.pixel_fonts["medium"].draw_text("#{@position.x.floor},#{@position.y.floor}", position_in_camera.x, position_in_camera.y - 20, 1)

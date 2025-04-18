@@ -3,27 +3,46 @@ class Collider
   include Indexable
   include ActorPart
 
+  # When `true` the Collider won't go cross other `solid` Colliders.
+  #
+  # Default `false`.
+  #
+  # @return [Boolean] the actual solid value
+  #
+  # @param solid [true, false] only true or false
+  #
+  # @example Set solid
+  #   collider = Collider.new()
+  #   collider.solid = true
+  attr_accessor :solid
+
   attr_accessor :name,
                 :position,
                 :width,
                 :height,
                 :group,
-                :solid,
                 :collision_with,
                 :active
 
   def initialize(
-    actor:,
+    actor: nil,
     position: Coordinates.zero,
     width: nil,
     height: nil,
     group: "all",
-    name: nil, solid: false
+    name: nil,
+    solid: false
   )
     @name = name
     @position = position
-    @width = width || (actor.width / actor.scale)
-    @height = height || (actor.height / actor.scale)
+
+    @width = width
+    @width ||= (actor.width / actor.scale) if actor
+    @width ||= 0
+    @height = height
+    @height ||= (actor.height / actor.scale) if actor
+    @height ||= 0
+
     @actor = actor
     @group = group
     @solid = solid
@@ -31,7 +50,7 @@ class Collider
     @on_collision_callback = nil
     @active = true
 
-    actor.parts.push(self)
+    actor&.parts&.push(self)
     Global.colliders&.push(self)
   end
 
@@ -82,7 +101,7 @@ class Collider
 
   # Destroy this Collider
   def destroy
-    actor.parts.remove(self)
+    actor&.parts&.remove(self)
     Global.colliders.delete(self)
   end
 
@@ -107,7 +126,7 @@ class Collider
   def on_collision_do(other)
     other_name = other.respond_to?(:name) ? other.name : "no-name"
     log("Collision detected with [#{other.object_id}] [#{other_name}]")
-    actor.on_collision_do(self, other)
+    actor&.on_collision_do(self, other)
     @on_collision_callback&.call(other)
   end
 
@@ -125,7 +144,7 @@ class Collider
       fill: false,
       stroke_color: Color.palette.yellow,
       stroke: 1
-    )
+    ).draw
 
     Global.pixel_fonts["medium"].draw_text("#{@position.x.floor},#{@position.y.floor}", position_in_camera.x, position_in_camera.y - 20, 1)
   end

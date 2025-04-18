@@ -14,7 +14,6 @@ module Global
                   :backgrounds,
                   :tile_maps,
                   :clocks,
-                  :shapes,
                   :tweens,
                   :colliders
 
@@ -47,7 +46,6 @@ module Global
       @backgrounds = []
       @tile_maps = []
       @clocks = []
-      @shapes = []
       @tweens = []
       @colliders = []
 
@@ -165,7 +163,6 @@ module Global
       @animations.clear
       @backgrounds.clear
       @tile_maps.clear
-      @shapes.clear
       @tweens.clear
       @colliders.clear
 
@@ -191,10 +188,10 @@ module Global
 
     def load_fonts
       result = {}
-      result["small"] = Gosu::Font.new(20, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" })
-      result["medium"] = Gosu::Font.new(40, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" })
-      result["big"] = Gosu::Font.new(60, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" })
-      result["huge"] = Gosu::Font.new(100, { name: "#{__dir__}/../../fonts/VT323-Regular.ttf" })
+      result["small"] = Gosu::Font.new(20, { name: "#{__dir__}/../../../fonts/VT323-Regular.ttf" })
+      result["medium"] = Gosu::Font.new(40, { name: "#{__dir__}/../../../fonts/VT323-Regular.ttf" })
+      result["big"] = Gosu::Font.new(60, { name: "#{__dir__}/../../../fonts/VT323-Regular.ttf" })
+      result["huge"] = Gosu::Font.new(100, { name: "#{__dir__}/../../../fonts/VT323-Regular.ttf" })
 
       result
     end

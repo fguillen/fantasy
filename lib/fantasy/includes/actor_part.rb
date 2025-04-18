@@ -4,6 +4,8 @@
 # and layer of the component in the world and in the camera,
 # based on the position, scale, and layer of the actor it is attached to.
 module ActorPart
+  attr_accessor :actor
+
   def active_in_world
     if actor
       active && actor.active

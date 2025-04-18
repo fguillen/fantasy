@@ -33,8 +33,6 @@ class Shape
 
     # @errors = []
     # raise "Error: Shape kind '#{kind}' is invalid. #{errors.join(", ")}" if invalid?
-
-    Global.shapes&.push(self)
   end
   # rubocop:enable Metrics/ParameterLists
 
@@ -68,10 +66,6 @@ class Shape
     else
       raise "Shape.kind not supported: '#{@kind}'. Supported kinds: 'rectangle'"
     end
-  end
-
-  def destroy
-    Global.shapes.delete(self)
   end
 
   private

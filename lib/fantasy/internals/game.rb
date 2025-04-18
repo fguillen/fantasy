@@ -88,15 +88,13 @@ class Game < Gosu::Window
       Global.actors.select(&:active) +
       Global.colliders.select(&:active_in_world) +
       Global.hud_texts +
-      Global.hud_images +
-      Global.shapes
+      Global.hud_images
     ).group_by(&:layer).sort.map { |e| e[1] }.each { |e| e.sort_by(&:creation_index).each(&:draw) }
   end
 
   def check_click
     (
-      Global.actors +
-      Global.shapes
+      Global.actors
     ).sort_by(&:layer).each do |e|
       e.on_click_do if Utils.collision_at?(e, mouse_x, mouse_y)
     end
@@ -106,8 +104,7 @@ class Game < Gosu::Window
 
   def invoke_input_method_in_entities(input_method_name)
     (
-      Global.actors +
-      Global.shapes
+      Global.actors
     ).sort_by(&:layer).each do |e|
       e.send(input_method_name)
     end

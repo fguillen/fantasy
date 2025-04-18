@@ -34,7 +34,26 @@ class Graphic
     Global.graphics.delete(self)
   end
 
+  def width
+    raise NotImplementedError, "You must implement the draw method"
+  end
+
+  def height
+    raise NotImplementedError, "You must implement the draw method"
+  end
+
   def draw
     raise NotImplementedError, "You must implement the draw method"
+  end
+
+  def draw_debug
+    Shape.rectangle(
+      position: position_in_camera,
+      width: width,
+      height: height,
+      fill: false,
+      stroke_color: Color.palette.pink,
+      stroke: 1
+    )
   end
 end
