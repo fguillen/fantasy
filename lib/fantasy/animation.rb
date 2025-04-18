@@ -147,10 +147,7 @@ class Animation < Graphic
   end
 
   def draw
-    x = position_in_camera.x
-    y = position_in_camera.y
-
-    @images[@frame].draw(x: x, y: y, scale: scale_in_world, rotation: rotation_in_world, flip: flip)
+    @images[@frame].draw(position: position_in_camera, scale: scale_in_world, rotation: rotation_in_world, flip: flip)
   end
 
   def width

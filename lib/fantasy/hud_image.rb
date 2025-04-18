@@ -33,7 +33,7 @@ class HudImage
 
   def draw
     if visible
-      @image.draw(x: @position.x, y: @position.y, scale: @scale)
+      @image.draw(position: @position, scale: @scale)
     end
 
     draw_debug if Global.debug

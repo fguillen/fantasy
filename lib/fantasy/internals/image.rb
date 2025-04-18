@@ -9,14 +9,20 @@ class Image
     @gosu_image = gosu_image
   end
 
-  def draw(x:, y:, scale: 1, rotation: 0, flip: "none")
+  def draw(position:, scale: 1, rotation: 0, flip: "none")
     scale_x = scale
     scale_y = scale
     scale_x *= -1 if %w[horizontal both].include?(flip)
     scale_y *= -1 if %w[vertical both].include?(flip)
 
+    position_x = position.x # + (width / 2)
+    position_y = position.y # + (height / 2)
+    z = 0
+    center_x = 0
+    center_y = 0
+
     # draw_rot(x, y, z = 0, angle = 0, center_x = 0.5, center_y = 0.5, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default) ⇒ void
-    @gosu_image.draw_rot(x + (width / 2), y + (height / 2), 0, rotation, 0.5, 0.5, scale_x, scale_y)
+    @gosu_image.draw_rot(position_x, position_y, z, rotation, center_x, center_y, scale_x, scale_y)
   end
 
   def width

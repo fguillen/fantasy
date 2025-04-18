@@ -32,9 +32,6 @@ class Sprite < Graphic
   end
 
   def draw
-    x = position_in_camera.x
-    y = position_in_camera.y
-
-    @image.draw(x: x, y: y, scale: scale_in_world, rotation: rotation_in_world, flip: flip)
+    @image.draw(position: position_in_camera, scale: scale_in_world, rotation: rotation_in_world, flip: flip)
   end
 end

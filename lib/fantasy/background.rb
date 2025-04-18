@@ -139,43 +139,37 @@ class Background
   end
 
   # Camera relative Tiles
-  # rubocop:disable Metrics/AbcSize
   def draw_repeat
-    # TODO: optimize this. Looks to me that we are rendering more copies of the image
-    #   than we need. Also if the camera is very far away from the Background
-    #   we should only draw the images that will be shown in the screen
-
-    tiles_delta_x = position_in_camera.x
-    tiles_delta_y = position_in_camera.y
+    first_tile_position_x = position_in_camera.x
+    first_tile_position_y = position_in_camera.y
 
     tiles_needed_horizontal = 1
     tiles_needed_vertical = 1
 
     if repeat_horizontally?
-      tiles_needed_horizontal = ((Global.screen_width - (tiles_delta_x + width)) / width.to_f).ceil + 2
-      tiles_delta_x = (position_in_camera.x % width) - width
+      tiles_needed_horizontal = (Global.screen_width / width.to_f).ceil + 1
+      first_tile_position_x = position_in_camera.x - ((position_in_camera.x / width.to_f).ceil * width)
     end
 
     if repeat_vertically?
-      tiles_needed_vertical = ((Global.screen_height - (tiles_delta_y + height)) / height.to_f).ceil + 2
-      tiles_delta_y = (position_in_camera.y % height) - height
+      tiles_needed_vertical = (Global.screen_height / height.to_f).ceil + 1
+      first_tile_position_y = position_in_camera.y - ((position_in_camera.y / height.to_f).ceil * height)
     end
 
     tiles_needed_horizontal.times do |index_horizontal|
       tiles_needed_vertical.times do |index_vertical|
         drawing_position =
           Coordinates.new(
-            tiles_delta_x + (width * index_horizontal),
-            tiles_delta_y + (height * index_vertical)
+            first_tile_position_x + (width * index_horizontal),
+            first_tile_position_y + (height * index_vertical)
           )
-        @image.draw(x: drawing_position.x, y: drawing_position.y, scale: @scale)
+        @image.draw(position: drawing_position, scale: @scale)
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize
 
   def draw_normal
-    @image.draw(x: position_in_camera.x, y: position_in_camera.y, scale: @scale)
+    @image.draw(position: position_in_camera, scale: @scale)
   end
 
   def repeat_horizontally?
