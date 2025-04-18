@@ -101,6 +101,7 @@ class Collider
 
   # Destroy this Collider
   def destroy
+    log("#destroy")
     actor&.parts&.delete(self)
     Global.colliders.delete(self)
   end
@@ -149,6 +150,20 @@ class Collider
     new_collider.collision_with = @collision_with
 
     new_collider
+  end
+
+  def to_debug
+    {
+      name: @name,
+      position: @position,
+      width: @width,
+      height: @height,
+      group: @group,
+      collision_with: @collision_with,
+      solid: @solid,
+      active: @active,
+      actor: [@actor.object_id, @actor.name],
+    }
   end
 
   private

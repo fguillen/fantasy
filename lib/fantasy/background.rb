@@ -11,6 +11,7 @@
 # end
 # ```
 class Background
+  include Log
   include Indexable
 
   # In which layer the image of the Background is rendered.
@@ -129,6 +130,7 @@ class Background
   #   background = Background.new("background")
   #   background.destroy
   def destroy
+    log("#destroy")
     Global.backgrounds.delete(self)
   end
 

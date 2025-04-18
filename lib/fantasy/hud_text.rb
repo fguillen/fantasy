@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class HudText
+  include Log
   include Indexable
 
   attr_accessor :text, :size, :color, :background_color, :visible, :layer, :in_world, :position, :alignment
@@ -44,6 +45,7 @@ class HudText
   end
 
   def destroy
+    log("#destroy")
     Global.hud_texts.delete(self)
   end
 

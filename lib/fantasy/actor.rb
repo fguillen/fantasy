@@ -341,8 +341,7 @@ class Actor
 
     @graphic.actor = self
 
-    previous_graphics = @parts.select { |component| component.is_a?(Graphic) }
-    previous_graphics.each(&:destroy)
+    @parts.reject! { |component| component.is_a?(Graphic) }
     @parts.push(@graphic)
   end
 
@@ -478,8 +477,9 @@ class Actor
       apply_forces
     end
 
-    checking_autokill if @autokill
     on_after_move_do
+
+    checking_autokill if @autokill
   end
 
   # Destroy this Actor is not longer, moved, or rendered
@@ -488,8 +488,15 @@ class Actor
   #   actor = Actor.new("image")
   #   actor.destroy
   def destroy
+    log("#destroy")
+
     on_destroy_do
-    parts.each(&:destroy)
+
+    parts.dup.each do |part|
+      part.destroy
+    end
+    parts.clear
+
     Global.actors.delete(self)
   end
 
@@ -630,6 +637,27 @@ class Actor
     result
   end
 
+  def to_debug
+    {
+      name: @name,
+      position: @position,
+      direction: @direction,
+      speed: @speed,
+      scale: @scale,
+      rotation: @rotation,
+      flip: @flip,
+      active: @active,
+      autokill: @autokill,
+      layer: @layer,
+      gravity: @gravity,
+      jump_force: @jump_force,
+      collision_with: @collision_with,
+      graphic: @graphic.object_id,
+      parts: @parts.map { |e| [e.object_id, e.class.name] },
+      state: @state
+    }
+  end
+
   private
 
   # Execute callbacks
@@ -665,7 +693,6 @@ class Actor
   def collision_with_solid(self_collider, other_collider)
     @velocity ||= Coordinates.zero # In case it is not initialized yet
     last_movement = @position - @last_frame_position
-    puts ">>>> position: #{@position} - last_frame_position: #{@last_frame_position} - last_movement: #{last_movement}"
     movement = CollisionResolver.movement_until_collision(self_collider, other_collider, last_movement)
 
     # Collision with the floor
@@ -691,14 +718,15 @@ class Actor
     @position -= movement
   end
 
-  # If actor is out of the screen by 100 pixels, destroy it
+  # If actor is out of the screen by half of the screen pixels, destroy it
   def checking_autokill
-    margin_pixels = Global.screen_width / 2
+    margin_pixels_x = Global.screen_width / 2.to_f
+    margin_pixels_y = Global.screen_height / 2.to_f
 
-    if position_in_camera.x < -margin_pixels ||
-       position_in_camera.x > Global.screen_width + margin_pixels ||
-       position_in_camera.y < -margin_pixels ||
-       position_in_camera.y > Global.screen_height + margin_pixels
+    if position_in_camera.x < -margin_pixels_x ||
+       position_in_camera.x > Global.screen_width + margin_pixels_x ||
+       position_in_camera.y < -margin_pixels_y ||
+       position_in_camera.y > Global.screen_height + margin_pixels_y
 
       log "Autokill: #{name}"
       destroy

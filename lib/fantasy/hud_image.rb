@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class HudImage
+  include Log
   include Draggable
   include Indexable
 
@@ -44,6 +45,7 @@ class HudImage
   end
 
   def destroy
+    log("#destroy")
     Global.hud_images.delete(self)
   end
 end

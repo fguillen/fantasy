@@ -1,4 +1,5 @@
 class CollisionResolver
+  extend Log
   def self.resolve_collisions
     collisionable_colliders.each do |collider|
       active_colliders.each do |other|
@@ -18,7 +19,9 @@ class CollisionResolver
         colliders_can_collide?(collider, other) && collider_down.collides_with?(other)
       end
 
-    collider_down.destroy
+    Log.ignore_log do
+      collider_down.destroy
+    end
 
     result
   end
@@ -61,7 +64,9 @@ class CollisionResolver
 
     movement = collider.position - collider_dup.position
 
-    collider_dup.destroy
+    Log.ignore_log do
+      collider_dup.destroy
+    end
 
     movement
   end

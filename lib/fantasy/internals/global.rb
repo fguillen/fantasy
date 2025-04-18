@@ -85,6 +85,7 @@ module Global
       @last_frame_at = Time.now
 
       if Gosu.button_down?(Gosu::KB_D) && !@d_key_pressed
+        Log.debug_entities
         @debug = !@debug
         @d_key_pressed = true
       end

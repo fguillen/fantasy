@@ -1,4 +1,5 @@
 class Image
+  include Log
   attr_reader :gosu_image
 
   # Generates an Image based on Gosu::Image.
@@ -39,6 +40,10 @@ class Image
 
   def height
     @gosu_image.height
+  end
+
+  def destroy
+    log("#destroy")
   end
 
   class << self

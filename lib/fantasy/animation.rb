@@ -6,6 +6,7 @@
 # * Button.image
 
 class Animation < Graphic
+  include Log
   include ActorPart
 
   # The actual image frame that is being rendered.
@@ -207,5 +208,13 @@ class Animation < Graphic
     else
       @flip
     end
+  end
+
+  def destroy
+    log("#destroy")
+    Global.animations&.delete(self)
+    @images.each(&:destroy)
+    @images = nil
+    super
   end
 end

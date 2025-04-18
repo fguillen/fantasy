@@ -3,6 +3,7 @@
 # Some of the subclases are Sprite, Text, Animation, Shape, ... or you can do your own
 # Just implement the draw method and you are good to go.
 class Graphic
+  include Log
   include Indexable
 
   attr_accessor :name,
@@ -30,6 +31,7 @@ class Graphic
   end
 
   def destroy
+    log("#destroy")
     actor&.parts&.delete(self)
     Global.graphics.delete(self)
   end
