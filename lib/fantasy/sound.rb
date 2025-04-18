@@ -2,14 +2,14 @@
 
 module Sound
   class << self
-    @@sounds = {}
+    @@gosu_sounds = {}
 
     def play(sound_name, volume: 1)
       locate_sound(sound_name).play(volume)
     end
 
     def locate_sound(sound_name)
-      return @@sounds[sound_name] if @@sounds[sound_name]
+      return @@gosu_sounds[sound_name] if @@gosu_sounds[sound_name]
 
       puts "Initialize Sound: '#{sound_name}'"
 
@@ -21,9 +21,9 @@ module Sound
 
       raise "Sound file not found with name '#{sound_name}' in #{base_path}" if file_name.nil?
 
-      @@sounds[sound_name] = Gosu::Sample.new("#{base_path}/#{file_name}")
+      @@gosu_sounds[sound_name] = Gosu::Sample.new("#{base_path}/#{file_name}")
 
-      @@sounds[sound_name]
+      @@gosu_sounds[sound_name]
     end
 
     def preload_sounds

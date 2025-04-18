@@ -5,7 +5,11 @@
 # based on the position, scale, and layer of the actor it is attached to.
 module ActorPart
   def active_in_world
-    active && actor.active
+    if actor
+      active && actor.active
+    else
+      active
+    end
   end
 
   def position_in_world
@@ -13,31 +17,49 @@ module ActorPart
   end
 
   def width_in_world
-    result = width * actor.scale
+    result = width
+    result *= actor.scale if actor
     result *= scale if respond_to?(:scale)
     result
   end
 
   def height_in_world
-    result = height * actor.scale
+    result = height
+    result *= actor.scale if actor
     result *= scale if respond_to?(:scale)
     result
   end
 
   def scale_in_world
-    actor.scale * scale
+    if actor
+      scale * actor.scale
+    else
+      scale
+    end
   end
 
   def position_in_camera
-    actor.position_in_camera + position
+    if actor
+      position + actor.position_in_camera
+    else
+      position
+    end
   end
 
   def rotation_in_world
-    rotation + actor.rotation
+    if actor
+      rotation + actor.rotation
+    else
+      rotation
+    end
   end
 
   def layer
-    actor.layer
+    if actor
+      actor.layer
+    else
+      0
+    end
   end
 
   def actor

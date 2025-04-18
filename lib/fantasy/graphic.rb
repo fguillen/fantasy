@@ -6,6 +6,7 @@ class Graphic
   include Indexable
 
   attr_accessor :name,
+                :actor,
                 :position,
                 :active,
                 :scale,
@@ -13,7 +14,7 @@ class Graphic
                 :flip
 
   def initialize(
-    actor:,
+    actor: nil,
     position: Coordinates.zero,
     name: nil
   )
@@ -29,7 +30,7 @@ class Graphic
   end
 
   def destroy
-    actor.parts.remove(self)
+    actor&.parts&.delete(self)
     Global.graphics.delete(self)
   end
 

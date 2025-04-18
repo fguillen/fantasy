@@ -288,6 +288,7 @@ class Actor
   def initialize(image_name_or_image_or_animation)
     @parts = []
 
+    @graphic = nil
     self.graphic = image_name_or_image_or_animation
 
     @name =
@@ -350,18 +351,20 @@ class Actor
   #   actor = Actor.new("player_walk")
   #   actor.graphic = animation
   def graphic=(image_name_or_image_or_animation)
-    graphic =
+    @graphic =
       if image_name_or_image_or_animation.is_a?(Animation)
         image_name_or_image_or_animation
       elsif image_name_or_image_or_animation.is_a?(Sprite)
         image_name_or_image_or_animation
       else
-        Sprite.new(image_name_or_image_or_animation, actor: self)
+        Sprite.new(image_name_or_image_or_animation)
       end
+
+    @graphic.actor = self
 
     previous_graphics = @parts.select { |component| component.is_a?(Graphic) }
     previous_graphics.each(&:destroy)
-    @parts.push(graphic)
+    @parts.push(@graphic)
   end
 
   # Configure the flip of the image.
@@ -456,6 +459,7 @@ class Actor
 
   # @!visibility private
   def draw
+    @graphic.draw
     draw_debug if Global.debug
   end
 

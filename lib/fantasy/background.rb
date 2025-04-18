@@ -87,7 +87,7 @@ class Background
   # @example Instantiate a new Background
   #   background = Background.new("background")
   def initialize(image_name:)
-    @image = Image.new(image_name)
+    @image = Image.load(image_name)
     @position = Coordinates.zero
     @scale = 1
     @visible = true

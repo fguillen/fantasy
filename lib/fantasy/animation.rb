@@ -5,7 +5,8 @@
 # * Actor.image
 # * Button.image
 
-class Animation
+class Animation < Graphic
+  include ActorPart
 
   # The actual image frame that is being rendered.
   #
@@ -71,7 +72,18 @@ class Animation
   # @param initial_frame [integer] the initial frame index. Default `0`.
   # @param frames [integer] a list of frames from the image, if `nil` all the frames are selected
   # @param loops [integer|String] the number of times the animation will be played. Default `"infinite"`.
-  def initialize(names: nil, sequence: nil, columns: nil, rows: nil, speed: 10, initial_frame: 0, frames: nil, loops: "infinite")
+  def initialize(
+    names: nil,
+    actor: nil,
+    position: Coordinates.zero,
+    sequence: nil,
+    columns: nil,
+    rows: nil,
+    speed: 10,
+    initial_frame: 0,
+    frames: nil,
+    loops: "infinite"
+  )
     if loops != "infinite" && (!loops.is_a?(Integer) || loops < 1)
       raise ArgumentError, "'loops' must be 'infinite' or a positive integer"
     end
@@ -93,7 +105,7 @@ class Animation
     end
 
     if names
-      @images = names.map { |image_name| Image.new(image_name) }
+      @images = names.map { |image_name| Image.load(image_name) }
       @name = names.first
     end
 
@@ -104,15 +116,14 @@ class Animation
       @name = sequence
       @images = []
 
-      sequence_image = Image.new(sequence)
+      sequence_image = Image.load(sequence)
       columns.times.each do |column|
         rows.times.each do |row|
           next if !frames.nil? && !frames.include?(column + (row * columns))
 
-          gosu_image = sequence_image.image
           frame_width = sequence_image.width / columns
           frame_height = sequence_image.height / rows
-          gosu_subimage = gosu_image.subimage(column * frame_width, row * frame_height, frame_width, frame_height)
+          gosu_subimage = sequence_image.gosu_image.subimage(column * frame_width, row * frame_height, frame_width, frame_height)
           @images << Image.new(gosu_subimage)
         end
       end
@@ -126,6 +137,8 @@ class Animation
     @last_frame_set_at = Global.seconds_in_scene
     @on_finished_callback = nil
 
+    super(actor: actor, position: position, name: name)
+
     Global.animations&.push(self)
   end
 
@@ -133,8 +146,11 @@ class Animation
     @on_finished_callback = block
   end
 
-  def draw(x:, y:, scale: 1, rotation: 0, flip: "none")
-    @images[@frame].draw(x: x, y: y, scale: scale, rotation: rotation, flip: flip)
+  def draw
+    x = position_in_camera.x
+    y = position_in_camera.y
+
+    @images[@frame].draw(x: x, y: y, scale: scale_in_world, rotation: rotation_in_world, flip: flip)
   end
 
   def width

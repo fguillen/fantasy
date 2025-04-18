@@ -12,7 +12,14 @@ class Collider
                 :collision_with,
                 :active
 
-  def initialize(actor:, position: Coordinates.zero, width: nil, height: nil, group: "all", name: nil, solid: false)
+  def initialize(
+    actor:,
+    position: Coordinates.zero,
+    width: nil,
+    height: nil,
+    group: "all",
+    name: nil, solid: false
+  )
     @name = name
     @position = position
     @width = width || (actor.width / actor.scale)

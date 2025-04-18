@@ -1,9 +1,30 @@
-class Image < Gosu::Image
-  attr_reader :name
+class Image
+  attr_reader :gosu_image
 
-  def initialize(file_path)
-    super(file_path, { retro: true })
-    @name = File.basename(file_path)
+  # Generates an Image based on Gosu::Image.
+  #
+  # Params:
+  # @param source [Gosu::Image] a Gosu::Image object
+  def initialize(gosu_image)
+    @gosu_image = gosu_image
+  end
+
+  def draw(x:, y:, scale: 1, rotation: 0, flip: "none")
+    scale_x = scale
+    scale_y = scale
+    scale_x *= -1 if %w[horizontal both].include?(flip)
+    scale_y *= -1 if %w[vertical both].include?(flip)
+
+    # draw_rot(x, y, z = 0, angle = 0, center_x = 0.5, center_y = 0.5, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default) ⇒ void
+    @gosu_image.draw_rot(x + (width / 2), y + (height / 2), 0, rotation, 0.5, 0.5, scale_x, scale_y)
+  end
+
+  def width
+    @gosu_image.width
+  end
+
+  def height
+    @gosu_image.height
   end
 
   class << self
@@ -38,7 +59,8 @@ class Image < Gosu::Image
 
       raise "Sprite file not found with name '#{image_name}' in '#{base_path}' folder or any of its subfolders" if file_path.nil?
 
-      @@images[image_name] = Image.new(file_path)
+      gosu_image = Gosu::Image.new(file_path, retro: true)
+      @@images[image_name] = Image.new(gosu_image)
 
       log "Initialized image: '#{image_name}'"
 
