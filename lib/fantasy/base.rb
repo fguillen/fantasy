@@ -71,6 +71,11 @@ def on_button(&block)
   Global.button_proc = block
 end
 
+def on_key(key, &block)
+  Global.key_procs ||= {}
+  Global.key_procs[key] = block
+end
+
 # Triggered any time space bar key is pressed. To be used inside one of the scene blocks (`on_presentation`, `on_game`, `on_end`)
 # ```
 # on_game do

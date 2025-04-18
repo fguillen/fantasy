@@ -26,7 +26,7 @@ class Game < Gosu::Window
     when Mouse.left then mouse_button_left_pressed
     end
 
-    Global.button_proc&.call(button_id)
+    button_pressed(button_id)
 
     super
   end
@@ -61,6 +61,12 @@ class Game < Gosu::Window
     Global.mouse_button_left_proc&.call
 
     check_click
+  end
+
+  def button_pressed(button_id)
+    Global.key_procs ||= {}
+    Global.key_procs[button_id]&.call(button_id)
+    Global.button_proc&.call(button_id)
   end
 
   def update

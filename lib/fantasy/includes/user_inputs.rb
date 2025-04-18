@@ -22,6 +22,11 @@ module UserInputs
     @on_space_bar_callback = block
   end
 
+  def on_key(key, &block)
+    @on_key_callbacks ||= {}
+    @on_key_callbacks[key] = block
+  end
+
   def on_mouse_button_left(&block)
     @on_mouse_button_left_callback = block
   end
@@ -51,6 +56,10 @@ module UserInputs
     instance_exec(&@on_space_bar_callback) unless @on_space_bar_callback.nil?
   end
 
+  def on_key_do(key)
+    instance_exec(&@on_key_callbacks[key]) unless @on_key_callbacks.nil? || @on_key_callbacks[key].nil?
+  end
+
   def on_mouse_button_left_do
     instance_exec(&@on_mouse_button_left_callback) unless @on_mouse_button_left_callback.nil?
   end
@@ -61,5 +70,11 @@ module UserInputs
 
   protected
 
-  attr_accessor :on_cursor_down_callback, :on_cursor_up_callback, :on_cursor_left_callback, :on_cursor_right_callback, :on_space_bar_callback, :on_mouse_button_left_callback
+  attr_accessor :on_cursor_down_callback,
+                :on_cursor_up_callback,
+                :on_cursor_left_callback,
+                :on_cursor_right_callback,
+                :on_space_bar_callback,
+                :on_mouse_button_left_callback,
+                :on_key_callbacks
 end

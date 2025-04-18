@@ -2,7 +2,14 @@
 
 module MoveByCursor
   # rubocop:disable Metrics/PerceivedComplexity
-  def move_with_cursors(down: nil, up: nil, left: nil, right: nil, jump: false, continuous: false)
+  def move_with_cursors(
+    down: nil,
+    up: nil,
+    left: nil,
+    right: nil,
+    jump: false,
+    continuous: false
+  )
     if down.nil? && up.nil? && left.nil? && right.nil?
       down = true
       up = true
@@ -53,7 +60,7 @@ module MoveByCursor
       @direction = Coordinates.zero
     end
 
-    if Gosu.button_down?(Cursor.space_bar) && !@jumping && @on_floor && @move_with_cursors_jump
+    if Gosu.button_down?(Cursor.space_bar) && !@jumping && @is_on_floor && @move_with_cursors_jump
       jump
     end
   end

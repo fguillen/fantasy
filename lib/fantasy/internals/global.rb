@@ -18,7 +18,7 @@ module Global
                   :colliders
 
     attr_accessor :debug
-    attr_accessor :setup_proc, :loop_proc, :button_proc
+    attr_accessor :setup_proc, :loop_proc, :button_proc, :key_procs
     attr_accessor :presentation_proc, :game_proc, :end_proc
 
     attr_accessor :space_bar_proc
@@ -177,6 +177,7 @@ module Global
 
     def clear_callbacks
       @button_proc = nil
+      @key_procs = nil
       @space_bar_proc = nil
       @cursor_up_proc = nil
       @cursor_down_proc = nil

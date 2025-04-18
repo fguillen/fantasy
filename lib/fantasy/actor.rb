@@ -66,6 +66,8 @@ class Actor
   include UserInputs
   include Indexable
 
+  attr_reader :is_on_floor
+
   # Coordinates object where x and y represent the position of the Actor in the World (no necessarily in the Screen).
   #
   # Default `Coordinates.zero`.
@@ -292,15 +294,15 @@ class Actor
     @dragging_offset = nil
     @layer = 0
     @gravity = 0
-    @jump_force = 0
+    @jump_force = 100
 
-    @on_floor = false
+    @is_on_floor = false
 
     @on_after_move_callback = nil
     @on_destroy_callback = nil
     @on_jumping_callback = nil
     @on_collision_callback = nil
-    @on_floor_callback = nil
+    @is_on_floor_callback = nil
 
     @states = {}
     @state = nil
@@ -517,13 +519,14 @@ class Actor
     actor.on_destroy_callback = @on_destroy_callback
     actor.on_jumping_callback = @on_jumping_callback
     actor.on_collision_callback = @on_collision_callback
-    actor.on_floor_callback = @on_floor_callback
+    actor.on_floor_callback = @is_on_floor_callback
 
     actor.on_cursor_down_callback = @on_cursor_down_callback
     actor.on_cursor_up_callback = @on_cursor_up_callback
     actor.on_cursor_left_callback = @on_cursor_left_callback
     actor.on_cursor_right_callback = @on_cursor_right_callback
     actor.on_space_bar_callback = @on_space_bar_callback
+    actor.on_key_callbacks = @on_key_callbacks.clone
     actor.on_mouse_button_left_callback = @on_mouse_button_left_callback
 
     actor.on_click_callback = @on_click_callback
@@ -579,7 +582,7 @@ class Actor
   #     Clock.new { actor.graphic = "walk" }.run_on(seconds: 0.8)
   #   end
   def on_floor(&block)
-    @on_floor_callback = block
+    @is_on_floor_callback = block
   end
 
   # !visibility private
@@ -634,7 +637,7 @@ class Actor
   end
 
   def on_floor_do
-    instance_exec(&@on_floor_callback) unless @on_floor_callback.nil?
+    instance_exec(&@is_on_floor_callback) unless @is_on_floor_callback.nil?
   end
 
   def to_s
@@ -652,15 +655,17 @@ class Actor
   def collision_with_solid(other_collider)
     @velocity ||= Coordinates.zero # In case it is not initialized yet
 
-    if other_collider.position.y >= (@last_frame_position.y + height)
-      on_floor_do unless @on_floor
+    # Collision with the floor
+    if other_collider.position_in_world.y >= @last_frame_position.y
+      on_floor_do unless @is_on_floor
 
-      @on_floor = true
+      @is_on_floor = true
       @jumping = false
       @velocity.y = 0
     end
 
-    if other_collider.position.y + other_collider.height <= @last_frame_position.y
+    # Collision with the ceiling
+    if other_collider.position_in_world.y + other_collider.height_in_world <= @last_frame_position.y
       @velocity.y = 0
     end
 
