@@ -134,7 +134,7 @@ class Collider
     @solid
   end
 
-  def duplicate
+  def clone
     new_collider =
       Collider.new(
         actor: @actor,

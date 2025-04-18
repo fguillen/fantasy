@@ -619,6 +619,17 @@ class Actor
     # To be overriden
   end
 
+  def on_floor?
+    result =
+      parts.select { |part| part.is_a?(Collider) && part.solid? }.any? do |collider|
+        CollisionResolver.any_collision_down_with_solid?(collider)
+      end
+
+    @is_on_floor = result
+
+    result
+  end
+
   private
 
   # Execute callbacks
@@ -653,11 +664,15 @@ class Actor
 
   def collision_with_solid(self_collider, other_collider)
     @velocity ||= Coordinates.zero # In case it is not initialized yet
-    rollback_movement = @position - @last_frame_position
-    movement = CollisionResolver.movement_until_collision(self_collider, other_collider, rollback_movement, @direction)
+    last_movement = @position - @last_frame_position
+    puts ">>>> position: #{@position} - last_frame_position: #{@last_frame_position} - last_movement: #{last_movement}"
+    movement = CollisionResolver.movement_until_collision(self_collider, other_collider, last_movement)
 
     # Collision with the floor
-    if other_collider.position_in_world.y >= @last_frame_position.y
+    if ( # rubocop:disable Style/RedundantParentheses
+      last_movement.y.positive? &&
+      other_collider.position_in_world.y > (self_collider.position_in_world.y - last_movement.y + self_collider.height_in_world)
+    )
       on_floor_do unless @is_on_floor
 
       @is_on_floor = true
@@ -666,25 +681,14 @@ class Actor
     end
 
     # Collision with the ceiling
-    if other_collider.position_in_world.y + other_collider.height_in_world <= @last_frame_position.y
+    if ( # rubocop:disable Style/RedundantParentheses
+      last_movement.y.negative? &&
+      (other_collider.position_in_world.y + other_collider.height_in_world) < self_collider.position_in_world.y - last_movement.y
+    )
       @velocity.y = 0
     end
 
-    @position += movement
-    @last_frame_position = @position
-  end
-
-  def on_floor?
-    result =
-      parts.select { |part| part.is_a?(Collider) && part.solid? }.any? do |collider|
-        CollisionResolver.any_collision_down_with_solid?(collider)
-      end
-
-    @is_on_floor = result
-
-    puts ">>>> #{name} is on floor: #{result}"
-
-    result
+    @position -= movement
   end
 
   # If actor is out of the screen by 100 pixels, destroy it

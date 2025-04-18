@@ -32,3 +32,9 @@ Metrics/ModuleLength:
 
 Metrics/ClassLength:
   Max: 180
+
+Style/RedundantParentheses:
+  Enable: false
+
+Style/ParenthesesAroundCondition:
+  Enabled: false
