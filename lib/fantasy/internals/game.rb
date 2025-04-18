@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Game < Gosu::Window
+  include Log
+
   def initialize(screen_width, screen_height)
     Camera.initialize
     Global.initialize(screen_width, screen_height)
@@ -12,6 +14,8 @@ class Game < Gosu::Window
 
   # rubocop:disable Metrics/CyclomaticComplexity
   def button_down(button_id)
+    log("Button pressed: #{button_id}")
+
     case button_id
     when Cursor.down then cursor_down_pressed
     when Cursor.up then cursor_up_pressed
