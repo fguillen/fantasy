@@ -285,20 +285,15 @@ class Actor
   #
   # @param image_name_or_image_or_animation [string | Image | Animation] the name of the image file from `./images/*`. Or an Image object. Or an Animation object
   # @return [Actor] the Actor
-  def initialize(image_name_or_image_or_animation)
+  def initialize(name: nil, graphic: nil)
     @parts = []
 
     @graphic = nil
-    self.graphic = image_name_or_image_or_animation
+    self.graphic = graphic if graphic
 
-    @name =
-      if image_name_or_image_or_animation.is_a?(Animation)
-        image_name_or_image_or_animation.name
-      elsif image_name_or_image_or_animation.is_a?(String)
-        image_name_or_image_or_animation
-      else
-        nil
-      end
+    @name = name
+    @name ||= graphic&.name if graphic.respond_to?(:name)
+    @name ||= graphic if graphic.is_a?(String)
 
     @position = Coordinates.zero
     @direction = Coordinates.zero
@@ -459,7 +454,7 @@ class Actor
 
   # @!visibility private
   def draw
-    @graphic.draw
+    @graphic&.draw
     draw_debug if Global.debug
   end
 
