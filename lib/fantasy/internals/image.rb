@@ -12,14 +12,22 @@ class Image
   def draw(position:, scale: 1, rotation: 0, flip: "none")
     scale_x = scale
     scale_y = scale
-    scale_x *= -1 if %w[horizontal both].include?(flip)
-    scale_y *= -1 if %w[vertical both].include?(flip)
 
     position_x = position.x # + (width / 2)
     position_y = position.y # + (height / 2)
     z = 0
     center_x = 0
     center_y = 0
+
+    if %w[horizontal both].include?(flip)
+      position_x += width * scale_x
+      scale_x *= -1
+    end
+
+    if %w[vertical both].include?(flip)
+      position_y += height * scale_y
+      scale_y *= -1
+    end
 
     # draw_rot(x, y, z = 0, angle = 0, center_x = 0.5, center_y = 0.5, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default) ⇒ void
     @gosu_image.draw_rot(position_x, position_y, z, rotation, center_x, center_y, scale_x, scale_y)

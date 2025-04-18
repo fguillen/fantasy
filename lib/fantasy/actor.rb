@@ -65,6 +65,7 @@ class Actor
   include Jumper
   include UserInputs
   include Indexable
+  prepend AutoFlipable
 
   attr_reader :is_on_floor
 

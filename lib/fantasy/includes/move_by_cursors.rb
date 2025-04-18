@@ -3,20 +3,13 @@
 module MoveByCursor
   # rubocop:disable Metrics/PerceivedComplexity
   def move_with_cursors(
-    down: nil,
-    up: nil,
-    left: nil,
-    right: nil,
+    down: true,
+    up: true,
+    left: true,
+    right: true,
     jump: false,
     continuous: false
   )
-    if down.nil? && up.nil? && left.nil? && right.nil?
-      down = true
-      up = true
-      left = true
-      right = true
-    end
-
     @move_with_cursors_down = down || false
     @move_with_cursors_up = up || false
     @move_with_cursors_left = left || false

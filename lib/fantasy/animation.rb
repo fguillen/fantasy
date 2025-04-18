@@ -200,4 +200,12 @@ class Animation < Graphic
   def on_finished_do
     instance_exec(&@on_finished_callback) unless @on_finished_callback.nil?
   end
+
+  def flip
+    if actor
+      actor.flip
+    else
+      @flip
+    end
+  end
 end
