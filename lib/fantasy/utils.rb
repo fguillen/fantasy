@@ -1,15 +1,12 @@
 # frozen_string_literal: true
 
 module Utils
-
-
-
   def self.collision_at?(actor, x, y)
     (
-      actor.position.x < x &&
-      (actor.position.x + actor.width) > x &&
-      actor.position.y < y &&
-      actor.position.y + actor.height > y
+      actor.position_in_world.x < x &&
+      (actor.position_in_world.x + actor.width_in_world) > x &&
+      actor.position_in_world.y < y &&
+      actor.position_in_world.y + actor.height_in_world > y
     )
   end
 

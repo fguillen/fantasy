@@ -4,7 +4,7 @@ require "test_helper"
 
 class ActorTest < Minitest::Test
   def setup
-    Global.game_proc = Proc.new {}
+    Global.game_proc = proc {}
     Global.game = Game.new(100, 100)
     @actor = Actor.new("player")
   end
@@ -93,18 +93,18 @@ class ActorTest < Minitest::Test
   # Attributes :: END
 
   # Helper methods :: INI
-  def test_width
-    assert_equal(8, @actor.width)
+  def test_width_in_world
+    assert_equal(8, @actor.width_in_world)
 
     @actor.scale = 2
-    assert_equal(16, @actor.width)
+    assert_equal(16, @actor.width_in_world)
   end
 
-  def test_height
-    assert_equal(8, @actor.height)
+  def test_height_in_world
+    assert_equal(8, @actor.height_in_world)
 
     @actor.scale = 2
-    assert_equal(16, @actor.height)
+    assert_equal(16, @actor.height_in_world)
   end
 
   def test_solid_question_mark
@@ -332,7 +332,6 @@ class ActorTest < Minitest::Test
   end
   # Move :: INI
 
-
   # Collision :: INI
   def test_collision_after_moving_by_direction
     @actor.position = Coordinates.zero
@@ -422,7 +421,6 @@ class ActorTest < Minitest::Test
     assert(on_floor)
   end
   # Collision :: END
-
 
   # Callbacks :: INI
   def test_trigger_on_after_move_block

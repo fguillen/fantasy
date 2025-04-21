@@ -30,6 +30,7 @@ class Collider
     width: nil,
     height: nil,
     group: "all",
+    collision_with: "all",
     name: nil,
     solid: false
   )
@@ -37,16 +38,16 @@ class Collider
     @position = position
 
     @width = width
-    @width ||= (actor.width / actor.scale) if actor
+    @width ||= actor.width if actor
     @width ||= 0
     @height = height
-    @height ||= (actor.height / actor.scale) if actor
+    @height ||= actor.height if actor
     @height ||= 0
 
     @actor = actor
     @group = group
     @solid = solid
-    @collision_with = "all"
+    @collision_with = collision_with
     @on_collision_callback = nil
     @active = true
 
@@ -109,15 +110,12 @@ class Collider
   # rubocop:disable Metrics/AbcSize
   def collides_with?(other)
     # https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
-    (
-      position_in_world.x < (other.position_in_world.x + other.width_in_world) &&
+    position_in_world.x < (other.position_in_world.x + other.width_in_world) &&
       (position_in_world.x + width_in_world) > other.position_in_world.x &&
       position_in_world.y < (other.position_in_world.y + other.height_in_world) &&
       position_in_world.y + height_in_world > other.position_in_world.y
-    )
   end
   # rubocop:enable Metrics/AbcSize
-
 
   # @!visibility private
   def draw
@@ -139,7 +137,7 @@ class Collider
     new_collider =
       Collider.new(
         actor: @actor,
-        position: @position.dup,
+        position: @position.clone,
         width: @width,
         height: @height,
         group: @group,
@@ -162,8 +160,18 @@ class Collider
       collision_with: @collision_with,
       solid: @solid,
       active: @active,
-      actor: [@actor.object_id, @actor.name],
+      actor: [@actor.object_id, @actor.name]
     }
+  end
+
+  def extract_from_actor
+    if @actor
+      @position = position_in_world
+      @width = width_in_world
+      @height = height_in_world
+      @actor.parts.delete(self)
+      @actor = nil
+    end
   end
 
   private

@@ -14,8 +14,34 @@ module ActorPart
     end
   end
 
+  def position_in_actor
+    result = position.clone
+    if actor
+      if actor.flip == "horizontal"
+        actor_width_center = actor.width / 2.to_f
+        distant_to_center = actor_width_center - result.x
+        result.x += distant_to_center + actor_width_center
+        result.x -= width if respond_to?(:width)
+      end
+    end
+    result
+  end
+
   def position_in_world
-    position + actor.position
+    result = position_in_actor
+    if actor
+      result *= actor.scale
+      result += actor.position_in_world
+    end
+    result.freeze
+  end
+
+  def position_in_world=(coordinates)
+    if actor
+      self.position = (coordinates - actor.position_in_world) / actor.scale
+    else
+      self.position = coordinates
+    end
   end
 
   def width_in_world
@@ -41,11 +67,7 @@ module ActorPart
   end
 
   def position_in_camera
-    if actor
-      position + actor.position_in_camera
-    else
-      position
-    end
+    position_in_world - Camera.main.position
   end
 
   def rotation_in_world
@@ -62,9 +84,5 @@ module ActorPart
     else
       0
     end
-  end
-
-  def actor
-    @actor
   end
 end

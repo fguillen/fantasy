@@ -29,46 +29,47 @@ class CollisionResolver
   def self.movement_until_collision(collider, other, last_movement)
     return Coordinates.zero if last_movement.zero?
 
-    collider_dup = collider.clone
-    # initial_position = collider_dup.position.dup
-    collider_dup.position -= last_movement
+    collider_clone = collider.clone
+    collider_clone.extract_from_actor
+    collider_clone.position_in_world -= last_movement
     direction = last_movement.normalize
     x_blocked = direction.x.zero?
     y_blocked = direction.y.zero?
-
     loop do
       unless x_blocked
-        collider_dup.position.x += direction.x
-        if !same_sign?(collider.position.x - collider_dup.position.x, direction.x) ||
-           collider_dup.collides_with?(other)
-
+        collider_clone.position_in_world += Coordinates.new(direction.x, 0)
+        if ( # rubocop:disable Style/RedundantParentheses
+          !same_sign?(collider.position_in_world.x - collider_clone.position_in_world.x, direction.x) ||
+          collider_clone.collides_with?(other)
+        )
           x_blocked = true
-          collider_dup.position.x -= direction.x
+          collider_clone.position_in_world -= Coordinates.new(direction.x, 0)
         end
       end
 
       break if x_blocked && y_blocked
 
       unless y_blocked
-        collider_dup.position.y += direction.y
-        if !same_sign?(collider.position.y - collider_dup.position.y, direction.y) ||
-           collider_dup.collides_with?(other)
-
+        collider_clone.position_in_world += Coordinates.new(0, direction.y)
+        if ( # rubocop:disable Style/RedundantParentheses
+          !same_sign?(collider.position_in_world.y - collider_clone.position_in_world.y, direction.y) ||
+          collider_clone.collides_with?(other)
+        )
           y_blocked = true
-          collider_dup.position.y -= direction.y
+          collider_clone.position_in_world -= Coordinates.new(0, direction.y)
         end
       end
 
       break if x_blocked && y_blocked
     end
 
-    movement = collider.position - collider_dup.position
+    max_movement = collider.position_in_world - collider_clone.position_in_world
 
     Log.ignore_log do
-      collider_dup.destroy
+      collider_clone.destroy
     end
 
-    movement
+    max_movement
   end
 
   private

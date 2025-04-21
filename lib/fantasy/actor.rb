@@ -374,7 +374,7 @@ class Actor
   # @return [Fixnum] the Actor width in pixels
   def width
     if @graphic
-      @graphic.width_in_world
+      @graphic.width
     else
       0
     end
@@ -383,10 +383,20 @@ class Actor
   # @return [Fixnum] the Actor height in pixels
   def height
     if @graphic
-      @graphic.height_in_world
+      @graphic.height
     else
       0
     end
+  end
+
+  # @return [Fixnum] the Actor width in world (this is having in consideration the `scale`) in pixels
+  def width_in_world
+    width * scale
+  end
+
+  # @return [Fixnum] the Actor height in world (this is having in consideration the `scale`) in pixels
+  def height_in_world
+    height * scale
   end
 
   # @param value [Coordinates] set a new direction to the Actor.
@@ -492,7 +502,7 @@ class Actor
 
     on_destroy_do
 
-    parts.dup.each do |part|
+    parts.clone.each do |part|
       part.destroy
     end
     parts.clear
@@ -593,7 +603,11 @@ class Actor
 
   # !visibility private
   def position_in_camera
-    @position - Camera.main.position
+    position_in_world - Camera.main.position
+  end
+
+  def position_in_world
+    @position
   end
 
   # !visibility private
