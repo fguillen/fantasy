@@ -672,6 +672,14 @@ class Actor
     }
   end
 
+  def forward
+    if flip == "horizontal" || flip == "both"
+      Coordinates.new(-1, 0)
+    else
+      Coordinates.new(1, 0)
+    end
+  end
+
   private
 
   # Execute callbacks

@@ -17,10 +17,10 @@ module ActorPart
   def position_in_actor
     result = position.clone
     if actor
-      if actor.flip == "horizontal"
+      if actor.flip == "horizontal" || actor.flip == "both"
         actor_width_center = actor.width / 2.to_f
         distant_to_center = actor_width_center - result.x
-        result.x += distant_to_center + actor_width_center
+        result.x = actor_width_center + distant_to_center
         result.x -= width if respond_to?(:width)
       end
     end
