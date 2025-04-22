@@ -1,7 +1,7 @@
 class Collider
   include Log
   include Indexable
-  include ActorPart
+  include Node
 
   # When `true` the Collider won't go cross other `solid` Colliders.
   #
@@ -17,6 +17,7 @@ class Collider
   attr_accessor :solid
 
   attr_accessor :name,
+                :parent,
                 :position,
                 :width,
                 :height,
@@ -25,7 +26,7 @@ class Collider
                 :active
 
   def initialize(
-    actor: nil,
+    parent: nil,
     position: Coordinates.zero,
     width: nil,
     height: nil,
@@ -38,20 +39,20 @@ class Collider
     @position = position
 
     @width = width
-    @width ||= actor.width if actor
+    @width ||= parent.width if parent
     @width ||= 0
     @height = height
-    @height ||= actor.height if actor
+    @height ||= parent.height if parent
     @height ||= 0
 
-    @actor = actor
+    @parent = parent
     @group = group
     @solid = solid
     @collision_with = collision_with
     @on_collision_callback = nil
     @active = true
 
-    actor&.parts&.push(self)
+    parent&.add_child(self)
     Global.colliders&.push(self)
   end
 
@@ -93,7 +94,7 @@ class Collider
   # @example Collision detected with _"bullet"_
   #   collider.on_collision do |other|
   #     if other.name == "bullet"
-  #       collider.actor.destroy
+  #       collider.parent.destroy
   #     end
   #   end
   def on_collision(&block)
@@ -103,7 +104,7 @@ class Collider
   # Destroy this Collider
   def destroy
     log("#destroy")
-    actor&.parts&.delete(self)
+    parent&.children&.delete(self)
     Global.colliders.delete(self)
   end
 
@@ -125,7 +126,7 @@ class Collider
   def on_collision_do(other)
     other_name = other.respond_to?(:name) ? other.name : "no-name"
     log("Collision detected with [#{other.object_id}] [#{other_name}]")
-    actor&.on_collision_do(self, other)
+    parent&.on_collision_do(self, other)
     @on_collision_callback&.call(other)
   end
 
@@ -136,7 +137,7 @@ class Collider
   def clone
     new_collider =
       Collider.new(
-        actor: @actor,
+        parent: @parent,
         position: @position.clone,
         width: @width,
         height: @height,
@@ -152,6 +153,7 @@ class Collider
 
   def to_debug
     {
+      id: object_id,
       name: @name,
       position: @position,
       width: @width,
@@ -160,17 +162,17 @@ class Collider
       collision_with: @collision_with,
       solid: @solid,
       active: @active,
-      actor: [@actor.object_id, @actor.name]
+      parent: [@parent.object_id, @parent.name]
     }
   end
 
-  def extract_from_actor
-    if @actor
+  def extract_from_parent
+    if @parent
       @position = position_in_world
       @width = width_in_world
       @height = height_in_world
-      @actor.parts.delete(self)
-      @actor = nil
+      @parent.children.delete(self)
+      @parent = nil
     end
   end
 

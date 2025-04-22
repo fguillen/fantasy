@@ -134,6 +134,10 @@ class Background
     Global.backgrounds.delete(self)
   end
 
+  def layer_in_world
+    layer
+  end
+
   private
 
   def position_in_camera

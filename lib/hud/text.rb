@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-class HudText
+class Hud::Text
   include Log
   include Indexable
 
   attr_accessor :text, :size, :color, :background_color, :visible, :layer, :in_world, :position, :alignment
 
-  def initialize(text: "", position: Coordinates.zero)
+  def initialize(text: "", position: Coordinates.zero, hud: nil)
     @position = position
     @text = text
     @size = "medium"
@@ -17,10 +17,11 @@ class HudText
     @in_world = false
     @alignment = "top-left"
 
+    @hud = hud || Global.hud
+    @hud.add_part(self)
+
     Global.hud_texts&.push(self)
   end
-
-  def move; end
 
   # rubocop:disable Metrics/AbcSize
   def draw
@@ -46,6 +47,7 @@ class HudText
 
   def destroy
     log("#destroy")
+    @hud&.remove_part(self)
     Global.hud_texts.delete(self)
   end
 

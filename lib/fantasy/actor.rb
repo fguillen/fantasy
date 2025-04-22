@@ -65,6 +65,7 @@ class Actor
   include Jumper
   include UserInputs
   include Indexable
+  include Node
   prepend AutoFlipable
 
   attr_reader :is_on_floor
@@ -136,9 +137,6 @@ class Actor
   #   actor = Actor.new("image")
   #   actor.gravity = 10
   attr_accessor :gravity
-
-  # @!visibility private
-  attr_reader :parts
 
   # The value to scale the image of the Actor when drawn.
   # If the value is `2` the image will rendered at double of size.
@@ -271,8 +269,6 @@ class Actor
   # @param image_name_or_image_or_animation [string | Image | Animation] the name of the image file from `./images/*`. Or an Image object. Or an Animation object
   # @return [Actor] the Actor
   def initialize(name: nil, graphic: nil)
-    @parts = []
-
     @graphic = nil
     self.graphic = graphic if graphic
 
@@ -330,6 +326,7 @@ class Actor
   #   actor = Actor.new("player_walk")
   #   actor.graphic = animation
   def graphic=(image_name_or_image_or_animation)
+    puts ">>>> actor[#{name}].graphic=#{image_name_or_image_or_animation}"
     @graphic =
       if image_name_or_image_or_animation.is_a?(Animation)
         image_name_or_image_or_animation
@@ -339,10 +336,10 @@ class Actor
         Sprite.new(image_name_or_image_or_animation)
       end
 
-    @graphic.actor = self
+    @children ||= []
+    @children.select { |component| component.is_a?(Graphic) }.each(&:remove_parent)
 
-    @parts.reject! { |component| component.is_a?(Graphic) }
-    @parts.push(@graphic)
+    @graphic.parent = self
   end
 
   # Configure the flip of the image.
@@ -502,10 +499,10 @@ class Actor
 
     on_destroy_do
 
-    parts.clone.each do |part|
-      part.destroy
+    children.clone.each do |child|
+      child.destroy
     end
-    parts.clear
+    children.clear
 
     Global.actors.delete(self)
   end
@@ -521,7 +518,7 @@ class Actor
     actor.last_frame_position = @position.clone
     actor.direction = @direction.clone
 
-    # actot.parts = @parts.clone # TODO: Fix this
+    # actot.children = @children.clone # TODO: Fix this
 
     actor.speed = @speed
     actor.scale = @scale
@@ -616,18 +613,8 @@ class Actor
       collision_with_solid(self_collider, other_collider)
     end
 
-    do_on_collision(other_collider.actor)
+    do_on_collision(other_collider.actor) if other_collider.actor
     instance_exec(&@on_collision_callback) unless @on_collision_callback.nil?
-  end
-
-  def add_part(part)
-    @parts.push(part)
-    part.actor = self
-  end
-
-  def remove_part(part)
-    @parts.delete(part)
-    part.actor = nil
   end
 
   # protected
@@ -642,7 +629,7 @@ class Actor
 
   def on_floor?
     result =
-      parts.select { |part| part.is_a?(Collider) && part.solid? }.any? do |collider|
+      children.select { |child| child.is_a?(Collider) && child.solid? }.any? do |collider|
         CollisionResolver.any_collision_down_with_solid?(collider)
       end
 
@@ -653,6 +640,7 @@ class Actor
 
   def to_debug
     {
+      id: object_id,
       name: @name,
       position: @position,
       direction: @direction,
@@ -667,7 +655,7 @@ class Actor
       jump_force: @jump_force,
       collision_with: @collision_with,
       graphic: @graphic.object_id,
-      parts: @parts.map { |e| [e.object_id, e.class.name] },
+      children: @children.map { |e| [e.object_id, e.class.name] },
       state: @state
     }
   end
@@ -705,8 +693,8 @@ class Actor
   end
 
   def draw_debug
-    @parts.each do |part|
-      part.draw_debug if part.respond_to?(:draw_debug)
+    @children.each do |child|
+      child.draw_debug if child.respond_to?(:draw_debug)
     end
 
     Global.pixel_fonts["medium"].draw_text("#{@position.x.floor},#{@position.y.floor}", position_in_camera.x, position_in_camera.y - 20, 1)

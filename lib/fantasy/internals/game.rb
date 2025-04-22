@@ -73,9 +73,6 @@ class Game < Gosu::Window
     Global.update
 
     Global.actors.select(&:active).each(&:move)
-    Global.hud_texts.each(&:move)
-    Global.hud_images.each(&:move)
-    Global.hud_images.each(&:move)
     Global.animations.each(&:update)
     Global.tweens.each(&:update)
     Camera.main.move
@@ -93,15 +90,15 @@ class Game < Gosu::Window
       Global.tile_maps +
       Global.actors.select(&:active) +
       Global.colliders.select(&:active_in_world) +
-      Global.hud_texts +
-      Global.hud_images
-    ).group_by(&:layer).sort.map { |e| e[1] }.each { |e| e.sort_by(&:creation_index).each(&:draw) }
+      Global.huds.select(&:active)
+    ).group_by(&:layer_in_world).sort.map { |e| e[1] }.each { |e| e.sort_by(&:creation_index).each(&:draw) }
+
   end
 
   def check_click
     (
       Global.actors
-    ).sort_by(&:layer).each do |e|
+    ).sort_by(&:layer_in_world).each do |e|
       e.on_click_do if Utils.collision_at?(e, mouse_x, mouse_y)
     end
   end

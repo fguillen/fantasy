@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Sprite < Graphic
-  include ActorPart
+  include Node
 
   attr_reader :image
 

@@ -22,9 +22,9 @@ module Indexable
 
   def self.included(base)
     class << base
-      alias_method :__new, :new
+      alias_method :_indexable_included_new, :new
       def new(*args, **keyword_args)
-        e = __new(*args, **keyword_args)
+        e = _indexable_included_new(*args, **keyword_args)
         e.set_creation_index
         e
       end

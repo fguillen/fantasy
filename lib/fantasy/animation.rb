@@ -7,7 +7,7 @@
 
 class Animation < Graphic
   include Log
-  include ActorPart
+  include Node
 
   # The actual image frame that is being rendered.
   #
@@ -75,7 +75,7 @@ class Animation < Graphic
   # @param loops [integer|String] the number of times the animation will be played. Default `"infinite"`.
   def initialize(
     names: nil,
-    actor: nil,
+    parent: nil,
     position: Coordinates.zero,
     sequence: nil,
     columns: nil,
@@ -138,7 +138,7 @@ class Animation < Graphic
     @last_frame_set_at = Global.seconds_in_scene
     @on_finished_callback = nil
 
-    super(actor: actor, position: position, name: name)
+    super(parent: parent, position: position, name: name)
 
     Global.animations&.push(self)
   end
@@ -148,6 +148,10 @@ class Animation < Graphic
   end
 
   def draw
+    if parent and parent.name == "ninja"
+      puts ">>>> animation[#{name}].draw, #{layer_in_world}, #{active_in_world}, #{position_in_world}, #{scale_in_world}, #{rotation_in_world}, #{flip}, [#{parent&.name}]"
+    end
+
     @images[@frame].draw(position: position_in_camera, scale: scale_in_world, rotation: rotation_in_world, flip: flip)
   end
 
@@ -203,8 +207,8 @@ class Animation < Graphic
   end
 
   def flip
-    if actor
-      actor.flip
+    if parent
+      parent.flip
     else
       @flip
     end

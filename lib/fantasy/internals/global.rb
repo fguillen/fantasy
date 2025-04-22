@@ -10,6 +10,7 @@ module Global
                   :graphics,
                   :hud_texts,
                   :hud_images,
+                  :huds,
                   :animations,
                   :backgrounds,
                   :tile_maps,
@@ -44,6 +45,7 @@ module Global
       @hud_images = []
       @animations = []
       @backgrounds = []
+      @huds = []
       @tile_maps = []
       @clocks = []
       @tweens = []
@@ -174,6 +176,7 @@ module Global
       @background = Color.new(r: 0, g: 0, b: 0)
 
       Camera.reset
+      Hud.reset
     end
 
     def clear_callbacks

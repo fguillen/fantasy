@@ -1,37 +1,14 @@
-# Declares the ActorPart module,
-# which is included in all components that are attached to an actor.
-# This module provides methods to get the position, width, height,
-# and layer of the component in the world and in the camera,
-# based on the position, scale, and layer of the actor it is attached to.
-module ActorPart
-  attr_accessor :actor
+module Hud::Part
+  attr_accessor :hud
 
   def active_in_world
-    if actor
-      active && actor.active
-    else
-      active
-    end
-  end
-
-  def position_in_actor
-    result = position.clone
-    if actor
-      if actor.flip == "horizontal" || actor.flip == "both"
-        actor_width_center = actor.width / 2.to_f
-        distant_to_center = actor_width_center - result.x
-        result.x = actor_width_center + distant_to_center
-        result.x -= width if respond_to?(:width)
-      end
-    end
-    result
+    active && hud.active
   end
 
   def position_in_world
-    result = position_in_actor
-    if actor
-      result *= actor.scale
-      result += actor.position_in_world
+    result = position
+    result *= hud.scale
+    result += hud.position
     end
     result.freeze
   end

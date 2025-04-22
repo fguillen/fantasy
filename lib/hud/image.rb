@@ -8,7 +8,7 @@ class HudImage
   attr_accessor :name, :scale, :color, :visible, :position, :layer
 
   def initialize(image_name:, position: Coordinates.zero)
-    @image = Image.new(image_name)
+    @image = Image.load(image_name)
     @name = image_name
     @position = position
     @scale = 1
@@ -46,6 +46,7 @@ class HudImage
 
   def destroy
     log("#destroy")
+    @hud&.remove_part(self)
     Global.hud_images.delete(self)
   end
 end

@@ -30,7 +30,7 @@ class CollisionResolver
     return Coordinates.zero if last_movement.zero?
 
     collider_clone = collider.clone
-    collider_clone.extract_from_actor
+    collider_clone.extract_from_parent
     collider_clone.position_in_world -= last_movement
     direction = last_movement.normalize
     x_blocked = direction.x.zero?
@@ -85,13 +85,13 @@ class CollisionResolver
   def self.active_colliders
     Global.colliders.select do |collider|
       collider.active &&
-        collider.actor.active
+        collider.parent.active
     end
   end
 
   def self.colliders_can_collide?(collider, other)
     return false if collider == other
-    return false if collider.actor == other.actor
+    return false if collider.parent == other.parent
     return true if collider.collision_with == "all"
     return true if collider.collision_with.include?(other.group)
 
