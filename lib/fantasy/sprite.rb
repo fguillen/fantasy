@@ -1,16 +1,17 @@
 # frozen_string_literal: true
 
 class Sprite < Graphic
+  include Log
   include Node
 
   attr_reader :image
 
   def initialize(
     image_name_or_gosu_image,
-    actor: nil,
+    parent: nil,
     position: Coordinates.zero
   )
-    super(actor: actor, position: position, name: name)
+    super(parent: parent, position: position, name: name)
 
     @image =
       if image_name_or_gosu_image.is_a?(Image)
