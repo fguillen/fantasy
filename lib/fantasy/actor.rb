@@ -326,7 +326,6 @@ class Actor
   #   actor = Actor.new("player_walk")
   #   actor.graphic = animation
   def graphic=(image_name_or_image_or_animation)
-    puts ">>>> actor[#{name}].graphic=#{image_name_or_image_or_animation}"
     @graphic =
       if image_name_or_image_or_animation.is_a?(Animation)
         image_name_or_image_or_animation

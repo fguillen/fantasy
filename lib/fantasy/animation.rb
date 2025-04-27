@@ -148,10 +148,6 @@ class Animation < Graphic
   end
 
   def draw
-    if parent and parent.name == "ninja"
-      puts ">>>> animation[#{name}].draw, #{layer_in_world}, #{active_in_world}, #{position_in_world}, #{scale_in_world}, #{rotation_in_world}, #{flip}, [#{parent&.name}]"
-    end
-
     @images[@frame].draw(position: position_in_camera, scale: scale_in_world, rotation: rotation_in_world, flip: flip)
   end
 
