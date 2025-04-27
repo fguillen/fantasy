@@ -8,7 +8,7 @@ module Global
 
     attr_accessor :actors,
                   :graphics,
-                  :hud_texts,
+                  :texts,
                   :hud_images,
                   :huds,
                   :animations,
@@ -41,7 +41,7 @@ module Global
       log "Global.initialize"
       @actors = []
       @graphics = []
-      @hud_texts = []
+      @texts = []
       @hud_images = []
       @animations = []
       @backgrounds = []
@@ -161,7 +161,7 @@ module Global
     def clear_entities
       @actors.clear
       @graphics.clear
-      @hud_texts.clear
+      @texts.clear
       @hud_images.clear
       @animations.clear
       @backgrounds.clear

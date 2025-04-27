@@ -81,7 +81,7 @@ module Node
 
   def position_in_parent
     result = position.clone
-    if parent
+    if parent && parent.respond_to?(:flip)
       if parent.flip == "horizontal" || parent.flip == "both"
         parent_width_center = parent.width / 2.to_f
         distant_to_center = parent_width_center - result.x

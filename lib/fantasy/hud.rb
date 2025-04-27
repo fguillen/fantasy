@@ -1,40 +1,31 @@
 class Hud
   include Indexable
+  include Node
 
-  attr_accessor :position,
-                :scale,
-                :parts,
-                :active,
-                :layer
+  attr_reader :name
+  attr_accessor :active
 
-  def initialize
-    @position = Coordinates.zero
-    @scale = 1
-    @parts = []
+  def initialize(name: nil)
+    @name = name
     @active = true
-    @layer = 100
-
     Global.huds&.push(self)
   end
 
-  def add_part(part)
-    @parts.push(part)
-  end
-
-  def remove_part(part)
-    @parts.delete(part)
-  end
-
   def draw
-    @parts.each(&:draw)
+    @children.each(&:draw)
   end
 
   def destroy
-    @parts.each(&:destroy)
+    log("#destroy")
+
+    children.clone.each(&:destroy)
+    children.clear
+
+    Global.huds.delete(self)
   end
 
-  def layer_in_world
-    layer
+  def position_in_world
+    (Camera.main.position + @position).freeze
   end
 
   class << self

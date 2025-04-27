@@ -1,35 +1,43 @@
 # frozen_string_literal: true
 
-class Hud::Text
+class Text
   include Log
   include Indexable
+  include Node
 
-  attr_accessor :text, :size, :color, :background_color, :visible, :layer, :in_world, :position, :alignment
+  attr_accessor :text,
+                :size,
+                :color,
+                :background_color,
+                :active,
+                :alignment
 
-  def initialize(text: "", position: Coordinates.zero, hud: nil)
+  def initialize(
+      text: "",
+      position: Coordinates.zero,
+      size: "medium",
+      color: Color.palette.white,
+      background_color: Color.palette.black,
+      alignment: "top-left"
+  )
     @position = position
     @text = text
-    @size = "medium"
-    @color = Color.palette.white
-    @background_color = Color.palette.black
-    @visible = true
-    @layer = 100
-    @in_world = false
-    @alignment = "top-left"
+    @size = size
+    @color = color
+    @background_color = background_color
+    @active = true
+    @alignment = alignment
 
-    @hud = hud || Global.hud
-    @hud.add_part(self)
-
-    Global.hud_texts&.push(self)
+    Global.texts&.push(self)
   end
 
   # rubocop:disable Metrics/AbcSize
   def draw
-    if visible
+    if active
       unless @background_color.nil?
-        font.draw_markup_rel(text, screen_position.x + shadow_offset, screen_position.y + shadow_offset, 1, position_rel.x, position_rel.y, 1, 1, background_color)
+        font.draw_markup_rel(text, position_in_camera.x + shadow_offset, position_in_camera.y + shadow_offset, 1, position_rel.x, position_rel.y, 1, 1, background_color)
       end
-      font.draw_markup_rel(text, screen_position.x, screen_position.y, 1, position_rel.x, position_rel.y, 1, 1, color)
+      font.draw_markup_rel(text, position_in_camera.x, position_in_camera.y, 1, position_rel.x, position_rel.y, 1, 1, color)
     end
 
     draw_debug if Global.debug
@@ -47,8 +55,8 @@ class Hud::Text
 
   def destroy
     log("#destroy")
-    @hud&.remove_part(self)
-    Global.hud_texts.delete(self)
+    parent&.children&.delete(self)
+    Global.texts.delete(self)
   end
 
   def width
@@ -93,15 +101,7 @@ class Hud::Text
     end
   end
 
-  def screen_position
-    if @in_world
-      @position - Camera.main.position
-    else
-      @position
-    end
-  end
-
   def draw_debug
-    Global.pixel_fonts["medium"].draw_text("#{@position.x.floor},#{@position.y.floor}", screen_position.x, screen_position.y, 1)
+    Global.pixel_fonts["medium"].draw_text("#{@position.x.floor},#{@position.y.floor}", position_in_camera.x, position_in_camera.y, 1)
   end
 end

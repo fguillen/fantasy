@@ -25,7 +25,7 @@ module Log
       Global.tile_maps +
       Global.actors +
       Global.colliders +
-      Global.hud_texts +
+      Global.texts +
       Global.hud_images +
       Global.animations
     ).each do |entity|
