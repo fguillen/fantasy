@@ -4,6 +4,7 @@
 
 Global.setup_proc = nil
 Global.loop_proc = nil
+Global.draw_proc = nil
 
 # Defines the presentation Scene
 #
@@ -64,6 +65,10 @@ end
 # ```
 def on_loop(&block)
   Global.loop_proc = block
+end
+
+def on_draw(&block)
+  Global.draw_proc = block
 end
 
 # @!visibility private

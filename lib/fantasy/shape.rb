@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Shape
-  include UserInputs
   include Indexable
 
   attr_accessor :kind, :position, :width, :height, :stroke, :color, :fill, :stroke_color, :layer
@@ -30,9 +29,6 @@ class Shape
     @layer = 1
     @from = from
     @to = to
-
-    # @errors = []
-    # raise "Error: Shape kind '#{kind}' is invalid. #{errors.join(", ")}" if invalid?
   end
   # rubocop:enable Metrics/ParameterLists
 

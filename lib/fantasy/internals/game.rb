@@ -93,6 +93,7 @@ class Game < Gosu::Window
       Global.huds.select(&:active)
     ).group_by(&:layer_in_world).sort.map { |e| e[1] }.each { |e| e.sort_by(&:creation_index).each(&:draw) }
 
+    Global.draw_proc&.call
   end
 
   def check_click

@@ -17,8 +17,8 @@ class Image
     position_x = position.x # + (width / 2)
     position_y = position.y # + (height / 2)
     z = 0
-    center_x = 0
-    center_y = 0
+    center_x = 0.5
+    center_y = 0.5
 
     if %w[horizontal both].include?(flip)
       position_x += width * scale_x

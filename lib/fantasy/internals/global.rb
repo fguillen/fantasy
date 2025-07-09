@@ -19,7 +19,7 @@ module Global
                   :colliders
 
     attr_accessor :debug
-    attr_accessor :setup_proc, :loop_proc, :button_proc, :key_procs
+    attr_accessor :setup_proc, :loop_proc, :draw_proc, :button_proc, :key_procs
     attr_accessor :presentation_proc, :game_proc, :end_proc
 
     attr_accessor :space_bar_proc
