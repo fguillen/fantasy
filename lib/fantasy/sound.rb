@@ -29,13 +29,21 @@ module Sound
     def preload_sounds
       return unless Dir.exist?(base_path)
 
-      Dir.each_child(base_path) do |file_name|
+      all_sounds do |file_name|
         locate_sound(file_name) unless file_name.start_with?(".")
       end
     end
 
+    def all_sounds
+      Dir.glob("#{base_path}/**/*").select { |e| File.basename(e) =~ /\.(wav|ogg)$/ }
+    end
+
     def base_path
-      "#{Dir.pwd}/sounds"
+      if ENV["environment"] == "test"
+        "#{Dir.pwd}/test/fixtures/assets"
+      else
+        "#{Dir.pwd}/assets"
+      end
     end
   end
 end
