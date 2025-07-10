@@ -21,6 +21,7 @@ module Indexable
   attr_reader :creation_index
 
   def self.included(base)
+    # After create pattern
     class << base
       alias_method :_indexable_included_new, :new
       def new(*args, **keyword_args)
@@ -36,36 +37,3 @@ module Indexable
     end
   end
 end
-
-# module MyMixin
-#   def self.included(base)
-#     class << base
-#       alias_method :_new, :new
-
-#       define_method :new do
-#         _new.tap do |instance|
-#           instance.send(:after_init)
-#         end
-#       end
-#     end
-#   end
-
-#   def after_init
-#     puts 'hello'
-#   end
-# end
-# module MyMod
-#   def after_init
-#     puts "MyMod#after_init"
-#   end
-#   def self.included(klass)
-#     class << klass
-#       alias_method :__new, :new
-#       def new(*args)
-#         e = __new(*args)
-#         e.after_init
-#         e
-#       end
-#     end
-#   end
-# end

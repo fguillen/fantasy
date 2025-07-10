@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "gosu"
+require_relative "box2d/setup"
 
 require_relative "fantasy/version"
 
@@ -14,12 +15,15 @@ require_relative "fantasy/includes/user_inputs"
 require_relative "fantasy/includes/indexable"
 require_relative "fantasy/includes/node"
 require_relative "fantasy/includes/auto_flipable"
+require_relative "fantasy/includes/physics_body"
 require_relative "fantasy/internals/collision_resolver"
 require_relative "fantasy/internals/image"
 require_relative "fantasy/internals/game"
 require_relative "fantasy/internals/global"
 require_relative "fantasy/internals/cursor"
 require_relative "fantasy/internals/numeric"
+require_relative "fantasy/internals/physics/world"
+require_relative "fantasy/internals/physics/body"
 require_relative "fantasy/coordinates"
 require_relative "fantasy/mouse"
 require_relative "fantasy/tweeni"

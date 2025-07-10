@@ -6,6 +6,7 @@ class Game < Gosu::Window
   def initialize(screen_width, screen_height)
     Camera.initialize
     Global.initialize(screen_width, screen_height)
+    Physics::World.initialize
 
     super(Global.screen_width, Global.screen_height)
 
@@ -80,6 +81,8 @@ class Game < Gosu::Window
     Global.loop_proc&.call
 
     CollisionResolver.resolve_collisions
+
+    Physics::World.update
   end
 
   def draw
