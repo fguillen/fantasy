@@ -271,7 +271,7 @@ class Actor
   #
   # @param image_name_or_image_or_animation [string | Image | Animation] the name of the image file from `./images/*`. Or an Image object. Or an Animation object
   # @return [Actor] the Actor
-  def initialize(name: nil, graphic: nil, physics_type: :dynamic)
+  def initialize(name: nil, graphic: nil, physics_type: :dynamic, position: Coordinates.zero)
     @graphic = nil
     self.graphic = graphic if graphic
     @physics_type = physics_type
@@ -280,7 +280,7 @@ class Actor
     @name ||= graphic&.name if graphic.respond_to?(:name)
     @name ||= graphic if graphic.is_a?(String)
 
-    @position = Coordinates.zero
+    @position = position
     @direction = Coordinates.zero
     @last_frame_position = @position.clone
     @speed = 0

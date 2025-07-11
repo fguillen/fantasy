@@ -15,7 +15,7 @@ module PhysicsBody
             width: e.width,
             height: e.height
           )
-        physics_body.on_update { e.update_position }
+        physics_body.on_update { e.update_position_and_rotation }
 
         e.set_physics_body(physics_body)
         e
@@ -33,7 +33,10 @@ module PhysicsBody
     @physics_body&.destroy
   end
 
-  def update_position
-    @position = @physics_body.position if @physics_body
+  def update_position_and_rotation
+    if @physics_body
+      @position = @physics_body.position
+      @rotation = @physics_body.rotation
+    end
   end
 end

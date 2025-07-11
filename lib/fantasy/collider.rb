@@ -110,7 +110,7 @@ class Collider
   def destroy
     log("#destroy")
     actor.children&.delete(self)
-    actor.physics_body.remove_shape(@physics_shape)
+    actor.physics_body.remove_collider(@physics_shape)
     Global.colliders.delete(self)
   end
 

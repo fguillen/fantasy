@@ -2,7 +2,7 @@ module Physics
   class Body
     include Log
 
-    attr_reader :id, :type, :position
+    attr_reader :id, :type, :position, :rotation
 
     def initialize(position:, width:, height:, type: :dynamic)
       @position = position
@@ -12,6 +12,7 @@ module Physics
       @id = create_body(position)
       @on_update_callback = nil
       @colliders = []
+      @rotation = Box2D::ROT_IDENTITY
 
       created_default_collider
 
@@ -55,8 +56,14 @@ module Physics
     end
 
     def update
-      pysics_position = Box2D::Body_GetTransform(id).p
-      @position = Coordinates.new(pysics_position.x, pysics_position.y) / Physics::World.pixels_per_meter
+      transform = Box2D::Body_GetTransform(id)
+      physics_position = transform.p
+      @position = Coordinates.new(physics_position.x, physics_position.y) / Physics::World.pixels_per_meter
+
+      physics_rotation = transform.q
+      angle_radians = Box2D.Rot_GetAngle(physics_rotation)
+      @rotation = angle_radians * (180.0 / Math::PI) # degrees
+
       instance_exec(&@on_update_callback) unless @on_update_callback.nil?
     end
 
@@ -71,7 +78,7 @@ module Physics
       body_def.position.x = initial_position.x * Physics::World.pixels_per_meter
       body_def.position.y = initial_position.y * Physics::World.pixels_per_meter
       body_def.type = type == :static ? Box2D::BodyType_staticBody : Box2D::BodyType_dynamicBody
-      body_def.fixedRotation = true
+      # body_def.fixedRotation = true
 
       Box2D::CreateBody(Physics::World.id, body_def)
     end
