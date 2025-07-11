@@ -1,7 +1,7 @@
 module PhysicsBody
   attr_reader :physics_body
 
-  def self.included(base)
+  def self.prepended(base)
     # After create pattern
     class << base
       alias_method :_physics_body_included_new, :new
@@ -28,6 +28,7 @@ module PhysicsBody
   end
 
   def destroy
+    log("#destroy")
     @physics_body&.destroy
     super() if defined?(super)
   end

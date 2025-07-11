@@ -1,5 +1,7 @@
 module Physics
   class Body
+    include Log
+
     attr_reader :id, :type, :position
 
     def initialize(position:, width:, height:, type: :dynamic)
@@ -13,7 +15,8 @@ module Physics
     end
 
     def destroy
-      Box2D::DestroyBody(Physics::World.id, id)
+      log("#destroy")
+      Box2D::DestroyBody(id)
       Physics::World.remove_body(self)
     end
 
@@ -42,6 +45,7 @@ module Physics
     def created_default_shape(width, height)
       shape_def = Box2D::DefaultShapeDef()
       shape_def.enableContactEvents = true
+      shape_def.isSensor = true
 
       shape_def.density = 1.0
       shape_def.material.friction = 0.3

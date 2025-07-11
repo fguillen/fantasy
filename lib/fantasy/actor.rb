@@ -66,7 +66,7 @@ class Actor
   include UserInputs
   include Indexable
   include Node
-  include PhysicsBody
+  prepend PhysicsBody
   prepend AutoFlipable
 
   attr_reader :is_on_floor
