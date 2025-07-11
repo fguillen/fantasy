@@ -3,22 +3,22 @@ module Physics
     class << self
       attr_accessor :id, :pixels_per_meter, :bodies
 
-      def initialize(gravity: Coordinates.zero, pixels_per_meter: 32)
+      def initialize(gravity: Coordinates.new(0, -10), pixels_per_meter: 100)
         world_def = Box2D::DefaultWorldDef()
         world_def.gravity.x = gravity.x
-        world_def.gravity.y = gravity.y
+        world_def.gravity.y = gravity.y * -1 # Box2D uses Y down, so we invert it
         @id = Box2D::CreateWorld(world_def)
-        @time_step = 1.0 / 60.0
+        @time_step = 1.0 # / 60.0
         @pixels_per_meter = pixels_per_meter
 
         @bodies = []
-      end
 
-      def update
-        # puts "World.update"
         # Box2D::World_EnableSleeping(@id, true)
         # Box2D::World_EnableWarmStarting(@id, true)
         # Box2D::World_EnableContinuous(@id, true)
+      end
+
+      def update
         Box2D::World_Step(@id, @time_step, 4)
 
         @bodies.each(&:update)

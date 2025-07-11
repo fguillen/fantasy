@@ -139,6 +139,8 @@ class Actor
   #   actor.gravity = 10
   attr_accessor :gravity
 
+  attr_reader :physics_type
+
   # The value to scale the image of the Actor when drawn.
   # If the value is `2` the image will rendered at double of size.
   # If the value is `0.5` the image will rendered at half of size.
@@ -269,9 +271,10 @@ class Actor
   #
   # @param image_name_or_image_or_animation [string | Image | Animation] the name of the image file from `./images/*`. Or an Image object. Or an Animation object
   # @return [Actor] the Actor
-  def initialize(name: nil, graphic: nil)
+  def initialize(name: nil, graphic: nil, physics_type: :dynamic)
     @graphic = nil
     self.graphic = graphic if graphic
+    @physics_type = physics_type
 
     @name = name
     @name ||= graphic&.name if graphic.respond_to?(:name)
