@@ -28,9 +28,9 @@ module PhysicsBody
   end
 
   def destroy
-    log("#destroy")
-    @physics_body&.destroy
+    log("#PhysicsBody.destroy")
     super() if defined?(super)
+    @physics_body&.destroy
   end
 
   def update_position

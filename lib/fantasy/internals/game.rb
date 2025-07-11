@@ -80,7 +80,7 @@ class Game < Gosu::Window
 
     Global.loop_proc&.call
 
-    CollisionResolver.resolve_collisions
+    # CollisionResolver.resolve_collisions
 
     Physics::World.update
   end

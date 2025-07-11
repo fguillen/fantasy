@@ -1,4 +1,5 @@
-class CollisionResolver
+# TODO: remove this file when the new collision system is ready.
+class CollisionResolver_NOT_USED
   extend Log
   def self.resolve_collisions
     collisionable_colliders.each do |collider|

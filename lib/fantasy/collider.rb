@@ -17,7 +17,7 @@ class Collider
   attr_accessor :solid
 
   attr_accessor :name,
-                :parent,
+                :actor,
                 :position,
                 :width,
                 :height,
@@ -26,34 +26,39 @@ class Collider
                 :active
 
   def initialize(
-    parent: nil,
+    actor:,
     position: Coordinates.zero,
-    width: nil,
-    height: nil,
+    width: actor.width,
+    height: actor.height,
     group: "all",
     collision_with: "all",
     name: nil,
     solid: false
   )
+    @actor = actor
+
     @name = name
     @position = position
 
     @width = width
-    @width ||= parent.width if parent
-    @width ||= 0
     @height = height
-    @height ||= parent.height if parent
-    @height ||= 0
 
-    @parent = parent
     @group = group
     @solid = solid
     @collision_with = collision_with
     @on_collision_callback = nil
     @active = true
 
-    parent&.add_child(self)
+    actor.add_child(self)
     Global.colliders&.push(self)
+
+    @physics_shape =
+      actor.physics_body.add_collider(
+        position: position,
+        width: width,
+        height: height,
+        solid: solid
+      )
   end
 
   # Array of strings (or "all", or "none").
@@ -94,7 +99,7 @@ class Collider
   # @example Collision detected with _"bullet"_
   #   collider.on_collision do |other|
   #     if other.name == "bullet"
-  #       collider.parent.destroy
+  #       collider.actor.destroy
   #     end
   #   end
   def on_collision(&block)
@@ -104,18 +109,19 @@ class Collider
   # Destroy this Collider
   def destroy
     log("#destroy")
-    parent&.children&.delete(self)
+    actor.children&.delete(self)
+    actor.physics_body.remove_shape(@physics_shape)
     Global.colliders.delete(self)
   end
 
   # rubocop:disable Metrics/AbcSize
-  def collides_with?(other)
-    # https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
-    position_in_world.x < (other.position_in_world.x + other.width_in_world) &&
-      (position_in_world.x + width_in_world) > other.position_in_world.x &&
-      position_in_world.y < (other.position_in_world.y + other.height_in_world) &&
-      position_in_world.y + height_in_world > other.position_in_world.y
-  end
+  # def collides_with?(other)
+  #   # https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+  #   position_in_world.x < (other.position_in_world.x + other.width_in_world) &&
+  #     (position_in_world.x + width_in_world) > other.position_in_world.x &&
+  #     position_in_world.y < (other.position_in_world.y + other.height_in_world) &&
+  #     position_in_world.y + height_in_world > other.position_in_world.y
+  # end
   # rubocop:enable Metrics/AbcSize
 
   # @!visibility private
@@ -126,7 +132,7 @@ class Collider
   def on_collision_do(other)
     other_name = other.respond_to?(:name) ? other.name : "no-name"
     log("Collision detected with [#{other.object_id}] [#{other_name}]")
-    parent&.on_collision_do(self, other)
+    actor.on_collision_do(self, other)
     @on_collision_callback&.call(other)
   end
 
@@ -137,7 +143,7 @@ class Collider
   def clone
     new_collider =
       Collider.new(
-        parent: @parent,
+        actor: @actor,
         position: @position.clone,
         width: @width,
         height: @height,
@@ -162,18 +168,8 @@ class Collider
       collision_with: @collision_with,
       solid: @solid,
       active: @active,
-      parent: [@parent.object_id, @parent.name]
+      actor: [@actor.object_id, @actor.name]
     }
-  end
-
-  def extract_from_parent
-    if @parent
-      @position = position_in_world
-      @width = width_in_world
-      @height = height_in_world
-      @parent.children.delete(self)
-      @parent = nil
-    end
   end
 
   private
