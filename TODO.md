@@ -1,0 +1,5 @@
+- [ ] Respond to collisions
+- [ ] Control collision groups
+- [ ] Move object by cursor
+- [ ] Move object by forces
+- [ ] Joins
