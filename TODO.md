@@ -1,5 +1,6 @@
 - [ ] Respond to collisions
 - [ ] Control collision groups
+- [ ] Detect collision and send messages
 - [ ] Move object by cursor
 - [ ] Move object by forces
 - [ ] Joins
