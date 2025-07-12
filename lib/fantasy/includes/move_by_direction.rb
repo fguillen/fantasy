@@ -2,6 +2,7 @@
 
 module MoveByDirection
   def move_by_direction
-    @position += @direction * @speed * Global.frame_time
+    velocity = @direction * @speed * Global.frame_time
+    @physics_body.linear_velocity(velocity)
   end
 end

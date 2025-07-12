@@ -71,6 +71,55 @@ module Physics
       @on_update_callback = block
     end
 
+    def impulse(direction:, force:)
+      puts ">>> impulse: #{direction}, #{force}"
+      impulse = Coordinates.new(direction.x, direction.y).normalize * force
+      impulse_vec_2 = Box2D::Vec2.create_as(impulse.x, impulse.y)
+      puts ">>> impulse_vec_2: #{impulse_vec_2.x}, #{impulse_vec_2.y}"
+      velocity = Box2D.Body_GetLinearVelocity(id)
+      puts ">>> velocity 1: #{velocity.x}, #{velocity.y}"
+      Box2D.Body_ApplyLinearImpulseToCenter(id, impulse_vec_2, true)
+      velocity = Box2D.Body_GetLinearVelocity(id)
+      puts ">>> velocity 2: #{velocity.x}, #{velocity.y}"
+    end
+
+    def force(direction:, force:)
+      puts ">>> force: #{direction}, #{force}"
+      impulse = Coordinates.new(direction.x, direction.y).normalize * force * 1_000_000_000
+      impulse_vec_2 = Box2D::Vec2.create_as(impulse.x, impulse.y)
+      puts ">>> impulse_vec_2: #{impulse_vec_2.x}, #{impulse_vec_2.y}"
+      velocity = Box2D.Body_GetLinearVelocity(id)
+      puts ">>> velocity 1: #{velocity.x}, #{velocity.y}"
+      Box2D.Body_ApplyForceToCenter(id, impulse_vec_2, true)
+      velocity = Box2D.Body_GetLinearVelocity(id)
+      puts ">>> velocity 2: #{velocity.x}, #{velocity.y}"
+    end
+
+    def linear_velocity(velocity)
+      puts ">>> linear_velocity: #{velocity}"
+      velocity *= 1_000_000
+      velocity_vec_2 = Box2D::Vec2.create_as(velocity.x, velocity.y)
+      puts ">>> velocity_vec_2: #{velocity_vec_2.x}, #{velocity_vec_2.y}"
+      Box2D.Body_SetLinearVelocity(id, velocity_vec_2)
+      velocity = Box2D.Body_GetLinearVelocity(id)
+      puts ">>> velocity 3: #{velocity.x}, #{velocity.y}"
+    end
+
+    # def apply_forces(max_speed: Float::INFINITY)
+    #   @acceleration ||= Coordinates.zero
+    #   @velocity ||= Coordinates.zero
+
+    #   @velocity += @acceleration
+
+    #   @velocity.resize(max_speed) if @velocity.length > max_speed
+
+    #   unless @velocity.length.zero?
+    #     @position += @velocity * Global.frame_time
+    #   end
+
+    #   @acceleration = Coordinates.zero
+    # end
+
     private
 
     def create_body(initial_position)

@@ -18,4 +18,8 @@ class Configuration
   def title(title)
     Global.window_title = title
   end
+
+  def gravity(gravity_vector)
+    Global.physics_gravity = gravity_vector
+  end
 end

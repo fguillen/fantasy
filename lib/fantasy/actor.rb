@@ -60,7 +60,7 @@ class Actor
   include Log
   include MoveByCursor
   include MoveByDirection
-  include Mover
+  # include Mover
   include Gravitier
   include Jumper
   include UserInputs
@@ -475,16 +475,13 @@ class Actor
       move_by_cursors
 
       # Direction moving
-      unless @direction.zero?
-        @last_frame_position = @position.clone
-        move_by_direction
-      end
+      move_by_direction
 
       # Gravity force
       add_force_by_gravity
 
       # Apply forces
-      apply_forces
+      # apply_forces
     end
 
     on_after_move_do

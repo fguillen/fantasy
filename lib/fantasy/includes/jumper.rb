@@ -5,7 +5,7 @@ module Jumper
 
   def jump
     log "jump"
-    impulse(direction: Coordinates.up, force: @jump_force)
+    @physics_body.impulse(direction: Coordinates.up, force: @jump_force)
     @jumping = true
     @is_on_floor = false
 

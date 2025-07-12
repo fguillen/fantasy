@@ -3,10 +3,10 @@ module Physics
     class << self
       attr_accessor :id, :pixels_per_meter, :bodies
 
-      def initialize(gravity: Coordinates.new(0, -10), pixels_per_meter: 100)
+      def initialize(gravity: Coordinates.new(0, 0), pixels_per_meter: 100)
         world_def = Box2D::DefaultWorldDef()
-        world_def.gravity.x = gravity.x
-        world_def.gravity.y = gravity.y * -1 # Box2D uses Y down, so we invert it
+        world_def.gravity.x = Global.physics_gravity.x
+        world_def.gravity.y = Global.physics_gravity.y * -1 # Box2D uses Y down, so we invert it
         @id = Box2D::CreateWorld(world_def)
         @time_step = 1.0 # / 60.0
         @pixels_per_meter = pixels_per_meter
