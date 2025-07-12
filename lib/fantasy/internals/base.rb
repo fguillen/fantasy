@@ -6,6 +6,11 @@ Global.setup_proc = nil
 Global.loop_proc = nil
 Global.draw_proc = nil
 
+def configuration(&block)
+  configuration = Configuration.new
+  configuration.instance_eval(&block)
+end
+
 # Defines the presentation Scene
 #
 # ```
@@ -174,9 +179,8 @@ end
 # start!
 # ```
 def start!
-  raise "'SCREEN_WIDTH' and 'SCREEN_HEIGHT' both have to be set at the beginning of the program" unless defined?(SCREEN_WIDTH) && defined?(SCREEN_HEIGHT)
-
   Global.setup
-  Global.game = Game.new(SCREEN_WIDTH, SCREEN_HEIGHT)
+  Global.game = Game.new
+  Global.game.caption = Global.window_title
   Global.game.show
 end

@@ -3,9 +3,9 @@
 class Game < Gosu::Window
   include Log
 
-  def initialize(screen_width, screen_height)
+  def initialize
     Camera.initialize
-    Global.initialize(screen_width, screen_height)
+    Global.initialize
     Physics::World.initialize
 
     super(Global.screen_width, Global.screen_height)

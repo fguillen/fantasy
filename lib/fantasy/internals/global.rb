@@ -34,10 +34,11 @@ module Global
     attr_reader :references
     attr_reader :game_state
 
-    attr_reader :screen_width, :screen_height
+    attr_accessor :screen_width, :screen_height, :window_title
+    attr_reader :physics_pixels_per_meter
 
     # rubocop:disable Metrics/MethodLength
-    def initialize(screen_width, screen_height)
+    def initialize
       log "Global.initialize"
       @actors = []
       @graphics = []
@@ -64,8 +65,11 @@ module Global
 
       @frame_time = 0
 
-      @screen_width = screen_width
-      @screen_height = screen_height
+      @screen_width ||= 640
+      @screen_height ||= 380
+      @window_title ||= "Fantasy Game"
+
+      @physics_pixels_per_meter ||= 100 # 100 pixels = 1 meter
 
       if @presentation_proc.nil?
         on_presentation { Global.default_on_presentation }
