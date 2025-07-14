@@ -26,8 +26,6 @@ module Physics
     end
 
     def add_collider(position: Coordinates.zero, width: @width, height: @height, solid: true)
-      puts ">>> add_collider: #{position}, #{width}, #{height}, #{solid}"
-
       collider =
         Physics::Collider.new(
           body_id: id,
@@ -45,8 +43,6 @@ module Physics
     end
 
     def remove_collider(collider)
-      puts ">>>> remove_collider: #{collider.id}"
-
       if @colliders.include?(collider)
         collider.destroy
         @colliders.delete(collider)
@@ -72,37 +68,21 @@ module Physics
     end
 
     def impulse(direction:, force:)
-      puts ">>> impulse: #{direction}, #{force}"
       impulse = Coordinates.new(direction.x, direction.y).normalize * force
       impulse_vec_2 = Box2D::Vec2.create_as(impulse.x, impulse.y)
-      puts ">>> impulse_vec_2: #{impulse_vec_2.x}, #{impulse_vec_2.y}"
-      velocity = Box2D.Body_GetLinearVelocity(id)
-      puts ">>> velocity 1: #{velocity.x}, #{velocity.y}"
       Box2D.Body_ApplyLinearImpulseToCenter(id, impulse_vec_2, true)
-      velocity = Box2D.Body_GetLinearVelocity(id)
-      puts ">>> velocity 2: #{velocity.x}, #{velocity.y}"
     end
 
     def force(direction:, force:)
-      puts ">>> force: #{direction}, #{force}"
       impulse = Coordinates.new(direction.x, direction.y).normalize * force * 1_000_000_000
       impulse_vec_2 = Box2D::Vec2.create_as(impulse.x, impulse.y)
-      puts ">>> impulse_vec_2: #{impulse_vec_2.x}, #{impulse_vec_2.y}"
-      velocity = Box2D.Body_GetLinearVelocity(id)
-      puts ">>> velocity 1: #{velocity.x}, #{velocity.y}"
       Box2D.Body_ApplyForceToCenter(id, impulse_vec_2, true)
-      velocity = Box2D.Body_GetLinearVelocity(id)
-      puts ">>> velocity 2: #{velocity.x}, #{velocity.y}"
     end
 
     def linear_velocity(velocity)
-      puts ">>> linear_velocity: #{velocity}"
       velocity *= 1_000_000
       velocity_vec_2 = Box2D::Vec2.create_as(velocity.x, velocity.y)
-      puts ">>> velocity_vec_2: #{velocity_vec_2.x}, #{velocity_vec_2.y}"
       Box2D.Body_SetLinearVelocity(id, velocity_vec_2)
-      velocity = Box2D.Body_GetLinearVelocity(id)
-      puts ">>> velocity 3: #{velocity.x}, #{velocity.y}"
     end
 
     # def apply_forces(max_speed: Float::INFINITY)
@@ -127,7 +107,7 @@ module Physics
       body_def.position.x = initial_position.x * Physics::World.pixels_per_meter
       body_def.position.y = initial_position.y * Physics::World.pixels_per_meter
       body_def.type = type == :static ? Box2D::BodyType_staticBody : Box2D::BodyType_dynamicBody
-      # body_def.fixedRotation = true
+      body_def.fixedRotation = true
 
       Box2D::CreateBody(Physics::World.id, body_def)
     end

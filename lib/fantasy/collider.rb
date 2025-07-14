@@ -176,7 +176,7 @@ class Collider
 
   def draw_debug
     Shape.rectangle(
-      position: position_in_camera,
+      position: position_in_camera - Coordinates.new(width_in_world / 2, height_in_world / 2),
       width: width_in_world,
       height: height_in_world,
       fill: false,

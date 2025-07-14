@@ -5,6 +5,6 @@ module Gravitier
     return if @gravity.nil? || @gravity.zero?
     return if respond_to?(:on_floor?) && on_floor?
 
-    add_force(Coordinates.down * @gravity)
+    physics_body.force(direction: Coordinates.down, force: @gravity)
   end
 end
