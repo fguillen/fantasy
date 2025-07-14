@@ -23,6 +23,7 @@ module Physics
     def create_collider
       shape_def = Box2D::DefaultShapeDef()
       shape_def.enableContactEvents = true
+      shape_def.enableSensorEvents = true
       shape_def.isSensor = !solid
 
       shape_def.density = 1.0

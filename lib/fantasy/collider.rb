@@ -25,6 +25,8 @@ class Collider
                 :collision_with,
                 :active
 
+  attr_reader :physics_shape
+
   def initialize(
     actor:,
     position: Coordinates.zero,
@@ -52,13 +54,7 @@ class Collider
     actor.add_child(self)
     Global.colliders&.push(self)
 
-    @physics_shape =
-      actor.physics_body.add_collider(
-        position: position,
-        width: width,
-        height: height,
-        solid: solid
-      )
+    @physics_shape = create_physics_shape
   end
 
   # Array of strings (or "all", or "none").
@@ -172,7 +168,36 @@ class Collider
     }
   end
 
+  def self.find_by_physics_shape_id(physics_shape_id)
+    collider_ids = Global.colliders.map { |collider| collider.physics_shape.id.index1 }
+
+    puts ">>>> finding collider with physics_shape_id: #{physics_shape_id.index1}"
+    puts ">>>> collider_ids: #{collider_ids.inspect}"
+    Global.colliders.find { |collider| collider.physics_shape.id.index1 == physics_shape_id.index1 }
+  end
+
+  def position_in_camera
+    @actor.position_in_camera + @position
+  end
+
+  def width_in_world
+    @width * Physics::World.pixels_per_meter
+  end
+
+  def height_in_world
+    @height * Physics::World.pixels_per_meter
+  end
+
   private
+
+  def create_physics_shape
+    actor.physics_body.add_collider(
+      position: position,
+      width: width,
+      height: height,
+      solid: solid
+    )
+  end
 
   def draw_debug
     Shape.rectangle(

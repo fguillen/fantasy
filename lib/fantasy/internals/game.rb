@@ -7,6 +7,7 @@ class Game < Gosu::Window
     Camera.initialize
     Global.initialize
     Physics::World.initialize
+    Physics::CollisionsManager.initialize
 
     super(Global.screen_width, Global.screen_height)
 
@@ -83,6 +84,7 @@ class Game < Gosu::Window
     # CollisionResolver.resolve_collisions
 
     Physics::World.update
+    Physics::CollisionsManager.update
   end
 
   def draw
