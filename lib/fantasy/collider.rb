@@ -125,11 +125,11 @@ class Collider
     draw_debug if Global.debug
   end
 
-  def on_collision_do(other_collider)
+  def on_collision_do(other_collider, contact)
     other_collider_name = other_collider.name
-    log("Collision detected with [#{other_collider.object_id}] [#{other_collider_name}]")
-    actor.on_collision_do(self, other_collider)
-    @on_collision_callback&.call(other_collider)
+    log("Collision detected with [#{other_collider.object_id}] [#{other_collider_name}], on coordinates [#{contact[:coordinates]}]")
+    actor.on_collision_do(self, other_collider, contact)
+    @on_collision_callback&.call(other_collider, contact)
   end
 
   def solid?
@@ -168,12 +168,8 @@ class Collider
     }
   end
 
-  def self.find_by_physics_shape_id(physics_shape_id)
-    collider_ids = Global.colliders.map { |collider| collider.physics_shape.id.index1 }
-
-    puts ">>>> finding collider with physics_shape_id: #{physics_shape_id.index1}"
-    puts ">>>> collider_ids: #{collider_ids.inspect}"
-    Global.colliders.find { |collider| collider.physics_shape.id.index1 == physics_shape_id.index1 }
+  def self.find_by_physics_shape_id_index(physics_shape_id_index)
+    Global.colliders.find { |collider| collider.physics_shape.id.index1 == physics_shape_id_index }
   end
 
   def position_in_camera

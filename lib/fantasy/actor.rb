@@ -608,9 +608,9 @@ class Actor
   end
 
   # !visibility private
-  def on_collision_do(self_collider, other_collider)
+  def on_collision_do(self_collider, other_collider, contact)
     if self_collider.solid? && other_collider.solid?
-      collision_with_solid(self_collider, other_collider)
+      collision_with_solid(self_collider, other_collider, contact)
     end
 
     do_on_collision(other_collider.actor) if other_collider.actor
@@ -685,6 +685,7 @@ class Actor
   end
 
   def on_floor_do
+    puts ">>>> on_floor_do"
     instance_exec(&@on_floor_callback) unless @on_floor_callback.nil?
   end
 
@@ -700,32 +701,15 @@ class Actor
     Global.pixel_fonts["medium"].draw_text("#{@position.x.floor},#{@position.y.floor}", position_in_camera.x, position_in_camera.y - 20, 1)
   end
 
-  def collision_with_solid(self_collider, other_collider)
-    @velocity ||= Coordinates.zero # In case it is not initialized yet
-    last_movement = @position - @last_frame_position
-    movement = CollisionResolver.movement_until_collision(self_collider, other_collider, last_movement)
-
+  def collision_with_solid(self_collider, other_collider, contact)
     # Collision with the floor
-    if ( # rubocop:disable Style/RedundantParentheses
-      last_movement.y.positive? &&
-      other_collider.position_in_world.y > (self_collider.position_in_world.y - last_movement.y + self_collider.height_in_world)
-    )
+    puts ">>>> collision_with_solid: normal: #{contact[:normal]}"
+    if contact[:normal].y.negative?
       on_floor_do unless @is_on_floor
 
       @is_on_floor = true
       @jumping = false
-      @velocity.y = 0
     end
-
-    # Collision with the ceiling
-    if ( # rubocop:disable Style/RedundantParentheses
-      last_movement.y.negative? &&
-      (other_collider.position_in_world.y + other_collider.height_in_world) < self_collider.position_in_world.y - last_movement.y
-    )
-      @velocity.y = 0
-    end
-
-    @position -= movement
   end
 
   # If actor is out of the screen by half of the screen pixels, destroy it
