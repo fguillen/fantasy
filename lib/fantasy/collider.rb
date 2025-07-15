@@ -34,7 +34,7 @@ class Collider
     height: actor.height,
     group: "all",
     collision_with: "all",
-    name: nil,
+    name: "Collider_#{actor.name}",
     solid: false
   )
     @actor = actor
@@ -125,11 +125,11 @@ class Collider
     draw_debug if Global.debug
   end
 
-  def on_collision_do(other)
-    other_name = other.respond_to?(:name) ? other.name : "no-name"
-    log("Collision detected with [#{other.object_id}] [#{other_name}]")
-    actor.on_collision_do(self, other)
-    @on_collision_callback&.call(other)
+  def on_collision_do(other_collider)
+    other_collider_name = other_collider.name
+    log("Collision detected with [#{other_collider.object_id}] [#{other_collider_name}]")
+    actor.on_collision_do(self, other_collider)
+    @on_collision_callback&.call(other_collider)
   end
 
   def solid?
