@@ -25,14 +25,16 @@ module Physics
       Physics::World.remove_body(self)
     end
 
-    def add_collider(position: Coordinates.zero, width: @width, height: @height, solid: true)
+    def add_collider(position: Coordinates.zero, width: @width, height: @height, solid: true, group: "all", collision_with: "all")
       collider =
         Physics::Collider.new(
           body_id: id,
           position: position,
           width: width,
           height: height,
-          solid: solid
+          solid: solid,
+          group: group,
+          collision_with: collision_with
         )
 
       @colliders << collider

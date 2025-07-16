@@ -22,10 +22,9 @@ class Collider
                 :width,
                 :height,
                 :group,
-                :collision_with,
                 :active
 
-  attr_reader :physics_shape
+  attr_reader :physics_shape, :collision_with
 
   def initialize(
     actor:,
@@ -82,12 +81,8 @@ class Collider
   #   collider = Collider.new()
   #   collider.collision_with = "none"
   #
-  def collision_with=(value)
-    if value.is_a?(String) && value != "all" && value != "none"
-      value = [value]
-    end
-
-    @collision_with = value
+  def collision_with=(name_or_names)
+    physics_shape.collision_with = name_or_names
   end
 
   # The block to be executed when Collider collides with another Collider
@@ -191,7 +186,9 @@ class Collider
       position: position,
       width: width,
       height: height,
-      solid: solid
+      solid: solid,
+      group: group,
+      collision_with: collision_with
     )
   end
 
