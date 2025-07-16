@@ -1,8 +1,8 @@
 - [ ] On floor detection
 - [x] Individual gravity
-- [ ] Respond to collisions
+- [x] Respond to collisions
 - [ ] Control collision groups
-- [ ] Detect collision and send messages
+- [x] Detect collision and send messages
 - [x] Move object by cursor
 - [x] Move object by forces
 - [ ] Joins
