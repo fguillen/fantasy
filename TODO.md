@@ -1,4 +1,5 @@
 - [ ] On floor detection
+- [ ] Aggregate forces and velocities
 - [x] Individual gravity
 - [x] Respond to collisions
 - [x] Control collision groups

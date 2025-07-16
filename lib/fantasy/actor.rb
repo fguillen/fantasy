@@ -69,8 +69,6 @@ class Actor
   prepend PhysicsBody
   prepend AutoFlipable
 
-  attr_reader :is_on_floor
-
   # Coordinates object where x and y represent the position of the Actor in the World (no necessarily in the Screen).
   #
   # Default `Coordinates.zero`.
@@ -310,6 +308,9 @@ class Actor
 
     @pocket = {}
 
+    # To keep track if the Actor is on_floor
+    @ground_colliders_in_contact = []
+
     Global.actors&.push(self)
   end
 
@@ -479,9 +480,6 @@ class Actor
 
       # Gravity force
       add_force_by_gravity
-
-      # Apply forces
-      # apply_forces
     end
 
     on_after_move_do
@@ -617,6 +615,12 @@ class Actor
     instance_exec(&@on_collision_callback) unless @on_collision_callback.nil?
   end
 
+  def on_collision_ends_do(self_collider, other_collider, contact)
+    if self_collider.solid? && other_collider.solid?
+      collision_with_solid_ends(self_collider, other_collider, contact)
+    end
+  end
+
   # protected
 
   def do_after_move
@@ -628,14 +632,7 @@ class Actor
   end
 
   def on_floor?
-    result =
-      children.select { |child| child.is_a?(Collider) && child.solid? }.any? do |collider|
-        CollisionResolver.any_collision_down_with_solid?(collider)
-      end
-
-    @is_on_floor = result
-
-    result
+    @ground_colliders_in_contact.any?
   end
 
   def to_debug
@@ -704,12 +701,20 @@ class Actor
   def collision_with_solid(self_collider, other_collider, contact)
     # Collision with the floor
     puts ">>>> collision_with_solid: normal: #{contact[:normal]}"
-    if contact[:normal].y.negative?
-      on_floor_do unless @is_on_floor
+    if contact[:normal].y.positive?
+      on_floor_do unless on_floor?
 
-      @is_on_floor = true
+      @ground_colliders_in_contact << other_collider
+
+      puts ">>>> @ground_colliders_in_contact: #{@ground_colliders_in_contact.count}"
+
       @jumping = false
     end
+  end
+
+  def collision_with_solid_ends(self_collider, other_collider, contact)
+    puts ">>>> collision_with_solid_ends"
+    @ground_colliders_in_contact.delete(other_collider)
   end
 
   # If actor is out of the screen by half of the screen pixels, destroy it

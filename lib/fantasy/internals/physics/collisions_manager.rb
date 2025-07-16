@@ -23,6 +23,11 @@ module Physics
             collider_a.on_collision_do(collider_b, contact)
             collider_b.on_collision_do(collider_a, contact)
           end
+
+          if contact[:phase] == :end
+            collider_a.on_collision_ends_do(collider_b, contact)
+            collider_b.on_collision_ends_do(collider_a, contact)
+          end
         end
       end
 
