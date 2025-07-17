@@ -280,7 +280,6 @@ class Actor
 
     @position = position
     @direction = Coordinates.zero
-    @last_frame_position = @position.clone
     @speed = 0
     @scale = 1
     @rotation = 0
@@ -459,12 +458,12 @@ class Actor
   def move
     mouse_position = Global.mouse_position + Camera.main.position
 
-    if @draggable_on_debug && Global.debug && !@dragging && Gosu.button_down?(Gosu::MS_LEFT) && Utils.collision_at?(self, mouse_position.x, mouse_position.y)
+    if @draggable_on_debug && Global.debug && !@dragging && Cursor.key_pressed?(Gosu::MS_LEFT) && Utils.collision_at?(self, mouse_position.x, mouse_position.y)
       @dragging = true
       @dragging_offset = mouse_position - @position
     end
 
-    if @dragging && !Gosu.button_down?(Gosu::MS_LEFT)
+    if @dragging && !Cursor.key_pressed?(Gosu::MS_LEFT)
       @dragging = false
     end
 
@@ -472,18 +471,20 @@ class Actor
       @position = mouse_position - @dragging_offset
     else
       # Cursors moving
-      @last_frame_position = @position.clone
       move_by_cursors
 
       # Direction moving
-      move_by_direction
+      # move_by_direction
 
       # Gravity force
       add_force_by_gravity
     end
 
     on_after_move_do
+  end
 
+  # @!visibility private
+  def after_physics_update
     checking_autokill if @autokill
   end
 
@@ -513,7 +514,6 @@ class Actor
     actor = self.class.new
     actor.name = @name
     actor.position = @position.clone
-    actor.last_frame_position = @position.clone
     actor.direction = @direction.clone
 
     # actot.children = @children.clone # TODO: Fix this
@@ -698,13 +698,16 @@ class Actor
     Global.pixel_fonts["medium"].draw_text("#{@position.x.floor},#{@position.y.floor}", position_in_camera.x, position_in_camera.y - 20, 1)
   end
 
-  def collision_with_solid(self_collider, other_collider, contact)
+  def collision_with_solid(_self_collider, other_collider, contact)
     # Collision with the floor
     puts ">>>> collision_with_solid: normal: #{contact[:normal]}"
-    if contact[:normal].y.positive?
+    puts ">>>> collision_with_solid: anchor: #{contact[:anchor]}"
+    if contact[:anchor].y.positive?
       on_floor_do unless on_floor?
 
-      @ground_colliders_in_contact << other_collider
+      unless @ground_colliders_in_contact.include?(other_collider)
+        @ground_colliders_in_contact << other_collider
+      end
 
       puts ">>>> @ground_colliders_in_contact: #{@ground_colliders_in_contact.count}"
 
@@ -712,9 +715,13 @@ class Actor
     end
   end
 
-  def collision_with_solid_ends(self_collider, other_collider, contact)
+  def collision_with_solid_ends(_self_collider, other_collider, _contact)
     puts ">>>> collision_with_solid_ends"
     @ground_colliders_in_contact.delete(other_collider)
+
+    if @ground_colliders_in_contact.empty?
+      puts ">>>> out of the floor"
+    end
   end
 
   # If actor is out of the screen by half of the screen pixels, destroy it
@@ -727,7 +734,7 @@ class Actor
        position_in_camera.y < -margin_pixels_y ||
        position_in_camera.y > Global.screen_height + margin_pixels_y
 
-      log "Autokill: #{name}"
+      log "#Autokill: #{name}, at position_in_camera: #{position_in_camera}"
       destroy
     end
   end

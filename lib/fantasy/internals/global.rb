@@ -91,13 +91,13 @@ module Global
       @frame_time = Time.now - @last_frame_at
       @last_frame_at = Time.now
 
-      if Gosu.button_down?(Gosu::KB_D) && !@d_key_pressed
+      if Cursor.key_pressed?(Gosu::KB_D) && !@d_key_pressed
         Log.debug_entities
         @debug = !@debug
         @d_key_pressed = true
       end
 
-      if !Gosu.button_down?(Gosu::KB_D) && @d_key_pressed
+      if !Cursor.key_pressed?(Gosu::KB_D) && @d_key_pressed
         @d_key_pressed = false
       end
     end

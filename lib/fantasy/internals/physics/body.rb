@@ -56,7 +56,7 @@ module Physics
     def update
       transform = Box2D::Body_GetTransform(id)
       physics_position = transform.p
-      @position = Coordinates.new(physics_position.x, physics_position.y) / Physics::World.pixels_per_meter
+      @position = Coordinates.new(physics_position.x, physics_position.y) * Physics::World.pixels_per_meter
 
       physics_rotation = transform.q
       angle_radians = Box2D.Rot_GetAngle(physics_rotation)
@@ -76,14 +76,19 @@ module Physics
     end
 
     def force(direction:, force:)
-      impulse = Coordinates.new(direction.x, direction.y).normalize * force * 1_000_000_000
+      impulse = Coordinates.new(direction.x, direction.y).normalize * force
       impulse_vec_2 = Box2D::Vec2.create_as(impulse.x, impulse.y)
       Box2D.Body_ApplyForceToCenter(id, impulse_vec_2, true)
     end
 
     def linear_velocity(velocity)
-      velocity *= 1_000_000
-      velocity_vec_2 = Box2D::Vec2.create_as(velocity.x, velocity.y)
+      puts "Setting linear velocity: #{velocity}"
+      # velocity *= 1_000_000
+      velocity_vec_2 =
+        Box2D::Vec2.create_as(
+          velocity.x.to_f / Physics::World.pixels_per_meter,
+          velocity.y.to_f / Physics::World.pixels_per_meter
+        )
       Box2D.Body_SetLinearVelocity(id, velocity_vec_2)
     end
 
@@ -106,8 +111,8 @@ module Physics
 
     def create_body(initial_position)
       body_def = Box2D::DefaultBodyDef()
-      body_def.position.x = initial_position.x * Physics::World.pixels_per_meter
-      body_def.position.y = initial_position.y * Physics::World.pixels_per_meter
+      body_def.position.x = initial_position.x.to_f / Physics::World.pixels_per_meter
+      body_def.position.y = initial_position.y.to_f / Physics::World.pixels_per_meter
       body_def.type = type == :static ? Box2D::BodyType_staticBody : Box2D::BodyType_dynamicBody
       body_def.fixedRotation = true
 

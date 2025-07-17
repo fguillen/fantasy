@@ -19,19 +19,38 @@ module Physics
           collider_a = ::Collider.find_by_physics_shape_id_index(contact[:shape_id_a_index])
           collider_b = ::Collider.find_by_physics_shape_id_index(contact[:shape_id_b_index])
 
+          puts ">>> collider_a: #{collider_a}, collider_b: #{collider_b}"
+          puts ">>>> contact: #{contact.inspect}"
+
           if contact[:phase] == :begin
-            collider_a.on_collision_do(collider_b, contact)
-            collider_b.on_collision_do(collider_a, contact)
+            collider_a.on_collision_do(collider_b, contact_for_a(contact))
+            collider_b.on_collision_do(collider_a, contact_for_b(contact))
           end
 
           if contact[:phase] == :end
-            collider_a.on_collision_ends_do(collider_b, contact)
-            collider_b.on_collision_ends_do(collider_a, contact)
+            collider_a.on_collision_ends_do(collider_b, contact_for_a(contact))
+            collider_b.on_collision_ends_do(collider_a, contact_for_b(contact))
           end
         end
       end
 
       private
+
+      def contact_for_a(contact)
+        result = contact.dup
+        result[:anchor] = result[:anchor_a]
+        result.delete(:anchor_a)
+        result.delete(:anchor_b)
+        result
+      end
+
+      def contact_for_b(contact)
+        result = contact.dup
+        result[:anchor] = result[:anchor_b]
+        result.delete(:anchor_a)
+        result.delete(:anchor_b)
+        result
+      end
 
       def collect_contacts
         results = []
@@ -101,7 +120,9 @@ module Physics
             type:,
             phase: :begin,
             coordinates: Coordinates.new(first_point.point.x, first_point.point.y) / Physics::World.pixels_per_meter,
-            normal: Coordinates.new(manifold.normal.x, manifold.normal.y * -1) # Y is inverted in Box2D
+            normal: Coordinates.new(manifold.normal.x, manifold.normal.y * -1), # Y is inverted in Box2D
+            anchor_a: Coordinates.new(first_point.anchorA.x, first_point.anchorA.y), # Y is inverted in Box2D
+            anchor_b: Coordinates.new(first_point.anchorB.x, first_point.anchorB.y) # Y is inverted in Box2D
           }
         end
 
@@ -116,6 +137,8 @@ module Physics
           phase:,
           coordinates: nil,
           normal: nil,
+          anchor_a: nil,
+          anchor_b: nil
         }
       end
     end

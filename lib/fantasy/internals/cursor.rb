@@ -21,23 +21,27 @@ module Cursor
     Gosu::KB_SPACE
   end
 
+  def self.key_pressed?(button_id)
+    Gosu.button_down?(button_id)
+  end
+
   def self.left?
-    Gosu.button_down?(Cursor.left)
+    Cursor.key_pressed?(Cursor.left)
   end
 
   def self.right?
-    Gosu.button_down?(Cursor.right)
+    Cursor.key_pressed?(Cursor.right)
   end
 
   def self.up?
-    Gosu.button_down?(Cursor.up)
+    Cursor.key_pressed?(Cursor.up)
   end
 
   def self.down?
-    Gosu.button_down?(Cursor.down)
+    Cursor.key_pressed?(Cursor.down)
   end
 
   def self.space_bar?
-    Gosu.button_down?(Cursor.space_bar)
+    Cursor.key_pressed?(Cursor.space_bar)
   end
 end

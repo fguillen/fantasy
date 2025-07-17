@@ -8,7 +8,7 @@ module Physics
         world_def.gravity.x = Global.physics_gravity.x
         world_def.gravity.y = Global.physics_gravity.y * -1 # Box2D uses Y down, so we invert it
         @id = Box2D::CreateWorld(world_def)
-        @time_step = 1.0 # / 60.0
+        @time_step = 1.0 / 60.0
         @pixels_per_meter = pixels_per_meter
 
         @bodies = []

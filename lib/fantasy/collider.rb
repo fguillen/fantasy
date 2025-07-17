@@ -128,7 +128,7 @@ class Collider
   end
 
   def on_collision_ends_do(other_collider, contact)
-    log("Collision ends with [#{other_collider.object_id}] [#{other_collider.name}], on coordinates [#{contact[:coordinates]}]")
+    log("Collision ends with [#{other_collider.object_id}] [#{other_collider}], on coordinates [#{contact[:coordinates]}]")
     actor.on_collision_ends_do(self, other_collider, contact)
   end
 

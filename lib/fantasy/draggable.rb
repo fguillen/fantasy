@@ -15,7 +15,7 @@ module Draggable
     if(
       @draggable_on_debug &&
       !@dragging &&
-      Gosu.button_down?(Gosu::MS_LEFT) &&
+      Cursor.key_pressed?(Gosu::MS_LEFT) &&
       Utils.collision_at?(self, mouse_position.x, mouse_position.y)
     )
       @dragging = true
@@ -24,7 +24,7 @@ module Draggable
   end
 
   def stop_dragging?
-    if @dragging && !Gosu.button_down?(Gosu::MS_LEFT)
+    if @dragging && !Cursor.key_pressed?(Gosu::MS_LEFT)
       @dragging = false
     end
   end

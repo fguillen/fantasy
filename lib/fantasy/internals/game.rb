@@ -85,6 +85,8 @@ class Game < Gosu::Window
 
     Physics::World.update
     Physics::CollisionsManager.update
+
+    Global.actors.select(&:active).each(&:after_physics_update)
   end
 
   def draw

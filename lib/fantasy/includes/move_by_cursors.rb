@@ -10,11 +10,11 @@ module MoveByCursor
     jump: false,
     continuous: false
   )
-    @move_with_cursors_down = down || false
-    @move_with_cursors_up = up || false
-    @move_with_cursors_left = left || false
-    @move_with_cursors_right = right || false
-    @move_with_cursors_jump = jump || false
+    @move_with_cursors_down = down
+    @move_with_cursors_up = up
+    @move_with_cursors_left = left
+    @move_with_cursors_right = right
+    @move_with_cursors_jump = jump
 
     @move_with_cursors_activated = true
     @continuous = continuous
@@ -29,22 +29,22 @@ module MoveByCursor
 
     any_direction = false
 
-    if Gosu.button_down?(Cursor.down) && @move_with_cursors_down
+    if Cursor.key_pressed?(Cursor.down) && @move_with_cursors_down
       add_direction(Coordinates.down)
       any_direction = true
     end
 
-    if Gosu.button_down?(Cursor.up) && @move_with_cursors_up
+    if Cursor.key_pressed?(Cursor.up) && @move_with_cursors_up
       add_direction(Coordinates.up)
       any_direction = true
     end
 
-    if Gosu.button_down?(Cursor.right) && @move_with_cursors_right
+    if Cursor.key_pressed?(Cursor.right) && @move_with_cursors_right
       add_direction(Coordinates.right)
       any_direction = true
     end
 
-    if Gosu.button_down?(Cursor.left) && @move_with_cursors_left
+    if Cursor.key_pressed?(Cursor.left) && @move_with_cursors_left
       add_direction(Coordinates.left)
       any_direction = true
     end
@@ -53,7 +53,7 @@ module MoveByCursor
       @direction = Coordinates.zero
     end
 
-    if Gosu.button_down?(Cursor.space_bar) && !@jumping && on_floor? && @move_with_cursors_jump
+    if Cursor.key_pressed?(Cursor.space_bar) && !@jumping && on_floor? && @move_with_cursors_jump
       jump
     end
   end

@@ -11,22 +11,6 @@ class CollisionResolver_NOT_USED
     end
   end
 
-  def self.any_collision_down_with_solid?(collider)
-    collider_down = collider.clone
-    collider_down.position.y += 1
-
-    result =
-      active_colliders.select(&:solid).any? do |other|
-        colliders_can_collide?(collider, other) && collider_down.collides_with?(other)
-      end
-
-    Log.ignore_log do
-      collider_down.destroy
-    end
-
-    result
-  end
-
   def self.movement_until_collision(collider, other, last_movement)
     return Coordinates.zero if last_movement.zero?
 
